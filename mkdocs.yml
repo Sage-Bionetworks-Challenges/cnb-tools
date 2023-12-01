@@ -1,0 +1,28 @@
+site_name: cnb-tools
+repo_url: https://github.com/Sage-Bionetworks-Challenges/cnb-tools
+repo_name: cnb-tools
+nav:
+  - Quick Start: index.md
+  - Commands: commands.md
+  - Release Notes: release-notes.md
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)" 
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)" 
+      scheme: slate
+      primary: deep purple
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
