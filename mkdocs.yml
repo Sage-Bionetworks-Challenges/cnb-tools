@@ -27,6 +27,7 @@ theme:
     admonition:
       note: octicons/tag-16
       info: octicons/info-16
+  logo: assets/favicon.png
 
 markdown_extensions:
   - admonition

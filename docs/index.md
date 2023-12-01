@@ -1,4 +1,4 @@
-# cnb-tools
+![cnb-tools](assets/cnb-tools.png)
 
 <p align="center"><em>
   Convenience tools/functions for challenges and benchmarking on
@@ -30,20 +30,27 @@ but not limited to, [DREAM Challenges].
 
 To fully utilize **cnb-tools**, you must have a Synapse account and
 provide your credentials to the tool.  To do so, create a `.synapseConfig`
-file in your home directory, with the following structure:
+file in your home directory, and enter the following:
 
 ```yaml
 [authentication]
 authtoken = "YOUR PAT"
 ```
 
-Generate a Synapse [Personal Access Token (PAT)] with all token
-permissions selected and copy-paste the token into `authtoken`.
+Generate a new Synapse [Personal Access Token (PAT)] with all token
+permissions enabled, then copy-paste it into `authtoken`. Save the file.
+
+For security, we recommend updating its permissions so that other
+users on your machine do not have read access to your credentials, e.g.
+
+```sh
+chmod 600 ~/.synapseConfig
+```
 
 ## Installation
 
 ```
-$ pip install cnb-tools
+pip install cnb-tools
 ```
 
 !!! note
@@ -55,8 +62,7 @@ $ pip install cnb-tools
 Verify the installation with:
 
 ```
-$ cnb-tools --version
-cnb-tools v0.1.0
+cnb-tools --version
 ```
 
 ## License
