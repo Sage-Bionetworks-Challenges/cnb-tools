@@ -21,5 +21,6 @@ def main(
     ] = None,
 ):
     """
-    CNB Tools - convenience tools/functions for challenges and benchmarking
+    CNB Tools - convenience tools/functions for challenges and
+    benchmarking on Synapse.org
     """
