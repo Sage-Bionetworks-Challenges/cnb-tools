@@ -7,11 +7,11 @@ assignees: vchung
 
 ---
 
-**Describe The Problem To Be Solved**
+## Describe The Problem To Be Solved
 Please provide a concise description of the problem to be addressed
 by this feature request.
 
-**(optional) Suggest a Solution**
+## (optional) Suggest a Solution
 Do you have a preferred solution? Things to consider:
   * details of the technical implementation
   * tradeoffs made in design decisions
