@@ -46,6 +46,12 @@ permissions selected and copy-paste the token into `authtoken`.
 $ pip install cnb-tools
 ```
 
+!!! note
+    **cnb-tools** builds off of the Synapse Python Client — by
+    installing **cnb-tools**, you will also be installing **synapseclient**.
+    
+    → [Read its docs.]
+
 Verify the installation with:
 
 ```
@@ -63,3 +69,4 @@ cnb-tools v0.1.0
 [Python 3.9+]: https://www.python.org/downloads/
 [Synapse account]: https://www.synapse.org/#!LoginPlace:0
 [Personal Access Token (PAT)]: https://www.synapse.org/#!PersonalAccessTokens:
+[Read its docs.]: https://python-docs.synapse.org/build/html/index.html

@@ -21,6 +21,10 @@ theme:
       toggle:
         icon: material/toggle-switch
         name: Switch to light mode
+  icon:
+    admonition:
+      note: octicons/tag-16
+      info: octicons/info-16
 
 markdown_extensions:
   - admonition
