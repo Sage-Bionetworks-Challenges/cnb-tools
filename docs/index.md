@@ -30,15 +30,15 @@ but not limited to, [DREAM Challenges].
 
 To fully utilize **cnb-tools**, you must have a Synapse account and
 provide your credentials to the tool.  To do so, create a `.synapseConfig`
-file in your home directory with the following structure:
+file in your home directory, with the following structure:
 
 ```yaml
 [authentication]
 authtoken = "YOUR PAT"
 ```
 
-Generate a [Personal Access Token (PAT)] with all token permissions
-selected and copy-paste the token to `authtoken`.
+Generate a Synapse [Personal Access Token (PAT)] with all token
+permissions selected and copy-paste the token into `authtoken`.
 
 ## Installation
 
