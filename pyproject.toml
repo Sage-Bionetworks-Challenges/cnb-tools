@@ -38,10 +38,11 @@ cnb-tools = "cnb_tools.main_cli:app"
 "Bug Tracker" = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues"
 
 [tool.poetry.group.test.dependencies]
-pytest = "*"
+pytest = "^7.4.3"
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "*"
+mkdocs = "^1.5.3"
+mkdocs-material = "^9.4.14"
 
 [build-system]
 requires = ["poetry-core"]
