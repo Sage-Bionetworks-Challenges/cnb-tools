@@ -1,24 +1,25 @@
-<h1 align="center">
-  cnb-tools
-</h1>
+<div align="center">
 
-<h3 align="center">
-  Convenience tools/functions for challenges and benchmarking on
-  <a href="https://www.synapse.org" title="Synapse.org">Synapse.org</a>
-</h3>
-<br/>
+  ![cnb-tools](docs/assets/cnb-tools.png)
 
-<p align="center">
+  <h3>
+    Convenience tools/functions for challenges and benchmarking on
+    <a href="https://www.synapse.org" title="Synapse.org">Synapse.org</a>
+  </h3>
+
+  <br/>
+
   <img alt="PyPI version" src="https://img.shields.io/badge/pypi-1 | Planning-%23679EC1?style=flat-square&logo=pypi&logoColor=white">
   <img alt="Supported Python versions" src="https://img.shields.io/badge/python-3.9 | 3.10 | 3.11 | 3.12-%23EB8231?style=flat-square&logo=python&logoColor=white">
   <img alt="License" src="https://img.shields.io/github/license/Sage-Bionetworks-Challenges/cnb-tools?style=flat-square&logo=github&color=%236DB56D">
-</p>
+
+</div>
 
 ---
 
-**Documentation**: [https://sage-bionetworks-challenges.github.io/cnb-tools]
+📖 **Documentation**: [https://sage-bionetworks-challenges.github.io/cnb-tools]
 
-**Source code**: [https://github.com/Sage-Bionetworks-Challenges/cnb-tools]
+👾 **Source code**: [https://github.com/Sage-Bionetworks-Challenges/cnb-tools]
 
 ---
 
@@ -33,15 +34,22 @@ but not limited to, [DREAM Challenges].
 
 To fully utilize **cnb-tools**, you must have a Synapse account and
 provide your credentials to the tool.  To do so, create a `.synapseConfig`
-file in your home directory, with the following structure:
+file in your home directory, and enter the following:
 
 ```yaml
 [authentication]
 authtoken = "YOUR PAT"
 ```
 
-Generate a Synapse [Personal Access Token (PAT)] with all token
-permissions selected and copy-paste the token into `authtoken`.
+Generate a new Synapse [Personal Access Token (PAT)] with all token
+permissions enabled, then copy-paste it into `authtoken`. Save the file.
+
+For security, we recommend updating its permissions so that other
+users on your machine do not have read access to your credentials, e.g.
+
+```sh
+$ chmod 600 ~/.synapseConfig
+```
 
 ## Installation
 

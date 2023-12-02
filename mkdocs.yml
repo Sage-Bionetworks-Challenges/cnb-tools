@@ -1,19 +1,32 @@
+# Project
 site_name: cnb-tools
+site_author: Verena Chung
+site_description: >-
+  Convenience tools/functions for challenges and benchmarking
+  on Synapse.org
+
+# Repository
 repo_url: https://github.com/Sage-Bionetworks-Challenges/cnb-tools
 repo_name: cnb-tools
+
+# Navigation
 nav:
-  - Quick Start: index.md
-  - Commands: commands.md
-  - Contributing: contributing.md
-  - Release Notes: release-notes.md
+  - cnb-tools: index.md
+  - User Guide:
+    - Introduction: user-guide/introduction.md
+    - Cheat sheet: user-guide/cheat-sheet.md
+    - Contributing: user-guide/contributing.md
+  - Changelog: 
+    - changelog/release-notes.md
+    - How to upgrade: changelog/upgrade.md
 
-
+# Theme configuration
 theme:
   name: material
   palette:
     - media: "(prefers-color-scheme: light)" 
       scheme: default
-      primary: indigo
+      primary: teal
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
@@ -27,8 +40,30 @@ theme:
     admonition:
       note: octicons/tag-16
       info: octicons/info-16
+  logo: assets/favicon.png
+  features:
+    - content.code.copy
+    - navigation.footer
+    - navigation.sections
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Sage-Bionetworks-Challenges
+    - icon: fontawesome/brands/docker
+      link: https://hub.docker.com/u/sagebionetworks
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/search/?q=sagebionetworks
+    - icon: octicons/home-16
+      link: https://sagebionetworks.org/challenges-benchmarking/
 
 markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - toc:
+      permalink: true
