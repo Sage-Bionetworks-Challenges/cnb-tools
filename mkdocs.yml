@@ -50,6 +50,11 @@ theme:
     - search.suggest
     - toc.follow
 
+plugins:
+- search
+- mkdocstrings
+- autorefs
+
 extra:
   social:
     - icon: fontawesome/brands/github
