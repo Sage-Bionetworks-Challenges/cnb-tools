@@ -16,6 +16,8 @@ nav:
     - Introduction: user-guide/introduction.md
     - Cheat sheet: user-guide/cheat-sheet.md
     - Contributing: user-guide/contributing.md
+  - Reference:
+    - CLI: reference/cli.md
   - Changelog: 
     - changelog/release-notes.md
     - How to upgrade: changelog/upgrade.md

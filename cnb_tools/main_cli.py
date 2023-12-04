@@ -1,3 +1,15 @@
+"""Reference guide to cnb-tools CLI commands
+
+This module allows the user to manage challenges from the CLI.
+
+Examples:
+    $ cnb-tools create-challenge -t 2
+
+This module contains the following commands:
+
+- `create-challenge` - Creates a new challenge on the Sage Challenge Portal
+"""
+
 from typing import Optional
 
 import typer
