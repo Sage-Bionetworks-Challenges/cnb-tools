@@ -1,6 +1,6 @@
 <div align="center">
 
-  ![cnb-tools](docs/assets/cnb-tools.png)
+  ![cnb-tools](https://raw.githubusercontent.com/Sage-Bionetworks-Challenges/cnb-tools/main/docs/assets/cnb-tools.png)
 
   <h3>
     Convenience tools/functions for challenges and benchmarking on
@@ -48,13 +48,13 @@ For security, we recommend updating its permissions so that other
 users on your machine do not have read access to your credentials, e.g.
 
 ```sh
-$ chmod 600 ~/.synapseConfig
+chmod 600 ~/.synapseConfig
 ```
 
 ## Installation
 
-```
-$ pip install cnb-tools
+```sh
+pip install cnb-tools
 ```
 
 > [!NOTE]
@@ -65,9 +65,8 @@ $ pip install cnb-tools
 
 Verify the installation with:
 
-```
-$ cnb-tools --version
-cnb-tools v0.1.0
+```sh
+cnb-tools --version
 ```
 
 ## License
