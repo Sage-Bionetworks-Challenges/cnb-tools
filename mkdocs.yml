@@ -59,14 +59,14 @@ plugins:
 
 extra:
   social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/Sage-Bionetworks-Challenges
-    - icon: fontawesome/brands/docker
-      link: https://hub.docker.com/u/sagebionetworks
-    - icon: fontawesome/brands/python
-      link: https://pypi.org/search/?q=sagebionetworks
     - icon: octicons/home-16
       link: https://sagebionetworks.org/challenges-benchmarking/
+    - icon: fontawesome/brands/github
+      link: https://github.com/Sage-Bionetworks-Challenges/cnb-tools
+    - icon: fontawesome/brands/docker
+      link: https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pkgs/container/cnb-tools
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/cnb-tools/
 
 markdown_extensions:
   - admonition
