@@ -1,8 +1,7 @@
-name: Create and publish cnb-tools Docker image upon release
+name: Deploy image
 on:
   release:
-    types:
-      - 'published'
+    types: [created]
   workflow_dispatch:  # for testing
     
 
