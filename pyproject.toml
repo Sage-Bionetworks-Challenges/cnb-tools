@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cnb-tools"
-version = "0.1.0"
+version = "0.1.1"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = "Apache-2.0"
 authors = ["Sage CNB Team <cnb@sagebase.org>"]
