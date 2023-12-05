@@ -36,7 +36,7 @@ Here is a typical contribution workflow:
     the list of files.  Review the details of the upstream commits
     as needed, then click **Update branch**.
 
-4. **Branch off `develop` and develop your contribution**
+4. **Branch off `main` and develop your contribution**
 
     Ensure `develop` is up-to-date in your local dev, then create
     a new feature branch. We recommend prefixing the new branch name
@@ -44,8 +44,8 @@ Here is a typical contribution workflow:
     on — followed by its GH tracking number:
 
     ```
-    git checkout develop && git pull
-    git checkout -b <feat/bug-123> develop
+    git checkout main && git pull
+    git checkout -b <feat/bug-123> main
     ```
 
 5. **Document your changes**
@@ -67,7 +67,7 @@ Here is a typical contribution workflow:
     git push
     ```
 
-7. **Open a PR to upstream `develop` once ready**
+7. **Open a PR to upstream `main` once ready**
 
     Follow our PR template.  Someone from the Sage Challenges &
     Benchmarking team will then review, and either approve + merge
@@ -75,7 +75,7 @@ Here is a typical contribution workflow:
 
 ### Code style
 
-**cnb-tool** uses [flake8] to enforce [PEP 8] styling consistency and
+**cnb-tools** uses [flake8] to enforce [PEP 8] styling consistency and
 to check for possible errors. We recommend setting up your editor to
 follow PEP 8 for a more seamless contribution experience.
 
@@ -85,16 +85,51 @@ The documentation uses [MkDocs], [mkdocstrings], and the [Material theme].
 All docs are located in the `./docs` directory and are written in Markdown
 format.
 
-To add a new page, create a Markdown file in `./docs`, then add the page
-to the `nav` setting in `./mkdocs.yml`.
+* **To add a new page:**
 
-To test your changes, build a local docs site that will auto-reload with
-any changes:
+    Create a Markdown file in `./docs`, then add the page to the `nav` 
+    setting in `./mkdocs.yml`.
 
+* **To insert docstrings information:**
+
+    Use `::: identifer`, where `identifer` is the name of the
+    package/module/class you want to insert information for:
+
+    ```
+    # Insert docstring for package
+    ::: my_package
+
+    # Insert docstring for module
+    ::: my_package.my_module
+
+    # Insert docstring for class
+    ::: my_package.my_module.MyClass
+    ```
+
+    You can also change how the docstring is rendered by adding
+    `options` - [read its docs] for more details.
+
+* **To add an [animated terminal window]:**
+
+    Add `<!-- termynal -->` before the code block.
+
+    For the "typing" effect, prefix the line with `$`.
+
+* **To test your changes:**
+
+    Build a local docs site that will auto-reload with any changes:
+
+<!-- termynal -->
+```console
+$ mkdocs serve
+INFO    -  Building documentation...
+INFO    -  Cleaning site directory
+INFO    -  Documentation built in 0.51 seconds
+INFO    -  [10:20:58] Watching paths for changes: 'docs', 'mkdocs.yml'
+INFO    -  [10:20:58] Serving on http://127.0.0.1:8000/
 ```
-mkdocs serve
-```
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 This will serve the documentation on `http://127.0.0.1:8000`.
 
 
@@ -113,3 +148,5 @@ This will serve the documentation on `http://127.0.0.1:8000`.
 [MKDocs]: https://www.mkdocs.org/
 [mkdocstrings]: https://mkdocstrings.github.io/
 [Material theme]: https://squidfunk.github.io/mkdocs-material/
+[read its docs]: https://mkdocstrings.github.io/usage/
+[animated terminal window]: https://github.com/mkdocs-plugins/termynal
