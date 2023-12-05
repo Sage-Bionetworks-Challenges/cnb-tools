@@ -1,0 +1,10 @@
+.github
+.gitignore
+.pep8speaks.yml
+
+dist/
+docs/
+mkdocs.yml
+
+*.md
+!README.md
