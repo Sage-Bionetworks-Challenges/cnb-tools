@@ -47,14 +47,20 @@ permissions enabled, then copy-paste it into `authtoken`. Save the file.
 For security, we recommend updating its permissions so that other
 users on your machine do not have read access to your credentials, e.g.
 
-```sh
-chmod 600 ~/.synapseConfig
+<!-- termynal -->
+```console
+$ chmod 600 ~/.synapseConfig
+$ ls -l ~/.synapseConfig
+-rw-------@ 1 user  staff  123 Jan  1 12:00 .synapseConfig
 ```
 
 ## Installation
 
-```
-pip install cnb-tools
+<!-- termynal -->
+```console
+$ pip install cnb-tools
+---> 100%
+Successfully installed cnb-tools
 ```
 
 !!! note
@@ -65,8 +71,10 @@ pip install cnb-tools
 
 Verify the installation with:
 
-```
-cnb-tools --version
+<!-- termynal -->
+```console
+$ cnb-tools --version
+cnb-tools v0.1.1
 ```
 
 ## License

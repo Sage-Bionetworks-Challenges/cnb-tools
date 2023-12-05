@@ -1285,6 +1285,23 @@ pysftp = ["pysftp (>=0.2.8,<0.3)"]
 tests = ["flake8 (>=3.7.0,<4.0)", "func-timeout (>=4.3,<5.0)", "pytest (>=6.0.0,<7.0)", "pytest-mock (>=3.0,<4.0)", "pytest-rerunfailures (>=12.0,<13.0)", "pytest-xdist[psutil] (>=2.2,<3.0.0)"]
 
 [[package]]
+name = "termynal"
+version = "0.11.1"
+description = "A lightweight and modern animated terminal window"
+optional = false
+python-versions = ">=3.8.1,<4.0.0"
+files = [
+    {file = "termynal-0.11.1-py3-none-any.whl", hash = "sha256:553fc58b126a0482b71a442263d33a9b47fb69868a7fdd6cc36dc9f006aab7a2"},
+    {file = "termynal-0.11.1.tar.gz", hash = "sha256:ce70d264a649d26365bf72b8cfc5aa2bf903adafebc1027347343779a8695ff0"},
+]
+
+[package.dependencies]
+markdown = "*"
+
+[package.extras]
+mkdocs = ["mkdocs (>=1.4,<2.0)"]
+
+[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -1482,4 +1499,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b51381b8a1f8d0fbf2d46892beac34e34981c9159aa4d7239b50889b0ae417de"
+content-hash = "a2267423a3b59673be83d23c949a72855b00d052ea786093c5dbe4d02e92f7fc"
