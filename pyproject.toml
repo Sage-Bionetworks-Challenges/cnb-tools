@@ -9,6 +9,7 @@ maintainers = [
 ]
 readme = "README.md"
 repository = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools"
+documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
 classifiers = [
     "Development Status :: 1 - Planning",
     "Intended Audience :: Developers",
