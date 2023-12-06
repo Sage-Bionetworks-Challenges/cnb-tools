@@ -1,9 +1,9 @@
 ---
 name: Feature Request
 about: Have an idea for a new feature? Please share 🤝
-title: '[Feature] <title>'
+title: '[feat] '
 labels: feature
-assignees: vchung
+assignees: 
 
 ---
 

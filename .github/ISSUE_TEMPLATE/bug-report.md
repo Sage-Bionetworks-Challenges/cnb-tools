@@ -1,9 +1,9 @@
 ---
 name: Bug Report
 about: Something not working right? Let us know!
-title: '[Bug] <title>'
+title: '[bug] '
 labels: bug
-assignees: vchung
+assignees: 
 
 ---
 
