@@ -1,3 +1,9 @@
+## In development
+
+### Docs
+- add [Termynal plug-in](https://github.com/mkdocs-plugins/termynal)
+- mention using a Python environment before installing
+
 ## 0.1.1
 
 ### Internal

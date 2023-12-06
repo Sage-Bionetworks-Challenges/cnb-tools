@@ -56,8 +56,18 @@ $ ls -l ~/.synapseConfig
 
 ## Installation
 
+For best practice, use a Python environment to install **cnb-tools**
+rather than directly into your base env.  In our docs, we will be
+using [miniconda], but you can use [miniforge], [venv], [pyenv], etc.
+
 <!-- termynal -->
 ```console
+# Create a new env and activate it
+$ conda create -n cnb-tools python=3.12 -y
+---> 100%
+$ conda activate cnb-tools
+
+# Install cnb-tools using pip
 $ pip install cnb-tools
 ---> 100%
 Successfully installed cnb-tools
@@ -87,4 +97,8 @@ cnb-tools v0.1.1
 [Python 3.9+]: https://www.python.org/downloads/
 [Synapse account]: https://www.synapse.org/#!LoginPlace:0
 [Personal Access Token (PAT)]: https://www.synapse.org/#!PersonalAccessTokens:
+[miniconda]: https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html
+[miniforge]: https://github.com/conda-forge/miniforge
+[venv]: https://docs.python.org/3/library/venv.html
+[pyenv]: https://github.com/pyenv/pyenv
 [Read its docs.]: https://python-docs.synapse.org/build/html/index.html
