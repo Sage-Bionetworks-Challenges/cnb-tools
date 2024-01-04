@@ -7,3 +7,4 @@ RUN pip install --upgrade pip && \
     pip install .
 
 ENTRYPOINT [ "cnb-tools" ]
+CMD [ "--help" ]
