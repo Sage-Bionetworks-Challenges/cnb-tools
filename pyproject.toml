@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cnb-tools"
-version = "0.1.1"
+version = "0.2.0"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = "Apache-2.0"
 authors = ["Sage CNB Team <cnb@sagebase.org>"]
@@ -11,7 +11,7 @@ readme = "README.md"
 repository = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools"
 documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
 classifiers = [
-    "Development Status :: 1 - Planning",
+    "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
