@@ -39,7 +39,7 @@ def main(
     """
     CNB Tools - convenience tools/functions for challenges and
     benchmarking on Synapse.org
-    
+
     Some commands will require admin priviledges.  If you are a
     challenge admin and are experiencing issues, contact us at
     SageCNBTeam@synapse.org
