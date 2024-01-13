@@ -71,7 +71,8 @@ conda activate cnb-tools
 pip install cnb-tools
 ```
 
-> [!NOTE]
+> ⓘ **NOTE**
+>
 > **cnb-tools** builds off of the Synapse Python Client — by
 > installing **cnb-tools**, you will also be installing **synapseclient**.
 >  
@@ -97,4 +98,4 @@ cnb-tools --version
 [miniforge]: https://github.com/conda-forge/miniforge
 [venv]: https://docs.python.org/3/library/venv.html
 [pyenv]: https://github.com/pyenv/pyenv
-[Read its docs.]: https://python-docs.synapse.org/build/html/index.html
+[Read its docs.]: https://python-docs.synapse.org/

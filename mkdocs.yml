@@ -56,7 +56,10 @@ plugins:
 - search
 - mkdocstrings
 - autorefs
-- termynal
+- termynal:
+    prompt_literal_start:
+          - "$"
+          - "(cnb-tools) $"
 
 extra:
   social:

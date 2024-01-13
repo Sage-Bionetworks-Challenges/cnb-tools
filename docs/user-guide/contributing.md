@@ -38,14 +38,22 @@ Here is a typical contribution workflow:
 
 4. **Branch off `main` and develop your contribution**
 
-    Ensure `develop` is up-to-date in your local dev, then create
-    a new feature branch. We recommend prefixing the new branch name
-    with either `bug` or `feat` — depending on what you're working
-    on — followed by its GH tracking number:
+    Ensure `main` is up-to-date in your local dev, then create a new
+    feature branch. We recommend prefixing the new branch name with
+    either `bug` or `feat` — depending on what you're working on -
+    followed by its GitHub tracking number:
 
     ```
     git checkout main && git pull
     git checkout -b <feat/bug-123> main
+    ```
+
+    If there is not an associating GitHub ticket, use a concise descriptive
+    title, like:
+
+    ```
+    feat-add_submission_module
+    bug-fix_readme_typos
     ```
 
 5. **Document your changes**
