@@ -21,17 +21,21 @@ def info(
 
 
 @app.command()
-def download(
+def pull(
     submission_id: Annotated[
         int, typer.Argument(help="Submission ID to [blue]download[/blue]")
     ],
     dest: Annotated[
         str,
-        typer.Option(..., "-D", "--dir", help="Directory to download submission into"),
+        typer.Option(..., "-d", "--dir", help="Directory to download submission into"),
     ] = ".",
 ):
-    """[bold blue]Download[/bold blue] a submission"""
-    print(f"Downloading {submission_id} to {dest}...")
+    """[bold blue]Get[/bold blue] a submission (file/Docker image)"""
+    submission_type = "file"
+    if submission_type == "file":
+        print(f"Downloading {submission_id} to {dest}...")
+    else:
+        print("Pulling Docker image...")
     print("✅")
 
 
