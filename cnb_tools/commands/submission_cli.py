@@ -1,4 +1,4 @@
-from typing import Optional
+from pathlib import Path
 from typing_extensions import Annotated
 import typer
 
@@ -26,7 +26,7 @@ def pull(
         int, typer.Argument(help="Submission ID to [blue]download[/blue]")
     ],
     dest: Annotated[
-        str,
+        Path,
         typer.Option(..., "-d", "--dir", help="Directory to download submission into"),
     ] = ".",
 ):
@@ -44,7 +44,7 @@ def annotate(
     submission_id: Annotated[
         int, typer.Argument(help="Submission ID to [orange1]annotate[/orange1]")
     ],
-    annotations: Annotated[str, typer.Argument(help="Filepath to JSON file")],
+        Path, typer.Argument(help="Filepath to JSON file", exists=True)
 ):
     """[bold orange1]Annotate[/bold orange1] a submission."""
     print(f"Annotating {submission_id}...")
