@@ -25,7 +25,11 @@ def pull(
     submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
     dest: Annotated[
         Path,
-        typer.Option("--dir", "-d", help="Directory to download submission into (if submission is a file)"),
+        typer.Option(
+            "--dir",
+            "-d",
+            help="Directory to download submission into (if submission is a file)",
+        ),
     ] = ".",
 ):
     """Get a submission (file/Docker image)"""
