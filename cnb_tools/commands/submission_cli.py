@@ -1,4 +1,6 @@
 from pathlib import Path
+from typing import List
+
 from typing_extensions import Annotated
 import typer
 
@@ -7,11 +9,9 @@ app = typer.Typer()
 
 @app.command()
 def info(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [blue]get info[/blue]")
-    ]
+    submission_id: Annotated[int, typer.Argument(help="Submission ID to get info")]
 ):
-    """[bold blue]Get[/bold blue] information about a submission"""
+    """Get information about a submission"""
     print(f"ID: {submission_id}")
     print("Challenge: Awesome Challenge")
     print("Date: 2024-01-01")
@@ -22,15 +22,13 @@ def info(
 
 @app.command()
 def pull(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [blue]download[/blue]")
-    ],
+    submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
     dest: Annotated[
         Path,
-        typer.Option(..., "-d", "--dir", help="Directory to download submission into"),
+        typer.Option("--dir", "-d", help="Directory to download submission into (if submission is a file)"),
     ] = ".",
 ):
-    """[bold blue]Get[/bold blue] a submission (file/Docker image)"""
+    """Get a submission (file/Docker image)"""
     submission_type = "file"
     if submission_type == "file":
         print(f"Downloading {submission_id} to {dest}...")
@@ -41,57 +39,61 @@ def pull(
 
 @app.command()
 def annotate(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [orange1]annotate[/orange1]")
+    submission_ids: Annotated[
+        List[int],
+        typer.Argument(help="One or more submission ID(s) to annotate"),
     ],
+    annotations: Annotated[
         Path, typer.Argument(help="Filepath to JSON file", exists=True)
+    ],
 ):
-    """[bold orange1]Annotate[/bold orange1] a submission."""
-    print(f"Annotating {submission_id}...")
-    print("✅")
+    """Annotate one or more submission(s) with a JSON file."""
+    for submission in submission_ids:
+        print(f"Annotating {submission} with {annotations}...")
+        print("✅")
 
 
 @app.command()
 def update_status(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [orange1]update[/orange1]")
-    ],
+    submission_id: Annotated[List[int], typer.Argument(help="Submission ID to update")],
     new_status: Annotated[
         str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
-    ] = "ACCEPTED",
+    ],
 ):
-    """[bold orange1]Update[/bold orange1] a submission status."""
+    """Update a submission status."""
     print(f"Updating {submission_id} to status: {new_status}...")
     print("✅")
 
 
 @app.command()
 def reset(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [orange1]reset[/orange1]")
-    ],
+    submission_id: Annotated[int, typer.Argument(help="Submission ID to reset")],
 ):
-    """[bold orange1]Reset[/bold orange1] a submission status."""
+    """Reset a submission status."""
     print(f"Resetting {submission_id} to status RECEIVED...")
     print("✅")
 
 
 @app.command()
 def delete(
-    submission_id: Annotated[
-        int, typer.Argument(help="Submission ID to [red]delete[/red]")
+    submission_ids: Annotated[
+        List[int],
+        typer.Argument(help="One or more submission ID(s) to [red]delete[/red]"),
     ],
     force: Annotated[
         bool,
         typer.Option(
+            "--force",
+            "-f",
             prompt="Are you sure you want to delete the submission(s)?",
             help="Force [red]deletion[/red] without confirmation.",
         ),
-    ],
+    ] = False,
 ):
-    """[bold red]Delete[/bold red] one or more submissions."""
+    """Delete one or more submissions."""
     if force:
-        print(f"Deleting submissions: {submission_id}")
+        for submission in submission_ids:
+            print(f"Deleting submissions: {submission}")
         print("✅")
     else:
-        print("Nothing was done.")
+        print("No deletion was done.")
