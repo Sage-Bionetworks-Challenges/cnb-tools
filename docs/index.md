@@ -68,7 +68,7 @@ $ conda create -n cnb-tools python=3.12 -y
 $ conda activate cnb-tools
 
 # Install cnb-tools using pip
-$ pip install cnb-tools
+(cnb-tools) $ pip install cnb-tools
 ---> 100%
 Successfully installed cnb-tools
 ```
@@ -83,7 +83,7 @@ Verify the installation with:
 
 <!-- termynal -->
 ```console
-$ cnb-tools --version
+(cnb-tools) $ cnb-tools --version
 cnb-tools v0.1.1
 ```
 
@@ -101,4 +101,4 @@ cnb-tools v0.1.1
 [miniforge]: https://github.com/conda-forge/miniforge
 [venv]: https://docs.python.org/3/library/venv.html
 [pyenv]: https://github.com/pyenv/pyenv
-[Read its docs.]: https://python-docs.synapse.org/build/html/index.html
+[Read its docs.]: https://python-docs.synapse.org/
