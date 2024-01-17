@@ -29,8 +29,9 @@ def version_callback(value: bool):
         raise typer.Exit()
 
 
-@app.callback()
+@app.callback(invoke_without_command=True)
 def main(
+    ctx: typer.Context,
     version: Annotated[
         Optional[bool],
         typer.Option("--version", callback=version_callback, is_eager=True),
@@ -40,7 +41,11 @@ def main(
     CNB Tools - convenience tools/functions for challenges and
     benchmarking on Synapse.org
 
-    Some commands will require admin priviledges.  If you are a
-    challenge admin and are experiencing issues, contact us at
-    SageCNBTeam@synapse.org
+    [red](some commands will require admin priviledges)[/red]
+
+    If you are a challenge admin and are experiencing issues, contact us at
+    [bold blue]SageCNBTeam@synapse.org[/bold blue]
     """
+    if ctx.invoked_subcommand is None:
+        print("Manage challenges on Synapse.org from the CLI\n")
+        print("Enter `cnb-tools --help` for usage information.")
