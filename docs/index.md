@@ -83,8 +83,10 @@ Verify the installation with:
 
 <!-- termynal -->
 ```console
-(cnb-tools) $ cnb-tools --version
-cnb-tools v0.1.1
+(cnb-tools) $ cnb-tools
+Manage challenges on Synapse.org from the CLI
+
+Enter `cnb-tools --help` for usage information.
 ```
 
 ## License
