@@ -58,7 +58,7 @@ def annotate(
 
 
 @app.command()
-def update_status(
+def change_status(
     submission_id: Annotated[List[int], typer.Argument(help="Submission ID to update")],
     new_status: Annotated[
         str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
