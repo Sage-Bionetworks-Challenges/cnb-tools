@@ -1,15 +1,15 @@
 ## In development
 
 ### Features
-- CLI
-   * Annotate submission: `submission annotate <submission ID> <filepath to JSON file>`
-   * Download submission: `submission download <submission ID> --dest`
-   * Delete one or more submissions: `submission delete [--force] <submission ID 1> <submission ID 2> ...`
-   * Get information about submission: `submission info <submission ID>`
-   * Update submission status: `submission update-status <submission ID> <new status>`
+* CLI
+      * Annotate submission: `submission annotate`
+      * Download submission: `submission pull`
+      * Delete one or more submissions: `submission delete`
+      * Get information about submission: `submission info`
+      * Update submission status: `submission update-status`
 
-- Package
-   * New class: `Submission`
+* Package
+      * New class: `Submission`
 
 ### Docs
 - add [Termynal plug-in](https://github.com/mkdocs-plugins/termynal)
