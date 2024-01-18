@@ -29,7 +29,8 @@ cnb-tools submission annotate SUB_ID JSON_FILE
 Replace the following:
 
 * _`SUB_ID`_ - submission ID to annotate
-* _`JSON_FILE`_ - filepath to JSON file containing annotations as key-value pairs
+* _`JSON_FILE`_ - filepath to JSON file containing annotations as
+        key-value pairs
 
 
 ### `change-status`
@@ -54,8 +55,8 @@ Replace the following:
 * _`STATUS`_ - new status
 
 !!!Note
-    Consider using [`reset`](#reset) if you need to update the status
-    to `RECEIVED`.
+    Consider using [`reset`](#reset) if you need to update the status to
+    `RECEIVED`.
 
 
 ### `delete`
@@ -94,9 +95,11 @@ Replace the following:
 
 ### `pull`
 
-Download a submission to your local machine.  If the submission
-is a flat file, you can optionally specify the download destination
-with `-d DESTINATION`
+Download a submission to your local machine.
+
+If the submission is a flat file, you can optionally specify the download
+destination with `-d DESTINATION`.  `-d DESTINATION` will be ignored if
+the submission is a Docker image.
 
 ```bash
 cnb-tools submission pull SUB_ID [-d/--dir DESTINATION]
@@ -123,3 +126,5 @@ Replace the following:
 * _`SUB_ID`_ - submission ID to reset
 
 ---
+
+!!!info "More commands coming soon!"
