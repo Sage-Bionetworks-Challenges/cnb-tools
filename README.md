@@ -81,7 +81,7 @@ pip install cnb-tools
 Verify the installation with:
 
 ```console
-cnb-tools --version
+cnb-tools
 ```
 
 ## License
