@@ -6,7 +6,7 @@
       * Download submission: `submission pull`
       * Delete one or more submissions: `submission delete`
       * Get information about submission: `submission info`
-      * Update submission status: `submission update-status`
+      * Update submission status: `submission change-status`
 
 * Package
       * New class: `Submission`
