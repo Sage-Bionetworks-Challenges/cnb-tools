@@ -20,7 +20,14 @@ from cnb_tools.commands import submission_cli
 
 
 app = typer.Typer(rich_markup_mode="rich")
-app.add_typer(submission_cli.app, name="submission", help="Manage submissions")
+app.add_typer(
+    submission_cli.app,
+    name="submission",
+    help=(
+        "Manage submissions, e.g. download prediction file/Docker model, view "
+        "submission metadata, update status, etc."
+    ),
+)
 
 
 def version_callback(value: bool):
