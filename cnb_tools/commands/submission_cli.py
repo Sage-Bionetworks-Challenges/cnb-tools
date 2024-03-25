@@ -1,3 +1,11 @@
+"""CLI command: submission
+
+Manage submissions.
+
+Example:
+    $ cnb-tools submission --help
+"""
+
 from pathlib import Path
 from typing import List
 
