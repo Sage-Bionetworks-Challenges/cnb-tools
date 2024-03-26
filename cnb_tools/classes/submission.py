@@ -1,5 +1,7 @@
 """Class representing a challenge submission."""
 
+from pathlib import Path
+
 from cnb_tools.classes.base import SynapseBase
 from cnb_tools.classes.submitter import Submitter
 
@@ -14,7 +16,7 @@ class Submission(SynapseBase):
         if "dockerDigest" in self.submission:
             print("Pulling Docker image...")
         else:
-            location = "working directory" if dest == "." else dest
+            location = Path.cwd() if str(dest) == "." else dest
             print(f"Downloading {self.sub_id} to {location}...")
             self.syn.getSubmission(self.sub_id, downloadLocation=dest)
 

@@ -30,7 +30,7 @@ def info(
 def pull(
     submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
     dest: Annotated[
-        str,
+        Path,
         typer.Option(
             "--dir",
             "-d",
