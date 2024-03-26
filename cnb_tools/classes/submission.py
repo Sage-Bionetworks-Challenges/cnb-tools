@@ -12,13 +12,20 @@ class Submission(SynapseBase):
         self.sub_id = sub_id
         self.submission = self.syn.getSubmission(sub_id, downloadFile=False)
 
-    def download(self, dest):
+    def download(self, dest) -> None:
         if "dockerDigest" in self.submission:
-            print("Pulling Docker image...")
+            print(
+                f"Submission ID {self.sub_id} is a Docker image 🐳 To "
+                "'download', run the following:\n\n"
+                f"docker pull {self.submission.dockerRepositoryName}"
+                f"@{self.submission.dockerDigest}\n\n"
+                "If you receive an error, try logging in first with: "
+                "docker login docker.synapse.org"
+            )
         else:
-            location = Path.cwd() if str(dest) == "." else dest
-            print(f"Downloading {self.sub_id} to {location}...")
             self.syn.getSubmission(self.sub_id, downloadLocation=dest)
+            location = Path.cwd() if str(dest) == "." else dest
+            print(f"Submission ID {self.sub_id} downloaded to: {location}")
 
     def view(self):
         challenge = self.syn.get(
