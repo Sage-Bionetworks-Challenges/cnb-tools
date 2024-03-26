@@ -19,7 +19,7 @@ app = typer.Typer()
 
 @app.command()
 def info(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to get info")]
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")]
 ):
     """Get information about a submission"""
     submission = Submission(submission_id)
@@ -28,13 +28,13 @@ def info(
 
 @app.command()
 def pull(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
     dest: Annotated[
         Path,
         typer.Option(
             "--dir",
             "-d",
-            help="Absolute path to download destination (if submission is a file)",
+            help="Filepath to download destination (if submission is a file)",
         ),
     ] = ".",
 ):
@@ -48,7 +48,7 @@ def pull(
 def annotate(
     submission_ids: Annotated[
         List[int],
-        typer.Argument(help="One or more submission ID(s) to annotate"),
+        typer.Argument(help="One or more submission ID(s)"),
     ],
     annotations: Annotated[
         Path, typer.Argument(help="Filepath to JSON file", exists=True)
@@ -62,7 +62,7 @@ def annotate(
 
 @app.command()
 def change_status(
-    submission_id: Annotated[List[int], typer.Argument(help="Submission ID to update")],
+    submission_id: Annotated[List[int], typer.Argument(help="Submission ID")],
     new_status: Annotated[
         str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
     ],
@@ -74,7 +74,7 @@ def change_status(
 
 @app.command()
 def reset(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to reset")],
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
 ):
     """Reset a submission status."""
     print(f"Resetting {submission_id} to status RECEIVED...")
@@ -85,7 +85,7 @@ def reset(
 def delete(
     submission_ids: Annotated[
         List[int],
-        typer.Argument(help="One or more submission ID(s) to [red]delete[/red]"),
+        typer.Argument(help="One or more submission ID(s)"),
     ],
     force: Annotated[
         bool,
