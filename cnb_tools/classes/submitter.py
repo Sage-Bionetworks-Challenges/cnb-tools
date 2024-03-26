@@ -10,7 +10,7 @@ class Submitter(SynapseBase):
         super().__init__()
         self.uid = uid
 
-    def pretty_print(self):
+    def __str__(self):
         try:
             return self.syn.getTeam(self.uid).get("name")
         except SynapseHTTPError:

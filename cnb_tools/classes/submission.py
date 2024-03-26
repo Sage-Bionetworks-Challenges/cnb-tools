@@ -32,5 +32,5 @@ class Submission(SynapseBase):
         print(f"ID: {self.submission.id}")
         print(f"Challenge: {challenge}")
         print(f"Date: {self.submission.createdOn[:10]}")
-        print(f"Submitter: {submitter.pretty_print()}")
+        print(f"Submitter: {submitter}")
         print(f"Team (if any): {team}")
