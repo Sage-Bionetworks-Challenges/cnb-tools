@@ -1,10 +1,10 @@
 """Class representing a challenge submission."""
 
-from cnb_tools.classes.base import BaseSynapseEntity
+from cnb_tools.classes.base import SynapseBase
 from cnb_tools.classes.submitter import Submitter
 
 
-class Submission(BaseSynapseEntity):
+class Submission(SynapseBase):
     def __init__(self, sub_id):
         super().__init__()
         self.sub_id = sub_id

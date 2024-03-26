@@ -1,11 +1,11 @@
-"""Class representing a challenge team or individual participant."""
+"""Class representing a submission team or individual participant."""
 
 from synapseclient.core.exceptions import SynapseHTTPError
 
-from cnb_tools.classes.base import BaseSynapseEntity
+from cnb_tools.classes.base import SynapseBase
 
 
-class Submitter(BaseSynapseEntity):
+class Submitter(SynapseBase):
     def __init__(self, uid):
         super().__init__()
         self.uid = uid

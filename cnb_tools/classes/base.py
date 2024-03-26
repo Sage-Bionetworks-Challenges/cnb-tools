@@ -5,7 +5,7 @@ import synapseclient
 from synapseclient.core.exceptions import SynapseNoCredentialsError
 
 
-class BaseSynapseEntity:
+class SynapseBase:
     def __init__(self):
         self.syn = self._check_login()
 
