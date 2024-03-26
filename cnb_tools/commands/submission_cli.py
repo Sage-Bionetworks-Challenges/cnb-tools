@@ -27,7 +27,7 @@ def info(
 
 
 @app.command()
-def pull(
+def download(
     submission_id: Annotated[int, typer.Argument(help="Submission ID")],
     dest: Annotated[
         Path,
@@ -41,7 +41,6 @@ def pull(
     """Get a submission (file/Docker image)"""
     submission = Submission(submission_id)
     submission.download(dest)
-    print("✅")
 
 
 @app.command()
