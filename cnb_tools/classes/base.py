@@ -9,6 +9,7 @@ class SynapseBase:
     def __init__(self):
         self.syn = self._check_login()
 
+    # pylint: disable=unsupported-binary-operation
     @staticmethod
     def _check_login() -> synapseclient.Synapse | None:
         try:
