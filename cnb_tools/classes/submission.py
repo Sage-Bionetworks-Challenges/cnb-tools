@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from cnb_tools.classes.base import SynapseBase
+from cnb_tools.classes.queue import Queue
 from cnb_tools.classes.submitter import Submitter
 
 
@@ -27,10 +28,8 @@ class Submission(SynapseBase):
             location = Path.cwd() if str(dest) == "." else dest
             print(f"Submission ID {self.sub_id} downloaded to: {location}")
 
-    def view(self):
-        challenge = self.syn.get(
-            self.syn.getEvaluation(self.submission.evaluationId).contentSource
-        ).name
+    def view(self) -> None:
+        challenge = Queue(self.submission.evaluationId).get_challenge_name()
         submitter = Submitter(self.submission.userId)
         if self.submission.get("teamId"):
             team = Submitter(self.submission.teamId)
