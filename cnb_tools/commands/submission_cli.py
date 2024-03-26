@@ -12,6 +12,8 @@ from typing import List
 from typing_extensions import Annotated
 import typer
 
+from cnb_tools.classes.submission import Submission
+
 app = typer.Typer()
 
 
@@ -20,32 +22,25 @@ def info(
     submission_id: Annotated[int, typer.Argument(help="Submission ID to get info")]
 ):
     """Get information about a submission"""
-    print(f"ID: {submission_id}")
-    print("Challenge: Awesome Challenge")
-    print("Date: 2024-01-01")
-    print("Submitter: awesome-user")
-    print("Team (if any): Awesome Team")
-    print("Status: SCORED")
+    submission = Submission(submission_id)
+    submission.view()
 
 
 @app.command()
 def pull(
     submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
     dest: Annotated[
-        Path,
+        str,
         typer.Option(
             "--dir",
             "-d",
-            help="Directory to download submission into (if submission is a file)",
+            help="Absolute path to download destination (if submission is a file)",
         ),
     ] = ".",
 ):
     """Get a submission (file/Docker image)"""
-    submission_type = "file"
-    if submission_type == "file":
-        print(f"Downloading {submission_id} to {dest}...")
-    else:
-        print("Pulling Docker image...")
+    submission = Submission(submission_id)
+    submission.download(dest)
     print("✅")
 
 
