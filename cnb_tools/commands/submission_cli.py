@@ -11,15 +11,14 @@ from pathlib import Path
 from typing_extensions import Annotated
 import typer
 
+from cnb_tools.classes.annotation import Annotation
 from cnb_tools.classes.submission import Submission
 
 app = typer.Typer()
 
 
 @app.command()
-def info(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID")]
-):
+def info(submission_id: Annotated[int, typer.Argument(help="Submission ID")]):
     """Get information about a submission"""
     submission = Submission(submission_id)
     submission.info()
@@ -66,8 +65,8 @@ def change_status(
     ],
 ):
     """Update a submission status."""
-    print(f"Updating {submission_id} to status: {new_status}...")
-    print("✅")
+    annotations = Annotation(submission_id)
+    annotations.update_status(new_status)
 
 
 @app.command()
@@ -75,8 +74,8 @@ def reset(
     submission_id: Annotated[int, typer.Argument(help="Submission ID")],
 ):
     """Reset a submission status."""
-    print(f"Resetting {submission_id} to status RECEIVED...")
-    print("✅")
+    annotations = Annotation(submission_id)
+    annotations.update_status("RECEIVED")
 
 
 @app.command()
