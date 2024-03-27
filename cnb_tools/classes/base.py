@@ -15,5 +15,10 @@ class SynapseBase:
         try:
             return synapseclient.login(silent=True)
         except SynapseNoCredentialsError as err:
-            print(err)
-            sys.exit()
+            print(f"⛔ {err}\n")
+            print(
+                "Steps on how to provide your Synapse credentials to "
+                "cnb-tools are available here: "
+                "https://sage-bionetworks-challenges.github.io/cnb-tools/#requirements"
+            )
+            sys.exit(1)
