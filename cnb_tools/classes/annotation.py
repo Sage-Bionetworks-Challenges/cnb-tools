@@ -2,12 +2,9 @@
 
 import sys
 
-from pathlib import Path
 from synapseclient.core.exceptions import SynapseHTTPError
 
 from cnb_tools.classes.base import SynapseBase
-from cnb_tools.classes.queue import Queue
-from cnb_tools.classes.submitter import Submitter
 
 
 class Annotation(SynapseBase):
@@ -23,14 +20,13 @@ class Annotation(SynapseBase):
             )
             sys.exit(1)
 
-    def update():
+    def update(self):
         pass
 
-    def reset():
+    def reset(self):
         pass
 
-    def update_status():
-        pass
-
-    def reset_status():
-        pass
+    def update_status(self, new_status):
+        self.annotations.status = new_status
+        self.syn.store(self.annotations)
+        print(f"Updated submission ID {self.sub_id} to status: {new_status}")
