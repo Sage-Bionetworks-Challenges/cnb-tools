@@ -30,7 +30,7 @@ class Submission(SynapseBase):
             location = Path.cwd() if str(dest) == "." else dest
             print(f"Submission ID {self.sub_id} downloaded to: {location}")
 
-    def view(self) -> None:
+    def info(self) -> None:
         challenge = Queue(self.submission.evaluationId).get_challenge_name()
         submitter = Submitter(self.submission.userId)
         if self.submission.get("teamId"):

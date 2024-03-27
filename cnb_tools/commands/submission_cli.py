@@ -23,7 +23,7 @@ def info(
 ):
     """Get information about a submission"""
     submission = Submission(submission_id)
-    submission.view()
+    submission.info()
 
 
 @app.command()
