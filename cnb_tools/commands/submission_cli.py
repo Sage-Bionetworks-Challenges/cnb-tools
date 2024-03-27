@@ -8,11 +8,21 @@ Example:
 
 from pathlib import Path
 
+from enum import Enum
 from typing_extensions import Annotated
 import typer
 
 from cnb_tools.classes.annotation import Annotation
 from cnb_tools.classes.submission import Submission
+
+
+class Status(str, Enum):
+    received = "RECEIVED"
+    validated = "VALIDATED"
+    invalid = "INVALID"
+    accepted = "ACCEPTED"
+    closed = "CLOSED"
+
 
 app = typer.Typer()
 
@@ -59,10 +69,10 @@ def change_status(
         list[int], typer.Argument(help="One or more submission ID(s)")
     ],
     new_status: Annotated[
-        str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
+        Status, typer.Argument()
     ],
 ):
-    """Update a submission status."""
+    """Update one or more submission statuses."""
     for submission_id in submission_ids:
         annotations = Annotation(submission_id)
         annotations.update_status(new_status)
@@ -74,7 +84,7 @@ def reset(
         list[int], typer.Argument(help="One or more submission ID(s)")
     ],
 ):
-    """Reset a submission status."""
+    """Reset one or more submission to RECEIVED."""
     for submission_id in submission_ids:
         annotations = Annotation(submission_id)
         annotations.update_status("RECEIVED")
