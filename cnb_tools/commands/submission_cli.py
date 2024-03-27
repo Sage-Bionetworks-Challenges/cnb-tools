@@ -7,7 +7,6 @@ Example:
 """
 
 from pathlib import Path
-from typing import List
 
 from typing_extensions import Annotated
 import typer
@@ -46,7 +45,7 @@ def download(
 @app.command()
 def annotate(
     submission_ids: Annotated[
-        List[int],
+        list[int],
         typer.Argument(help="One or more submission ID(s)"),
     ],
     annotations: Annotated[
@@ -61,7 +60,7 @@ def annotate(
 
 @app.command()
 def change_status(
-    submission_id: Annotated[List[int], typer.Argument(help="Submission ID")],
+    submission_id: Annotated[list[int], typer.Argument(help="Submission ID")],
     new_status: Annotated[
         str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
     ],
@@ -83,7 +82,7 @@ def reset(
 @app.command()
 def delete(
     submission_ids: Annotated[
-        List[int],
+        list[int],
         typer.Argument(help="One or more submission ID(s)"),
     ],
     force: Annotated[
