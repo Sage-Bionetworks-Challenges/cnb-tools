@@ -91,15 +91,19 @@ def delete(
         typer.Option(
             "--force",
             "-f",
-            prompt="Are you sure you want to delete the submission(s)?",
+            prompt=(
+                "❗Are you sure you want to delete the submission(s)?\n\n"
+                "Once deleted, submission(s) CANNOT be recovered."
+            ),
             help="Force [red]deletion[/red] without confirmation.",
         ),
     ] = False,
 ):
     """Delete one or more submissions."""
+    print()
     if force:
-        for submission in submission_ids:
-            print(f"Deleting submissions: {submission}")
-        print("✅")
+        for submission_id in submission_ids:
+            submission = Submission(submission_id)
+            submission.delete()
     else:
         print("No deletion was done.")

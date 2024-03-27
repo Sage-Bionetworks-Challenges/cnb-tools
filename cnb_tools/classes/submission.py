@@ -11,7 +11,9 @@ class Submission(SynapseBase):
     def __init__(self, sub_id):
         super().__init__()
         self.sub_id = sub_id
-        self.submission = self.syn.getSubmission(sub_id, downloadFile=False)
+    def delete(self) -> None:
+        self.syn.delete(self.submission)
+        print(f"Submission deleted: {self.sub_id}")
 
     def download(self, dest) -> None:
         if "dockerDigest" in self.submission:
