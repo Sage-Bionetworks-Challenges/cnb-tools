@@ -54,13 +54,24 @@ def download(
 @app.command()
 def annotate(
     submission_id: Annotated[int, typer.Argument(help="Submission ID")],
-    annotations: Annotated[
-        Path, typer.Argument(help="Filepath to JSON file", exists=True)
+    annots_file: Annotated[
+        Path,
+        typer.Argument(
+            help="Filepath to JSON file containing annotations", exists=True
+        ),
     ],
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help="Output final submission annotations (default: false)",
+        ),
+    ] = False,
 ):
     """Annotate one or more submission(s) with a JSON file."""
-    print(f"Annotating {submission_id} with {annotations}...")
-    print("✅")
+    submission_annots = Annotation(submission_id)
+    submission_annots.update(annots_file, verbose)
 
 
 @app.command()
@@ -68,14 +79,12 @@ def change_status(
     submission_ids: Annotated[
         list[int], typer.Argument(help="One or more submission ID(s)")
     ],
-    new_status: Annotated[
-        Status, typer.Argument()
-    ],
+    new_status: Annotated[Status, typer.Argument()],
 ):
     """Update one or more submission statuses."""
     for submission_id in submission_ids:
-        annotations = Annotation(submission_id)
-        annotations.update_status(new_status)
+        submission_annots = Annotation(submission_id)
+        submission_annots.update_status(new_status)
 
 
 @app.command()
@@ -85,9 +94,7 @@ def reset(
     ],
 ):
     """Reset one or more submission to RECEIVED."""
-    for submission_id in submission_ids:
-        annotations = Annotation(submission_id)
-        annotations.update_status("RECEIVED")
+    change_status(submission_ids=submission_ids, new_status="RECEIVED")
 
 
 @app.command()
