@@ -10,10 +10,18 @@ from typing_extensions import Annotated
 import typer
 
 from cnb_tools import __version__
-from cnb_tools.commands import submission_cli
+from cnb_tools.commands import challenge_cli, submission_cli
 
 
 app = typer.Typer(rich_markup_mode="rich")
+app.add_typer(
+    challenge_cli.app,
+    name="challenge",
+    help=(
+        "Manage a challenge, e.g. create a new challenge site, launch the ,"
+        "challenge, close the challenge, etc."
+    ),
+)
 app.add_typer(
     submission_cli.app,
     name="submission",
