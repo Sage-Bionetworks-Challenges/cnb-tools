@@ -1,15 +1,9 @@
-"""Reference guide to cnb-tools CLI commands
-
-Manage challenges and benchmarking on Synapse from the CLI.
+"""Main CLI application.
 
 Examples:
-    ```
-    $ cnb-tools create-challenge "challenge name" -t 2
-    ```
-
-This CLI application contains the following commands:
-
-- `create-challenge` - Creates a new challenge on the Sage Challenge Portal
+    $ cnb-tools
+    $ cnb-tools --help
+    $ cnb-tools --version
 """
 from typing import Optional
 from typing_extensions import Annotated
@@ -20,7 +14,14 @@ from cnb_tools.commands import submission_cli
 
 
 app = typer.Typer(rich_markup_mode="rich")
-app.add_typer(submission_cli.app, name="submission", help="Manage submissions")
+app.add_typer(
+    submission_cli.app,
+    name="submission",
+    help=(
+        "Manage submissions, e.g. download prediction file/Docker model, view "
+        "submission metadata, update status, etc."
+    ),
+)
 
 
 def version_callback(value: bool):
@@ -38,13 +39,9 @@ def main(
     ] = None,
 ):
     """
-    CNB Tools - convenience tools/functions for challenges and
-    benchmarking on Synapse.org
+    Manage challenges on Synapse.org from the CLI
 
-    [red](some commands will require admin priviledges)[/red]
-
-    If you are a challenge admin and are experiencing issues, contact us at
-    [bold blue]SageCNBTeam@synapse.org[/bold blue]
+    [blue](Note: some commands will require challenge admin permissions)[/blue]
     """
     if ctx.invoked_subcommand is None:
         print("Manage challenges on Synapse.org from the CLI\n")

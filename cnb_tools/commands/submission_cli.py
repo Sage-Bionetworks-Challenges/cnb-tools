@@ -1,103 +1,126 @@
-from pathlib import Path
-from typing import List
+"""CLI command: submission
 
+Manage submissions.
+
+Example:
+    $ cnb-tools submission --help
+"""
+
+from pathlib import Path
+
+from enum import Enum
 from typing_extensions import Annotated
 import typer
+
+from cnb_tools.classes.annotation import Annotation
+from cnb_tools.classes.submission import Submission
+
+
+class Status(str, Enum):
+    received = "RECEIVED"
+    validated = "VALIDATED"
+    invalid = "INVALID"
+    accepted = "ACCEPTED"
+    closed = "CLOSED"
+
 
 app = typer.Typer()
 
 
 @app.command()
-def info(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to get info")]
-):
+def info(submission_id: Annotated[int, typer.Argument(help="Submission ID")]):
     """Get information about a submission"""
-    print(f"ID: {submission_id}")
-    print("Challenge: Awesome Challenge")
-    print("Date: 2024-01-01")
-    print("Submitter: awesome-user")
-    print("Team (if any): Awesome Team")
-    print("Status: SCORED")
+    submission = Submission(submission_id)
+    submission.info()
 
 
 @app.command()
-def pull(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to download")],
+def download(
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
     dest: Annotated[
         Path,
         typer.Option(
-            "--dir",
+            "--dest",
             "-d",
-            help="Directory to download submission into (if submission is a file)",
+            help="Filepath to download destination (if submission is a file)",
         ),
     ] = ".",
 ):
     """Get a submission (file/Docker image)"""
-    submission_type = "file"
-    if submission_type == "file":
-        print(f"Downloading {submission_id} to {dest}...")
-    else:
-        print("Pulling Docker image...")
-    print("✅")
+    submission = Submission(submission_id)
+    submission.download(dest)
 
 
 @app.command()
 def annotate(
-    submission_ids: Annotated[
-        List[int],
-        typer.Argument(help="One or more submission ID(s) to annotate"),
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+    annots_file: Annotated[
+        Path,
+        typer.Argument(
+            help="Filepath to JSON file containing annotations", exists=True
+        ),
     ],
-    annotations: Annotated[
-        Path, typer.Argument(help="Filepath to JSON file", exists=True)
-    ],
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help="Output final submission annotations (default: false)",
+        ),
+    ] = False,
 ):
     """Annotate one or more submission(s) with a JSON file."""
-    for submission in submission_ids:
-        print(f"Annotating {submission} with {annotations}...")
-        print("✅")
+    submission_annots = Annotation(submission_id)
+    submission_annots.update(annots_file, verbose)
 
 
 @app.command()
 def change_status(
-    submission_id: Annotated[List[int], typer.Argument(help="Submission ID to update")],
-    new_status: Annotated[
-        str, typer.Argument(help="One of [RECEIVED, VALIDATED, INVALID, ACCEPTED]")
+    submission_ids: Annotated[
+        list[int], typer.Argument(help="One or more submission ID(s)")
     ],
+    new_status: Annotated[Status, typer.Argument()],
 ):
-    """Update a submission status."""
-    print(f"Updating {submission_id} to status: {new_status}...")
-    print("✅")
+    """Update one or more submission statuses."""
+    for submission_id in submission_ids:
+        submission_annots = Annotation(submission_id)
+        submission_annots.update_status(new_status)
 
 
 @app.command()
 def reset(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID to reset")],
+    submission_ids: Annotated[
+        list[int], typer.Argument(help="One or more submission ID(s)")
+    ],
 ):
-    """Reset a submission status."""
-    print(f"Resetting {submission_id} to status RECEIVED...")
-    print("✅")
+    """Reset one or more submission to RECEIVED."""
+    change_status(submission_ids=submission_ids, new_status="RECEIVED")
 
 
 @app.command()
 def delete(
     submission_ids: Annotated[
-        List[int],
-        typer.Argument(help="One or more submission ID(s) to [red]delete[/red]"),
+        list[int],
+        typer.Argument(help="One or more submission ID(s)"),
     ],
     force: Annotated[
         bool,
         typer.Option(
             "--force",
             "-f",
-            prompt="Are you sure you want to delete the submission(s)?",
+            prompt=(
+                "❗Are you sure you want to delete the submission(s)?\n\n"
+                "Once deleted, submission(s) CANNOT be recovered."
+            ),
             help="Force [red]deletion[/red] without confirmation.",
         ),
     ] = False,
 ):
     """Delete one or more submissions."""
+    print()
     if force:
-        for submission in submission_ids:
-            print(f"Deleting submissions: {submission}")
-        print("✅")
+        for submission_id in submission_ids:
+            submission = Submission(submission_id)
+            submission.delete()
     else:
         print("No deletion was done.")
