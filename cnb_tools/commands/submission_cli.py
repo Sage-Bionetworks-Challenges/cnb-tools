@@ -40,7 +40,7 @@ def download(
     dest: Annotated[
         Path,
         typer.Option(
-            "--dir",
+            "--dest",
             "-d",
             help="Filepath to download destination (if submission is a file)",
         ),

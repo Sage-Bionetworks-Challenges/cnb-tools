@@ -55,4 +55,4 @@ class Submission(SynapseBase):
         print(f"Date: {self.submission.createdOn[:10]}")
         print(f"Submitter: {submitter}")
         print(f"Team (if any): {team}")
-        print(f"Annotations:\n{annotations}")
+        print(annotations)

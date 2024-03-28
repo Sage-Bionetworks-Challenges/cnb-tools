@@ -22,7 +22,10 @@ class Annotation(SynapseBase):
             sys.exit(1)
 
     def __str__(self) -> str:
-        return json.dumps(self.curr_annotations.submissionAnnotations, indent=2)
+        to_print = f"Status: {self.curr_annotations.status}\n"
+        to_print += "Annotations:\n"
+        to_print += json.dumps(self.curr_annotations.submissionAnnotations, indent=2)
+        return to_print
 
     def _annotate(self, new_annots, verbose) -> None:
         self.curr_annotations.submissionAnnotations.update(new_annots)
