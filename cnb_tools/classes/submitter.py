@@ -6,10 +6,6 @@ from cnb_tools.classes.base import SynapseBase
 
 
 class Submitter(SynapseBase):
-    def __init__(self, uid):
-        super().__init__()
-        self.uid = uid
-
     def __str__(self):
         try:
             return self.syn.getTeam(self.uid).get("name")

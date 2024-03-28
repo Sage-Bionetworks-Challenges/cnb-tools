@@ -5,8 +5,7 @@ from cnb_tools.classes.base import SynapseBase
 
 class Queue(SynapseBase):
     def __init__(self, uid):
-        super().__init__()
-        self.uid = uid
+        super().__init__(uid)
         self.queue = self.syn.getEvaluation(uid)
 
     def __str__(self) -> str:

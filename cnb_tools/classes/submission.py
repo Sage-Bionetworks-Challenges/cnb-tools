@@ -12,8 +12,7 @@ from cnb_tools.classes.submitter import Submitter
 
 class Submission(SynapseBase):
     def __init__(self, sub_id):
-        super().__init__()
-        self.sub_id = sub_id
+        super().__init__(sub_id)
         try:
             self.submission = self.syn.getSubmission(sub_id, downloadFile=False)
         except SynapseHTTPError as err:
@@ -25,12 +24,12 @@ class Submission(SynapseBase):
 
     def delete(self) -> None:
         self.syn.delete(self.submission)
-        print(f"Submission deleted: {self.sub_id}")
+        print(f"Submission deleted: {self.uid}")
 
     def download(self, dest) -> None:
         if "dockerDigest" in self.submission:
             print(
-                f"Submission ID {self.sub_id} is a Docker image 🐳 To "
+                f"Submission ID {self.uid} is a Docker image 🐳 To "
                 "'download', run the following:\n\n"
                 f"docker pull {self.submission.dockerRepositoryName}"
                 f"@{self.submission.dockerDigest}\n\n"
@@ -38,9 +37,9 @@ class Submission(SynapseBase):
                 "docker login docker.synapse.org"
             )
         else:
-            self.syn.getSubmission(self.sub_id, downloadLocation=dest)
+            self.syn.getSubmission(self.uid, downloadLocation=dest)
             location = Path.cwd() if str(dest) == "." else dest
-            print(f"Submission ID {self.sub_id} downloaded to: {location}")
+            print(f"Submission ID {self.uid} downloaded to: {location}")
 
     def info(self) -> None:
         challenge = Queue(self.submission.evaluationId).get_challenge_name()
@@ -49,7 +48,7 @@ class Submission(SynapseBase):
             team = Submitter(self.submission.teamId)
         else:
             team = ""
-        print(f"ID: {self.submission.id}")
+        print(f"ID: {self.uid}")
         print(f"Challenge: {challenge}")
         print(f"Date: {self.submission.createdOn[:10]}")
         print(f"Submitter: {submitter}")

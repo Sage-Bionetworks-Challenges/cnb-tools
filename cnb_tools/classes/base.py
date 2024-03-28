@@ -6,8 +6,9 @@ from synapseclient.core.exceptions import SynapseNoCredentialsError
 
 
 class SynapseBase:
-    def __init__(self):
+    def __init__(self, uid):
         self.syn = self._check_login()
+        self.uid = uid
 
     # pylint: disable=unsupported-binary-operation
     @staticmethod
