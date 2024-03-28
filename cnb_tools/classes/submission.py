@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from synapseclient.core.exceptions import SynapseHTTPError
 
+from cnb_tools.classes.annotation import Annotation
 from cnb_tools.classes.base import SynapseBase
 from cnb_tools.classes.queue import Queue
 from cnb_tools.classes.submitter import Submitter
@@ -44,6 +45,7 @@ class Submission(SynapseBase):
     def info(self) -> None:
         challenge = Queue(self.submission.evaluationId).get_challenge_name()
         submitter = Submitter(self.submission.userId)
+        annotations = Annotation(self.uid)
         if self.submission.get("teamId"):
             team = Submitter(self.submission.teamId)
         else:
@@ -53,3 +55,4 @@ class Submission(SynapseBase):
         print(f"Date: {self.submission.createdOn[:10]}")
         print(f"Submitter: {submitter}")
         print(f"Team (if any): {team}")
+        print(f"Annotations:\n{annotations}")

@@ -21,6 +21,9 @@ class Annotation(SynapseBase):
             )
             sys.exit(1)
 
+    def __str__(self) -> str:
+        return json.dumps(self.curr_annotations.submissionAnnotations, indent=2)
+
     def _annotate(self, new_annots, verbose) -> None:
         self.curr_annotations.submissionAnnotations.update(new_annots)
         curr_annotations = self.syn.store(self.curr_annotations)
