@@ -30,7 +30,7 @@ class Annotation(SynapseBase):
         print(f"Submission ID {self.uid} annotations updated.")
 
         if verbose:
-            print(f"Annotations:")
+            print("Annotations:")
             print(json.dumps(curr_annotations.submissionAnnotations, indent=2))
 
     def update(self, anots_file, verbose) -> None:
