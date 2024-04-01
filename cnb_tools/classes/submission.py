@@ -5,10 +5,10 @@ import sys
 from pathlib import Path
 from synapseclient.core.exceptions import SynapseHTTPError
 
-from cnb_tools.classes.annotation import Annotation
+from cnb_tools.classes.annotation import SubmissionAnnotation
 from cnb_tools.classes.base import SynapseBase
+from cnb_tools.classes.participant import Participant
 from cnb_tools.classes.queue import Queue
-from cnb_tools.classes.submitter import Submitter
 
 
 class Submission(SynapseBase):
@@ -42,17 +42,14 @@ class Submission(SynapseBase):
             location = Path.cwd() if str(dest) == "." else dest
             print(f"Submission ID {self.uid} downloaded to: {location}")
 
-    def info(self) -> None:
+    def info(self, verbose) -> None:
         challenge = Queue(self.submission.evaluationId).get_challenge_name()
-        submitter = Submitter(self.submission.userId)
-        annotations = Annotation(self.uid)
-        if self.submission.get("teamId"):
-            team = Submitter(self.submission.teamId)
-        else:
-            team = ""
-        print(f"ID: {self.uid}")
-        print(f"Challenge: {challenge}")
-        print(f"Date: {self.submission.createdOn[:10]}")
-        print(f"Submitter: {submitter}")
-        print(f"Team (if any): {team}")
-        print(annotations)
+        submitter_id = self.submission.get("teamId") or self.submission.get("userId")
+        submitter = Participant(submitter_id)
+        print(f"         ID: {self.uid}")
+        print(f"  Challenge: {challenge}")
+        print(f"       Date: {self.submission.createdOn[:10]}")
+        print(f"  Submitter: {submitter}")
+        if verbose:
+            annotations = SubmissionAnnotation(self.uid)
+            print(annotations)
