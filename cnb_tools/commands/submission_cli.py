@@ -12,7 +12,7 @@ from enum import Enum
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.classes.annotation import Annotation
+from cnb_tools.classes.annotation import SubmissionAnnotation
 from cnb_tools.classes.submission import Submission
 
 
@@ -28,10 +28,22 @@ app = typer.Typer()
 
 
 @app.command()
-def info(submission_id: Annotated[int, typer.Argument(help="Submission ID")]):
+def info(
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+    verbose: Annotated[
+        bool,
+        typer.Option(
+            "--verbose",
+            "-v",
+            help=(
+                "Also output submission annotations - this may result in "
+                "longer runtimes (default: false)"),
+        ),
+    ] = False,
+):
     """Get information about a submission"""
     submission = Submission(submission_id)
-    submission.info()
+    submission.info(verbose)
 
 
 @app.command()
@@ -70,8 +82,8 @@ def annotate(
     ] = False,
 ):
     """Annotate one or more submission(s) with a JSON file."""
-    submission_annots = Annotation(submission_id)
-    submission_annots.update(annots_file, verbose)
+    submission_annots = SubmissionAnnotation(submission_id)
+    submission_annots.update_with_file(annots_file, verbose)
 
 
 @app.command()
@@ -83,7 +95,7 @@ def change_status(
 ):
     """Update one or more submission statuses."""
     for submission_id in submission_ids:
-        submission_annots = Annotation(submission_id)
+        submission_annots = SubmissionAnnotation(submission_id)
         submission_annots.update_status(new_status)
 
 
