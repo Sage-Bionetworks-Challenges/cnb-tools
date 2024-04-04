@@ -1,6 +1,5 @@
-## Basic usage
-
 <!--termynal -->
+
 ```
 (cnb-tools) $ cnb-tools
 Manage challenges on Synapse.org from the CLI
@@ -11,53 +10,57 @@ Enter `cnb-tools --help` for usage information.
 # Get the current version
 (cnb-tools) $ cnb-tools --version
 cnb-tools v0.2.0
+
+
+# Basic usage
+(cnb-tools) $ cnb-tools COMMAND ARGS [OPTIONS]
 ```
 
 ---
 
-## `submission`
+## Command: `submission`
+
+Manage submissions on Synapse, e.g. download prediction file/Docker model,
+view submission metadata, update submission status, etc.
 
 ### `annotate`
 
-Annotate a submission.  Existing annotations will be replaced with
-the new values from the JSON file.
+Annotate a submission using a JSON file. This subcommand can be used to update
+existing annotations with new values.
 
 ```bash
-cnb-tools submission annotate SUB_ID JSON_FILE
+cnb-tools submission annotate SUB_ID JSON_FILE [--verbose]
 ```
 
 Replace the following:
 
-* _`SUB_ID`_ - submission ID to annotate
-* _`JSON_FILE`_ - filepath to JSON file containing annotations as
-        key-value pairs
+- _`SUB_ID`_ - submission ID
+- _`JSON_FILE`_ - filepath to JSON file containing annotations as
+  key-value pairs
 
+Options:
+
+| Name        | Type    | Description                                        | Default |
+| ----------- | ------- | -------------------------------------------------- | ------- |
+| `--verbose` | boolean | Output all submission annotations after annotating | False   |
 
 ### `change-status`
 
-Update a submission status to one of:
-
-* `RECEIVED`
-* `VALIDATED`
-* `INVALID`
-* `SCORED`
-* `ACCEPTED`
-* `OPEN`
-* `CLOSED`
+Update the submission status of one or more submission(s).
 
 ```bash
-cnb-tools submission change-status SUB_ID STATUS
+cnb-tools submission change-status SUB_ID ... NEW_STATUS
 ```
 
 Replace the following:
 
-* _`SUB_ID`_ - submission ID to update
-* _`STATUS`_ - new status
+- _`SUB_ID ...`_ - submission ID(s)
+- _`NEW_STATUS`_ - one of: `RECEIVED` | `VALIDATED` | `INVALID` | `SCORED` |
+  `ACCEPTED` | `CLOSED`
 
 !!!Note
-    Consider using [`reset`](#reset) if you need to update the status to
-    `RECEIVED`.
-
+Consider using [`submission reset`](#reset) if you need to update the status to
+`RECEIVED`.
 
 ### `delete`
 
@@ -65,10 +68,9 @@ Delete one or more submission(s) from the evaluation queue. By default,
 this action will require confirmation; optionally use `--force` to bypass
 the prompt.
 
-!!!Warning 
-    Once a submission has been deleted, it can NOT be recovered.  This
-    includes the metadata about the submission.  Use this command with
-    caution.
+!!!Warning
+Once a submission has been deleted, **it CANNOT be recovered**. Use this
+command with extreme caution.
 
 ```bash
 cnb-tools submission delete SUB_ID ... [--force]
@@ -76,46 +78,58 @@ cnb-tools submission delete SUB_ID ... [--force]
 
 Replace the following:
 
-* _`SUB_ID ...`_ - submission ID(s) to delete
-* `--force` - force deletion without confirmation
+- _`SUB_ID ...`_ - submission ID(s)
 
+Options:
 
-### `info`
+| Name      | Type    | Description                         | Default |
+| --------- | ------- | ----------------------------------- | ------- |
+| `--force` | boolean | Force deletion without confirmation | False   |
 
-Get general information about a submission.
-
-```bash
-cnb-tools submission info SUB_ID
-```
-
-Replace the following:
-
-* _`SUB_ID`_ - submission ID to get info
-
-
-### `pull`
+### `download`
 
 Download a submission to your local machine.
 
-If the submission is a flat file, you can optionally specify the download
-destination with `-d DESTINATION`.  `-d DESTINATION` will be ignored if
-the submission is a Docker image.
+If the submission is a file, you can optionally specify the download destination
+with `--dest` (or `-d`). `--dest` is ignored if the submission is a Docker image.
 
 ```bash
-cnb-tools submission pull SUB_ID [-d/--dir DESTINATION]
+cnb-tools submission download SUB_ID [--dest/-d DESTINATION]
 ```
 
 Replace the following:
 
-* _`SUB_ID`_ - submission ID to download
-* `-d/--dir `_`DESTINATION`_ - (optional) filepath to where submission
-    will be downloaded
+- _`SUB_ID`_ - submission ID
 
+Options:
+
+| Name           | Type | Description                                     | Default |
+| -------------- | ---- | ----------------------------------------------- | ------- |
+| `--dest`, `-d` | str  | Filepath to where submission will be downloaded | `.`     |
+
+### `info`
+
+Get general information about a submission, such as the submission date, who
+submitted it, and name of the challenge. You can also get the current status
+and annotations with `--verbose`.
+
+```bash
+cnb-tools submission info SUB_ID [--verbose]
+```
+
+Replace the following:
+
+- _`SUB_ID`_ - submission ID
+
+Options:
+
+| Name        | Type    | Description                                  | Default |
+| ----------- | ------- | -------------------------------------------- | ------- |
+| `--verbose` | boolean | Output the submission status and annotations | False   |
 
 ### `reset`
 
-Reset a submission (set the `status` to `RECEIVED`) and remove all
-existing annotations.
+Reset a submission (set the `status` to `RECEIVED`).
 
 ```bash
 cnb-tools submission reset SUB_ID
@@ -123,7 +137,7 @@ cnb-tools submission reset SUB_ID
 
 Replace the following:
 
-* _`SUB_ID`_ - submission ID to reset
+- _`SUB_ID`_ - submission ID to reset
 
 ---
 
