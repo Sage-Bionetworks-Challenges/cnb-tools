@@ -40,9 +40,9 @@ Replace the following:
 
 Options:
 
-| Name        | Type    | Description                                        | Default |
-| ----------- | ------- | -------------------------------------------------- | ------- |
-| `--verbose` | boolean | Output all submission annotations after annotating | False   |
+Name | Type | Description | Default
+--|--|--|--
+`--verbose` | boolean | Output all submission annotations after annotating | False
 
 ### `change-status`
 
@@ -59,8 +59,8 @@ Replace the following:
   `ACCEPTED` | `CLOSED`
 
 !!!Note
-Consider using [`submission reset`](#reset) if you need to update the status to
-`RECEIVED`.
+    Consider using [`submission reset`](#reset) if you need to update the status to
+    `RECEIVED`.
 
 ### `delete`
 
@@ -69,8 +69,8 @@ this action will require confirmation; optionally use `--force` to bypass
 the prompt.
 
 !!!Warning
-Once a submission has been deleted, **it CANNOT be recovered**. Use this
-command with extreme caution.
+    Once a submission has been deleted, **it CANNOT be recovered**. Use this
+    command with extreme caution.
 
 ```bash
 cnb-tools submission delete SUB_ID ... [--force]
@@ -82,9 +82,9 @@ Replace the following:
 
 Options:
 
-| Name      | Type    | Description                         | Default |
-| --------- | ------- | ----------------------------------- | ------- |
-| `--force` | boolean | Force deletion without confirmation | False   |
+Name | Type | Description | Default
+--|--|--|--
+`--force` | boolean | Force deletion without confirmation | False
 
 ### `download`
 
@@ -103,9 +103,9 @@ Replace the following:
 
 Options:
 
-| Name           | Type | Description                                     | Default |
-| -------------- | ---- | ----------------------------------------------- | ------- |
-| `--dest`, `-d` | str  | Filepath to where submission will be downloaded | `.`     |
+Name | Type | Description | Default
+--|--|--|--
+`--dest`, `-d` | str  | Filepath to where submission will be downloaded | `.`
 
 ### `info`
 
