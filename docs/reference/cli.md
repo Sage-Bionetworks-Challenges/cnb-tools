@@ -129,15 +129,15 @@ Options:
 
 ### `reset`
 
-Reset a submission (set the `status` to `RECEIVED`).
+Reset one or more submission(s) (that is: set `status` to `RECEIVED`).
 
 ```bash
-cnb-tools submission reset SUB_ID
+cnb-tools submission reset SUB_ID ...
 ```
 
 Replace the following:
 
-- _`SUB_ID`_ - submission ID to reset
+- _`SUB_ID ...`_ - submission ID(s))
 
 ---
 
