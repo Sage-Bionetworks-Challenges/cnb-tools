@@ -6,12 +6,14 @@ Example:
     $ cnb-tools submission --help
 """
 
+import sys
 from pathlib import Path
 
 from enum import Enum
 from typing_extensions import Annotated
 import typer
 
+from cnb_tools.classes.base import UnknownSynapseID
 from cnb_tools.classes.annotation import SubmissionAnnotation
 from cnb_tools.classes.submission import Submission
 
