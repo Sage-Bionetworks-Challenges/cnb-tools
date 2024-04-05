@@ -49,7 +49,7 @@ Name | Type | Description | Default
 Update the submission status of one or more submission(s).
 
 ```bash
-cnb-tools submission change-status SUB_ID ... NEW_STATUS
+cnb-tools submission change-status SUB_ID ... NEW_STATUS [--skip-errors]
 ```
 
 Replace the following:
@@ -62,6 +62,12 @@ Replace the following:
     Consider using [`submission reset`](#reset) if you need to update the status to
     `RECEIVED`.
 
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--skip-errors` | boolean | Continue update even if unknown ID error is encountered | False
+
 ### `delete`
 
 Delete one or more submission(s) from the evaluation queue. By default,
@@ -73,7 +79,7 @@ the prompt.
     command with extreme caution.
 
 ```bash
-cnb-tools submission delete SUB_ID ... [--force]
+cnb-tools submission delete SUB_ID ... [--force] [--skip-errors]
 ```
 
 Replace the following:
@@ -85,6 +91,7 @@ Options:
 Name | Type | Description | Default
 --|--|--|--
 `--force` | boolean | Force deletion without confirmation | False
+`--skip-errors` | boolean | Continue update even if unknown ID error is encountered | False
 
 ### `download`
 
@@ -132,12 +139,18 @@ Name | Type | Description | Default
 Reset one or more submission(s) (set `status` to `RECEIVED`).
 
 ```bash
-cnb-tools submission reset SUB_ID ...
+cnb-tools submission reset SUB_ID ... [--skip-errors]
 ```
 
 Replace the following:
 
 - _`SUB_ID ...`_ - submission ID(s)
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--skip-errors` | boolean | Continue update even if unknown ID error is encountered | False
 
 ---
 
