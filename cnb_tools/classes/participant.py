@@ -16,7 +16,13 @@ class Participant(SynapseBase):
         except SynapseHTTPError:
             return self.syn.getUserProfile(self.uid).get("userName")
 
-    def create_team(self, name, description=None, can_public_join=False) -> Team:
+    # pylint: disable=unsupported-binary-operation
+    def create_team(
+        self,
+        name: str,
+        description: str | None = None,
+        can_public_join: bool = False
+    ) -> Team:
         try:
             team = self.syn.getTeam(name)
             use_team = typer.confirm(f"Team '{name}' already exists. Use this team?")

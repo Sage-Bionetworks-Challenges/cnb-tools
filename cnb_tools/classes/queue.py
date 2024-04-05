@@ -19,11 +19,11 @@ class Queue(SynapseBase):
 
     @property
     def queue(self) -> Evaluation:
-        """Synapse entity's unique ID."""
+        """Synapse evaluation queue."""
         return self._queue
 
     @queue.setter
-    def queue(self, value: Evaluation):
+    def queue(self, value: Evaluation) -> None:
         self._queue = value
 
     def __str__(self) -> str:

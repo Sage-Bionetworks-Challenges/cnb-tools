@@ -2,6 +2,7 @@
 
 import json
 
+from synapseclient import SubmissionStatus
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.core.retry import with_retry
 
@@ -9,7 +10,7 @@ from cnb_tools.classes.base import SynapseBase, UnknownSynapseID
 
 
 class SubmissionAnnotation(SynapseBase):
-    def __init__(self, sub_id):
+    def __init__(self, sub_id: int):
         super().__init__(sub_id)
         try:
             self._curr_annotations = self.syn.getSubmissionStatus(sub_id)
@@ -20,12 +21,12 @@ class SubmissionAnnotation(SynapseBase):
             ) from err
 
     @property
-    def curr_annotations(self) -> list[str]:
+    def curr_annotations(self) -> SubmissionStatus:
         """Submission's current list of annotations."""
         return self._curr_annotations
 
     @curr_annotations.setter
-    def curr_annotations(self, value: list[str]):
+    def curr_annotations(self, value: SubmissionStatus):
         self._curr_annotations = value
 
     def __str__(self) -> str:
@@ -34,7 +35,12 @@ class SubmissionAnnotation(SynapseBase):
         to_print += json.dumps(self.curr_annotations.submissionAnnotations, indent=2)
         return to_print
 
-    def update(self, new_annots, verbose) -> None:
+    # pylint: disable=unsupported-binary-operation
+    def update(
+            self,
+            new_annots: dict[str, str | int | float | bool],
+            verbose: bool
+        ) -> None:
         self.curr_annotations.submissionAnnotations.update(new_annots)
         self.curr_annotations = self.syn.store(self.curr_annotations)
         print(f"Submission ID {self.uid} annotations updated.")
@@ -43,7 +49,7 @@ class SubmissionAnnotation(SynapseBase):
             print("Annotations:")
             print(json.dumps(self.curr_annotations.submissionAnnotations, indent=2))
 
-    def update_with_file(self, annots_file, verbose) -> None:
+    def update_with_file(self, annots_file: str, verbose: bool) -> None:
         with open(annots_file, encoding="utf-8") as f:
             new_annots = json.load(f)
 
@@ -61,7 +67,7 @@ class SubmissionAnnotation(SynapseBase):
             verbose=True,
         )
 
-    def update_status(self, new_status) -> None:
+    def update_status(self, new_status: str) -> None:
         self.curr_annotations.status = new_status
         self.syn.store(self.curr_annotations)
         print(f"Updated saubmission ID {self.uid} to status: {new_status}")
