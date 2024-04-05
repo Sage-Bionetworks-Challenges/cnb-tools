@@ -123,13 +123,13 @@ Replace the following:
 
 Options:
 
-| Name        | Type    | Description                                  | Default |
-| ----------- | ------- | -------------------------------------------- | ------- |
-| `--verbose` | boolean | Output the submission status and annotations | False   |
+Name | Type | Description | Default
+--|--|--|--
+`--verbose` | boolean | Output the submission status and annotations | False
 
 ### `reset`
 
-Reset one or more submission(s) (that is: set `status` to `RECEIVED`).
+Reset one or more submission(s) (set `status` to `RECEIVED`).
 
 ```bash
 cnb-tools submission reset SUB_ID ...
@@ -137,7 +137,7 @@ cnb-tools submission reset SUB_ID ...
 
 Replace the following:
 
-- _`SUB_ID ...`_ - submission ID(s))
+- _`SUB_ID ...`_ - submission ID(s)
 
 ---
 
