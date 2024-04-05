@@ -36,12 +36,12 @@ class SubmissionAnnotation(SynapseBase):
 
     def update(self, new_annots, verbose) -> None:
         self.curr_annotations.submissionAnnotations.update(new_annots)
-        curr_annotations = self.syn.store(self.curr_annotations)
+        self.curr_annotations = self.syn.store(self.curr_annotations)
         print(f"Submission ID {self.uid} annotations updated.")
 
         if verbose:
             print("Annotations:")
-            print(json.dumps(curr_annotations.submissionAnnotations, indent=2))
+            print(json.dumps(self.curr_annotations.submissionAnnotations, indent=2))
 
     def update_with_file(self, annots_file, verbose) -> None:
         with open(annots_file, encoding="utf-8") as f:
