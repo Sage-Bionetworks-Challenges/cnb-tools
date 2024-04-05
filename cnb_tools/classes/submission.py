@@ -12,16 +12,25 @@ from cnb_tools.classes.queue import Queue
 
 
 class Submission(SynapseBase):
-    def __init__(self, sub_id):
+    def __init__(self, sub_id: int):
         super().__init__(sub_id)
         try:
-            self.submission = self.syn.getSubmission(sub_id, downloadFile=False)
+            self._submission = self.syn.getSubmission(sub_id, downloadFile=False)
         except SynapseHTTPError as err:
             print(
                 f"⛔ {err.response.json().get('reason')}. "
                 "Check the ID and try again."
             )
             sys.exit(1)
+
+    @property
+    def submission(self):
+        """Synapse submission."""
+        return self._submission
+
+    @submission.setter
+    def submission(self, value) -> None:
+        self._sumission = value
 
     def delete(self) -> None:
         self.syn.delete(self.submission)
