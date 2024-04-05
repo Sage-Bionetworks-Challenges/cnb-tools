@@ -1,27 +1,33 @@
 """Class representing a challenge submission."""
 
-import sys
-
 from pathlib import Path
 from synapseclient.core.exceptions import SynapseHTTPError
 
 from cnb_tools.classes.annotation import SubmissionAnnotation
-from cnb_tools.classes.base import SynapseBase
+from cnb_tools.classes.base import SynapseBase, UnknownSynapseID
 from cnb_tools.classes.participant import Participant
 from cnb_tools.classes.queue import Queue
 
 
 class Submission(SynapseBase):
-    def __init__(self, sub_id):
+    def __init__(self, sub_id: int):
         super().__init__(sub_id)
         try:
-            self.submission = self.syn.getSubmission(sub_id, downloadFile=False)
+            self._submission = self.syn.getSubmission(sub_id, downloadFile=False)
         except SynapseHTTPError as err:
-            print(
+            raise UnknownSynapseID(
                 f"⛔ {err.response.json().get('reason')}. "
                 "Check the ID and try again."
-            )
-            sys.exit(1)
+            ) from err
+
+    @property
+    def submission(self):
+        """Synapse submission."""
+        return self._submission
+
+    @submission.setter
+    def submission(self, value) -> None:
+        self._sumission = value
 
     def delete(self) -> None:
         self.syn.delete(self.submission)

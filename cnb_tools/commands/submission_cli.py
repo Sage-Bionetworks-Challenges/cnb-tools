@@ -6,12 +6,14 @@ Example:
     $ cnb-tools submission --help
 """
 
+import sys
 from pathlib import Path
 
 from enum import Enum
 from typing_extensions import Annotated
 import typer
 
+from cnb_tools.classes.base import UnknownSynapseID
 from cnb_tools.classes.annotation import SubmissionAnnotation
 from cnb_tools.classes.submission import Submission
 
@@ -57,11 +59,24 @@ def change_status(
         list[int], typer.Argument(help="One or more submission ID(s)")
     ],
     new_status: Annotated[Status, typer.Argument()],
+    skip_errors: Annotated[
+        bool,
+        typer.Option(
+            "--skip_errors",
+            help="Continue update even if unknown ID error is encountered (default: False)",
+        ),
+    ] = False,
 ):
     """Update one or more submission statuses."""
     for submission_id in submission_ids:
-        submission_annots = SubmissionAnnotation(submission_id)
-        submission_annots.update_status(new_status)
+        try:
+            submission_annots = SubmissionAnnotation(submission_id)
+            submission_annots.update_status(new_status)
+        except UnknownSynapseID as err:
+            if skip_errors:
+                print(f"Unknown submission ID: {submission_id} - skipping...")
+                continue
+            sys.exit(err)
 
 
 @app.command()
@@ -82,13 +97,26 @@ def delete(
             help="Force [red]deletion[/red] without confirmation.",
         ),
     ] = False,
+    skip_errors: Annotated[
+        bool,
+        typer.Option(
+            "--skip_errors",
+            help="Continue deletion even if unknown ID error is encountered (default: False)",
+        ),
+    ] = False,
 ):
     """Delete one or more submissions."""
     print()
     if force:
         for submission_id in submission_ids:
-            submission = Submission(submission_id)
-            submission.delete()
+            try:
+                submission = Submission(submission_id)
+                submission.delete()
+            except UnknownSynapseID as err:
+                if skip_errors:
+                    print(f"Unknown submission ID: {submission_id} - skipping...")
+                    continue
+                sys.exit(err)
     else:
         print("No deletion was done.")
 
@@ -135,6 +163,17 @@ def reset(
     submission_ids: Annotated[
         list[int], typer.Argument(help="One or more submission ID(s)")
     ],
+    skip_errors: Annotated[
+        bool,
+        typer.Option(
+            "--skip_errors",
+            help="Continue update even if unknown ID error is encountered (default: False)",
+        ),
+    ] = False,
 ):
     """Reset one or more submission to RECEIVED."""
-    change_status(submission_ids=submission_ids, new_status="RECEIVED")
+    change_status(
+        submission_ids=submission_ids,
+        new_status="RECEIVED",
+        skip_errors=skip_errors
+    )

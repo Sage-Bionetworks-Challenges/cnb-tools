@@ -15,7 +15,7 @@ class SynapseBase:
         return self._syn
 
     @syn.setter
-    def syn(self, _: str):
+    def syn(self, _: str) -> None:
         raise SynapseInternalError("syn object is read-only")
 
     @property
@@ -24,7 +24,7 @@ class SynapseBase:
         return self._uid
 
     @uid.setter
-    def uid(self, value: str):
+    def uid(self, value: str) -> None:
         self._uid = value
 
     # pylint: disable=unsupported-binary-operation
