@@ -70,4 +70,4 @@ class SubmissionAnnotation(SynapseBase):
     def update_status(self, new_status: str) -> None:
         self.curr_annotations.status = new_status
         self.syn.store(self.curr_annotations)
-        print(f"Updated saubmission ID {self.uid} to status: {new_status}")
+        print(f"Updated submission ID {self.uid} to status: {new_status}")
