@@ -86,6 +86,25 @@ def check_nan_values(pred_col: pd.Series) -> str:
     return ""
 
 
+def check_binary_values(
+    pred_col: pd.Series, label1: int = 0, label2: int = 1
+) -> str:
+    """Check that predictions are binary (default: 0 or 1).
+
+    Args:
+        pred_col: Dataframe column containing the values to validate.
+        label1: First binary value.
+        label2: Second binary value.
+
+    Returns:
+        An error message, if any (default is an empty string)
+
+    """
+    if not pred_col.isin([label1, label2]).all():
+        return f"'{pred_col.name}' values should only be {label1} or {label2}."
+    return ""
+
+
 # pylint: disable=unsupported-binary-operation
 def check_values_range(
     pred_col: pd.Series, min_val: int | float = 0, max_val: int | float = 1
