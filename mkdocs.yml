@@ -18,6 +18,7 @@ nav:
     - Contributing: user-guide/contributing.md
   - Reference:
     - CLI: reference/cli.md
+    - Validation Toolkit: reference/validation-toolkit.md
   - Changelog: 
     - changelog/release-notes.md
     - How to upgrade: changelog/upgrade.md
@@ -54,7 +55,11 @@ theme:
 
 plugins:
 - search
-- mkdocstrings
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          docstring_section_style: spacy
 - autorefs
 - termynal:
     prompt_literal_start:
