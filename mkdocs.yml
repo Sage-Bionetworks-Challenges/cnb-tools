@@ -55,7 +55,11 @@ theme:
 
 plugins:
 - search
-- mkdocstrings
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          docstring_section_style: spacy
 - autorefs
 - termynal:
     prompt_literal_start:
