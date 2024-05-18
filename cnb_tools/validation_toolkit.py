@@ -1,8 +1,8 @@
-import pandas as pd
+from pandas import Series
 
 
 def check_missing_keys(
-    gold_col: pd.Series, pred_col: pd.Series, verbose: bool = False
+    gold_col: Series, pred_col: Series, verbose: bool = False
 ) -> str:
     """Check for missing keys.
 
@@ -29,7 +29,7 @@ def check_missing_keys(
 
 
 def check_unknown_keys(
-    gold_col: pd.Series, pred_col: pd.Series, verbose: bool = False
+    gold_col: Series, pred_col: Series, verbose: bool = False
 ) -> str:
     """Check for unknown keys.
 
@@ -55,7 +55,7 @@ def check_unknown_keys(
     return error
 
 
-def check_duplicate_keys(pred_col: pd.Series, verbose: bool = False) -> str:
+def check_duplicate_keys(pred_col: Series, verbose: bool = False) -> str:
     """Check for duplicate keys.
 
     Tip: Example Use Case
@@ -79,7 +79,7 @@ def check_duplicate_keys(pred_col: pd.Series, verbose: bool = False) -> str:
     return error
 
 
-def check_nan_values(pred_col: pd.Series) -> str:
+def check_nan_values(pred_col: Series) -> str:
     """Check for NAN values.
 
     Tip: Example Use Case
@@ -99,7 +99,7 @@ def check_nan_values(pred_col: pd.Series) -> str:
 
 
 def check_binary_values(
-    pred_col: pd.Series, label1: int = 0, label2: int = 1
+    pred_col: Series, label1: int = 0, label2: int = 1
 ) -> str:
     """Check that values are binary (default: 0 or 1).
 
@@ -122,7 +122,7 @@ def check_binary_values(
 
 # pylint: disable=unsupported-binary-operation
 def check_values_range(
-    pred_col: pd.Series, min_val: int | float = 0, max_val: int | float = 1
+    pred_col: Series, min_val: int | float = 0, max_val: int | float = 1
 ) -> str:
     """Check that values are between min and max values, inclusive.
 
