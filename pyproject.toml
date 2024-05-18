@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cnb-tools"
-version = "0.2.0"
+version = "0.3.0"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = "Apache-2.0"
 authors = ["Sage CNB Team <cnb@sagebase.org>"]
@@ -30,7 +30,7 @@ classifiers = [
 [tool.poetry.dependencies]
 python = "^3.9"
 typer = {extras = ["all"], version = "^0.9.0"}
-synapseclient = "4.1.1"
+synapseclient = "4.2.0"
 
 [tool.poetry.scripts]
 cnb-tools = "cnb_tools.main_cli:app"
