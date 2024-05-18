@@ -3,6 +3,20 @@
 ### Features
 - Add new CLI command: `cnb-tools challenge SUBCOMMAND`
 
+### Docs
+- Add How-To tutorial on how the Validation Toolkit can be used
+
+### Bug fixes
+- Remove custom classes, as to prevent future confusion with synapseclient's classes
+
+## 0.3.0
+
+### Features
+- Add new module: validation_toolkit ([#26](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/26))
+
+### Bug fixes
+- Handle use case when there is one or more unknown submission IDs in given list ([#23](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/23))
+
 ## 0.2.0
 
 ### Features
