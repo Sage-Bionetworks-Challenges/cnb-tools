@@ -9,6 +9,11 @@
 ### Bug fixes
 - Remove custom classes, as to prevent future confusion with synapseclient's classes
 
+## 0.3.1
+
+### Bug fixes
+- Fix Docker image deployment ([#30](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/30))
+
 ## 0.3.0
 
 ### Features
