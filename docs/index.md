@@ -38,7 +38,7 @@ file in your home directory, and enter the following:
 
 ```yaml
 [authentication]
-authtoken = "YOUR PAT"
+authtoken=<YOUR PAT>
 ```
 
 Generate a new Synapse [Personal Access Token (PAT)] with all token
@@ -89,6 +89,34 @@ Manage challenges on Synapse.org from the CLI
 Enter `cnb-tools --help` for usage information.
 ```
 
+## Running With Docker
+
+If you rather not install `cnb-tools` onto your machine, you may still use the
+tool via Docker!  The package and list of versions are [available here].
+
+In order to provide your Synapse credentials to the Docker container, you must
+create a file with your Synapse PAT as the `SYNAPSE_AUTH_TOKEN` environment
+variable:
+
+```text
+SYNAPSE_AUTH_TOKEN=<YOUR PAT>
+```
+
+The `docker run` command will look something like this:
+
+<!-- termynal -->
+```console
+$ docker run --rm \
+    --env-file .synapse-config \
+    ghcr.io/sage-bionetworks-challenges/cnb-tools
+
+ Usage: cnb-tools [OPTIONS] COMMAND [ARGS]...
+
+ Manage challenges on Synapse.org from the CLI
+ (Note: some commands will require challenge admin permissions)
+ ...
+```
+
 ## License
 
 **cnb-tools** is released under the Apache 2.0 license.
@@ -104,3 +132,4 @@ Enter `cnb-tools --help` for usage information.
 [venv]: https://docs.python.org/3/library/venv.html
 [pyenv]: https://github.com/pyenv/pyenv
 [Read its docs.]: https://python-docs.synapse.org/
+[available here]: https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pkgs/container/cnb-tools
