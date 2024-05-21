@@ -93,7 +93,7 @@ To provide your Synapse credentials to the Docker container, you must first
 create a file with your Synapse PAT as the `SYNAPSE_AUTH_TOKEN` environment
 variable:
 
-```text
+```yaml
 SYNAPSE_AUTH_TOKEN=<YOUR PAT>
 ```
 
@@ -101,15 +101,10 @@ The `docker run` command will look something like this, assuming the file is
 named `~/.synapse-config`:
 
 ```console
-$ docker run --rm \
-    --env-file ~/.synapse-config \
-    ghcr.io/sage-bionetworks-challenges/cnb-tools
-
- Usage: cnb-tools [OPTIONS] COMMAND [ARGS]...
-
- Manage challenges on Synapse.org from the CLI
- (Note: some commands will require challenge admin permissions)
- ...
+docker run --rm \
+  --env-file ~/.synapse-config \
+  ghcr.io/sage-bionetworks-challenges/cnb-tools \
+  COMMAND [ARGS]
 ```
 
 ## License
