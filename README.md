@@ -38,7 +38,7 @@ but not limited to, [DREAM Challenges].
 
 To fully utilize **cnb-tools**, you must have a Synapse account and
 provide your credentials to the tool.  To do so, create a `.synapseConfig`
-file in your home directory, and enter the following:
+file in your home directory and enter the following:
 
 ```yaml
 [authentication]
@@ -86,21 +86,23 @@ cnb-tools
 
 ## Running With Docker
 
-If you rather not install `cnb-tools` onto your machine, you may still use the
-tool via Docker!  The package and list of versions are [available here].
+If you rather not install `cnb-tools` onto your machine, you may still use it
+via Docker!  The package and list of versions are [available here].
 
-In order to provide your Synapse credentials during each run, you must create a
-file with your Synapse PAT as the `SYNAPSE_AUTH_TOKEN` environment variable:
+To provide your Synapse credentials to the Docker container, you must first
+create a file with your Synapse PAT as the `SYNAPSE_AUTH_TOKEN` environment
+variable:
 
 ```text
 SYNAPSE_AUTH_TOKEN=<YOUR PAT>
 ```
 
-The `docker run` command will look something like this:
+The `docker run` command will look something like this, assuming the file is
+named `~/.synapse-config`:
 
 ```console
 $ docker run --rm \
-    --env-file .synapse-config \
+    --env-file ~/.synapse-config \
     ghcr.io/sage-bionetworks-challenges/cnb-tools
 
  Usage: cnb-tools [OPTIONS] COMMAND [ARGS]...
