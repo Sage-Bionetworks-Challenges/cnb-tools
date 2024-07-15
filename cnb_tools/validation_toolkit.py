@@ -1,3 +1,5 @@
+from typing import Union
+
 from pandas import Series
 
 
@@ -120,9 +122,10 @@ def check_binary_values(
     return ""
 
 
-# pylint: disable=unsupported-binary-operation
 def check_values_range(
-    pred_col: Series, min_val: int | float = 0, max_val: int | float = 1
+    pred_col: Series,
+    min_val: Union[int, float] = 0,
+    max_val: Union[int, float] = 1
 ) -> str:
     """Check that values are between min and max values, inclusive.
 
