@@ -9,6 +9,11 @@
 ### Bug fixes
 - Remove custom classes, as to prevent future confusion with synapseclient's classes
 
+## 0.3.2
+
+### Bug fixes
+- Replace `|` with `typing.Union` for type-hinting in order to be compatible with Python 3.9
+
 ## 0.3.1
 
 ### Bug fixes
