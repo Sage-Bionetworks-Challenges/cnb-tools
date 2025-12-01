@@ -15,6 +15,7 @@
 
 ### Internal
 - Drop support for Python 3.9 (reached [end of life](https://devguide.python.org/versions/))
+- Add unit tests
 
 ## 0.3.2
 
