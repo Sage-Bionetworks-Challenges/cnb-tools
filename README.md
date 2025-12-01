@@ -12,7 +12,7 @@
   <a href="https://pypi.org/project/cnb-tools/" title="cnb-tools on PyPI">
     <img alt="PyPI version" src="https://img.shields.io/pypi/v/cnb-tools?style=flat-square&logo=pypi&logoColor=white&color=%23679EC1">
   </a>
-  <img alt="Supported Python versions" src="https://img.shields.io/badge/python-3.9 | 3.10 | 3.11 | 3.12-%23EB8231?style=flat-square&logo=python&logoColor=white">
+  <img alt="Supported Python versions" src="https://img.shields.io/badge/python-3.10 | 3.11 | 3.12 -%23EB8231?style=flat-square&logo=python&logoColor=white">
   <a href="https://github.com/Sage-Bionetworks-Challenges/cnb-tools/blob/main/LICENSE" title="License">
     <img alt="License" src="https://img.shields.io/github/license/Sage-Bionetworks-Challenges/cnb-tools?style=flat-square&logo=github&color=%236DB56D">
   </a>
@@ -33,23 +33,23 @@ but not limited to, [DREAM Challenges].
 
 ## Requirements
 
-- [Python 3.9+]
+- [Python 3.10+]
 - [Synapse account]
 
 To fully utilize **cnb-tools**, you must have a Synapse account and
-provide your credentials to the tool.  To do so, create a `.synapseConfig`
-file in your home directory and enter the following:
+provide your credentials to the tool. First, generate a Synapse
+[Personal Access Token (PAT)] with all token permissions enabled.
 
-```yaml
-[authentication]
-authtoken=<YOUR PAT>
+Next, run the following command, then follow the prompts to enter
+your Synapse username and PAT:
+
+```console
+synapse config
 ```
 
-Generate a new Synapse [Personal Access Token (PAT)] with all token
-permissions enabled, then copy-paste it into `authtoken`. Save the file.
-
-For security, we recommend updating its permissions so that other
-users on your machine do not have read access to your credentials, e.g.
+This will create a `.synapseConfig` file in your home directory. For
+security, we recommend updating its permissions so that other users
+on your machine do not have read access to your credentials, e.g.
 
 ```console
 chmod 600 ~/.synapseConfig
@@ -58,10 +58,9 @@ chmod 600 ~/.synapseConfig
 ## Installation
 
 For best practice, use a Python environment to install **cnb-tools**
-rather than directly into your base env.  In our docs, we will be
+rather than directly into your base env. In our docs, we will be
 using [miniconda], but you can use [miniforge], [venv], [pyenv], etc.
 
-<!-- termynal -->
 ```console
 # Create a new env and activate it
 conda create -n cnb-tools python=3.12 -y
@@ -114,7 +113,7 @@ docker run --rm \
 [https://sage-bionetworks-challenges.github.io/cnb-tools]: https://sage-bionetworks-challenges.github.io/cnb-tools
 [https://github.com/Sage-Bionetworks-Challenges/cnb-tools]: https://github.com/Sage-Bionetworks-Challenges/cnb-tools
 [DREAM Challenges]: https://dreamchallenges.org/
-[Python 3.9+]: https://www.python.org/downloads/
+[Python 3.10+]: https://www.python.org/downloads/
 [Synapse account]: https://www.synapse.org/#!LoginPlace:0
 [Personal Access Token (PAT)]: https://www.synapse.org/#!PersonalAccessTokens:
 [miniconda]: https://docs.conda.io/projects/miniconda/en/latest/miniconda-install.html

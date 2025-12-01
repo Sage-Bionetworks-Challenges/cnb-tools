@@ -1,5 +1,3 @@
-from typing import Union
-
 from pandas import Series
 
 
@@ -100,9 +98,7 @@ def check_nan_values(pred_col: Series) -> str:
     return ""
 
 
-def check_binary_values(
-    pred_col: Series, label1: int = 0, label2: int = 1
-) -> str:
+def check_binary_values(pred_col: Series, label1: int = 0, label2: int = 1) -> str:
     """Check that values are binary (default: 0 or 1).
 
     Tip: Example Use Case
@@ -123,9 +119,7 @@ def check_binary_values(
 
 
 def check_values_range(
-    pred_col: Series,
-    min_val: Union[int, float] = 0,
-    max_val: Union[int, float] = 1
+    pred_col: Series, min_val: int | float = 0, max_val: int | float = 1
 ) -> str:
     """Check that values are between min and max values, inclusive.
 

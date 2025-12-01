@@ -5,6 +5,7 @@ Examples:
     $ cnb-tools --help
     $ cnb-tools --version
 """
+
 from typing import Optional
 from typing_extensions import Annotated
 import typer

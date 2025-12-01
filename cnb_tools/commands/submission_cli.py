@@ -13,9 +13,8 @@ from enum import Enum
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.classes.base import UnknownSynapseID
-from cnb_tools.classes.annotation import SubmissionAnnotation
-from cnb_tools.classes.submission import Submission
+from cnb_tools.modules.base import UnknownSynapseID
+from cnb_tools.modules import annotation, submission
 
 
 class Status(str, Enum):
@@ -49,8 +48,7 @@ def annotate(
     ] = False,
 ):
     """Annotate one or more submission(s) with a JSON file."""
-    submission_annots = SubmissionAnnotation(submission_id)
-    submission_annots.update_with_file(json_file, verbose)
+    annotation.update_annotations_from_file(submission_id, str(json_file), verbose)
 
 
 @app.command()
@@ -70,8 +68,7 @@ def change_status(
     """Update one or more submission statuses."""
     for submission_id in submission_ids:
         try:
-            submission_annots = SubmissionAnnotation(submission_id)
-            submission_annots.update_status(new_status)
+            annotation.update_submission_status(submission_id, new_status.value)
         except UnknownSynapseID as err:
             if skip_errors:
                 print(f"Unknown submission ID: {submission_id} - skipping...")
@@ -110,8 +107,7 @@ def delete(
     if force:
         for submission_id in submission_ids:
             try:
-                submission = Submission(submission_id)
-                submission.delete()
+                submission.delete_submission(submission_id)
             except UnknownSynapseID as err:
                 if skip_errors:
                     print(f"Unknown submission ID: {submission_id} - skipping...")
@@ -134,8 +130,7 @@ def download(
     ] = ".",
 ):
     """Get a submission (file/Docker image)"""
-    submission = Submission(submission_id)
-    submission.download(dest)
+    submission.download_submission(submission_id, str(dest))
 
 
 @app.command()
@@ -154,8 +149,7 @@ def info(
     ] = False,
 ):
     """Get information about a submission"""
-    submission = Submission(submission_id)
-    submission.info(verbose)
+    submission.print_submission_info(submission_id, verbose)
 
 
 @app.command()
@@ -173,7 +167,5 @@ def reset(
 ):
     """Reset one or more submission to RECEIVED."""
     change_status(
-        submission_ids=submission_ids,
-        new_status="RECEIVED",
-        skip_errors=skip_errors
+        submission_ids=submission_ids, new_status="RECEIVED", skip_errors=skip_errors
     )

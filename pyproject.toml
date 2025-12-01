@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cnb-tools"
-version = "0.3.2"
+version = "0.3.3"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = "Apache-2.0"
 authors = ["Sage CNB Team <cnb@sagebase.org>"]
@@ -11,14 +11,13 @@ readme = "README.md"
 repository = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools"
 documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -28,9 +27,11 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.10,<3.14"
 typer = {extras = ["all"], version = "^0.9.0"}
-synapseclient = "^4.2.0"
+synapseclient = "^4.7.0"
+click = ">=8.0.0,<8.2.0"
+pandas = ">=2.0.3"
 
 [tool.poetry.scripts]
 cnb-tools = "cnb_tools.main_cli:app"
@@ -39,14 +40,14 @@ cnb-tools = "cnb_tools.main_cli:app"
 "Bug Tracker" = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues"
 
 [tool.poetry.group.test.dependencies]
-pytest = "^7.4.3"
+pytest = ">=7.4.3"
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.3"
-mkdocs-material = "^9.4.14"
-mkdocstrings = "^0.24.0"
-mkdocstrings-python = "^1.7.5"
-termynal = "^0.11.1"
+mkdocs = ">=1.5.3"
+mkdocs-material = ">=9.4.14"
+mkdocstrings = ">=0.24.0"
+mkdocstrings-python = ">=1.7.5"
+termynal = ">=0.11.1"
 
 [build-system]
 requires = ["poetry-core"]

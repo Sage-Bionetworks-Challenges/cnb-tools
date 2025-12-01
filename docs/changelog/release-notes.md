@@ -7,7 +7,15 @@
 - Add How-To tutorial on how the Validation Toolkit can be used
 
 ### Bug fixes
-- Remove custom classes, as to prevent future confusion with synapseclient's classes
+- Refactor all modules to remove custom classes ([#24](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/24))
+  - Convert `annotation.py`, `submission.py`, `participant.py`, and `queue.py` to functional utilities
+  - All modules now act as extensions to `synapseclient` rather than wrapping it with custom classes
+  - Synapse authentication is now handled automatically within each function via `get_synapse_client()`
+  - Simplifies API usage and prevents confusion with synapseclient's native classes
+
+### Internal
+- Drop support for Python 3.9 (reached [end of life](https://devguide.python.org/versions/))
+- Add unit tests
 
 ## 0.3.2
 
