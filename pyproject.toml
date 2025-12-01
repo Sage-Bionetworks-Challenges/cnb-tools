@@ -30,6 +30,8 @@ classifiers = [
 python = ">=3.10,<3.14"
 typer = {extras = ["all"], version = "^0.9.0"}
 synapseclient = "^4.7.0"
+click = ">=8.0.0,<8.2.0"
+pandas = ">=2.0.3"
 
 [tool.poetry.scripts]
 cnb-tools = "cnb_tools.main_cli:app"
