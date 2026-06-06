@@ -10,7 +10,7 @@ from synapseclient import SubmissionStatus
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.core.retry import with_retry
 
-from cnb_tools.modules.base import get_synapse_client, UnknownSynapseID
+from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 
 
 def get_submission_status(submission_id: int) -> SubmissionStatus:
