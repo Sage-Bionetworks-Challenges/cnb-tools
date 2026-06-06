@@ -6,7 +6,7 @@ import pytest
 from synapseclient.core.exceptions import SynapseHTTPError
 
 from cnb_tools.modules import queue
-from cnb_tools.modules.base import UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID
 
 
 class TestGetEvaluation:
@@ -35,20 +35,6 @@ class TestGetEvaluation:
             queue.get_evaluation(99999)
 
         assert "Evaluation not found" in str(exc_info.value)
-
-
-class TestGetEvaluationName:
-    """Tests for get_evaluation_name function"""
-
-    @patch("cnb_tools.modules.queue.get_evaluation")
-    def test_get_evaluation_name(self, mock_get_eval, mock_evaluation):
-        """Test getting evaluation name"""
-        mock_get_eval.return_value = mock_evaluation
-
-        result = queue.get_evaluation_name(98765)
-
-        assert result == "Test Queue"
-        mock_get_eval.assert_called_once_with(98765)
 
 
 class TestGetChallengeNameFromEvaluation:
