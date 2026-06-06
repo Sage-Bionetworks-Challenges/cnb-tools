@@ -26,7 +26,7 @@ def list_threads(
     typer.echo(f"{'ID':<12} {'Created by':<20} {'Title'}")
     typer.echo("-" * 60)
     for t in threads:
-        typer.echo(f"{t.id:<12} {t.created_by:<20} {t.title}")
+        typer.echo(f"{t['id']:<12} {t['createdBy']:<20} {t['title']}")
 
 
 @app.command()
@@ -37,7 +37,7 @@ def create_thread(
 ):
     """Create a new discussion thread in a project's forum."""
     thread = discussion.create_thread(project_id, title, message)
-    typer.echo(f"✅ Thread created (ID: {thread.id}): {thread.title}")
+    typer.echo(f"✅ Thread created (ID: {thread['id']}): {thread['title']}")
 
 
 @app.command()

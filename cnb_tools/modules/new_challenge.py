@@ -21,9 +21,6 @@ from cnb_tools.modules.client import get_synapse_client
 
 logger = logging.getLogger(__name__)
 
-# ---------------------------------------------------------------------------
-# CNB portal constants
-# ---------------------------------------------------------------------------
 
 #: Synapse ID of the 'Curated Challenge Projects' submission view on the portal.
 PORTAL_TABLE = "syn51476218"
@@ -31,11 +28,6 @@ PORTAL_TABLE = "syn51476218"
 CHALLENGE_TEMPLATE_SYNID = "syn52941681"
 #: Synapse user/team ID for the Sage CNB admin team.
 SAGE_CNB_TEAM = "3379097"
-
-
-# ---------------------------------------------------------------------------
-# Private helpers
-# ---------------------------------------------------------------------------
 
 
 def _create_project(name: str) -> Project:
@@ -102,10 +94,10 @@ def _create_challenge_widget(project_id: str, team_part_id: str):
     """
     try:
         chal_obj = challenge_module.create_challenge(project_id, team_part_id)
-        logger.info(f"Activated as Challenge (ID: {chal_obj.id})")
+        logger.info(f"Activated as Challenge (ID: {chal_obj['id']})")
     except SynapseHTTPError:
         chal_obj = challenge_module.get_challenge(project_id)
-        logger.info(f"Fetched existing Challenge (ID: {chal_obj.id})")
+        logger.info(f"Fetched existing Challenge (ID: {chal_obj['id']})")
     return chal_obj
 
 
@@ -146,11 +138,6 @@ def _add_to_portal(project_id: str) -> None:
     project_view.scopeIds.append(project_id)
     syn.store(project_view)
     logger.info(f"Challenge added to 'Curated Challenge Projects' ({PORTAL_TABLE})")
-
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
 
 
 def main(
@@ -241,7 +228,7 @@ def main(
         wikipage = syn.getWiki(project_staging.id, page["id"])
         wikipage.markdown = _update_wikipage_string(
             wikipage.markdown,
-            challenge_obj.id,
+            challenge_obj["id"],
             teams["team_part_id"],
             challenge_name,
             project_live.id,

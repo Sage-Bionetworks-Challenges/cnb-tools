@@ -147,9 +147,19 @@ def get(
             ),
         ),
     ] = False,
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
 ):
     """Get information about a submission"""
-    submission.print_submission_info(submission_id, verbose)
+    if as_json:
+        import json
+
+        sub = submission.get_submission(submission_id)
+        typer.echo(json.dumps(dict(sub), indent=2, default=str))
+    else:
+        submission.print_submission_info(submission_id, verbose)
 
 
 @app.command()

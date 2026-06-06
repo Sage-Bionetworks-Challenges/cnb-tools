@@ -6,12 +6,13 @@ Example:
     $ cnb-tools queue --help
 """
 
+import json
 import sys
 from typing import Optional
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.modules import queue, utils
+from cnb_tools.modules import queue
 from cnb_tools.modules.client import UnknownSynapseID
 
 app = typer.Typer()
@@ -20,18 +21,25 @@ app = typer.Typer()
 @app.command()
 def get(
     evaluation_id: Annotated[int, typer.Argument(help="Evaluation queue ID")],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
 ):
     """Get details about an evaluation queue."""
     try:
         ev = queue.get_evaluation(evaluation_id)
     except UnknownSynapseID as err:
         sys.exit(err)
-    typer.echo(f"ID:          {ev.id}")
-    typer.echo(f"Name:        {ev.name}")
-    typer.echo(f"Description: {ev.description or '—'}")
-    typer.echo(f"Project:     {ev.contentSource}")
-    if ev.quota:
-        typer.echo(f"Quota:       {ev.quota}")
+    if as_json:
+        typer.echo(json.dumps(dict(ev), indent=2))
+    else:
+        typer.echo(f"ID:          {ev.id}")
+        typer.echo(f"Name:        {ev.name}")
+        typer.echo(f"Description: {ev.description or '—'}")
+        typer.echo(f"Project:     {ev.contentSource}")
+        if ev.quota:
+            typer.echo(f"Quota:       {ev.quota}")
 
 
 @app.command()
@@ -78,27 +86,3 @@ def set_quota(
     except UnknownSynapseID as err:
         sys.exit(err)
     typer.echo(f"✅ Quota updated for evaluation queue {evaluation_id}.")
-
-
-@app.command()
-def bulk_status(
-    evaluation_id: Annotated[int, typer.Argument(help="Evaluation queue ID")],
-    from_status: Annotated[
-        str,
-        typer.Option("--from", help="Current status of submissions to update"),
-    ] = "SCORED",
-    to_status: Annotated[
-        str,
-        typer.Option("--to", help="Status to assign"),
-    ] = "VALIDATED",
-):
-    """Bulk-update the status of all submissions in an evaluation queue.
-
-    Useful for re-scoring: flip submissions from SCORED back to VALIDATED
-    so they are picked up by a scoring harness again.
-    """
-    utils.change_all_submission_status(evaluation_id, from_status, to_status)
-    typer.echo(
-        f"✅ All {from_status} submissions in queue {evaluation_id} "
-        f"updated to {to_status}."
-    )

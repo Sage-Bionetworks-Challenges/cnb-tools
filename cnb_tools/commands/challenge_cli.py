@@ -6,13 +6,14 @@ Example:
     $ cnb-tools challenge --help
 """
 
+import json
 import sys
 
 from typing import Optional
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.modules import challenge, create_challenge
+from cnb_tools.modules import challenge, new_challenge
 from cnb_tools.modules.client import UnknownSynapseID
 
 app = typer.Typer()
@@ -50,7 +51,7 @@ def create(
     teams, per-task evaluation queues and data folders, and copies the CNB
     wiki template to the staging project.
     """
-    result = create_challenge.main(
+    result = new_challenge.main(
         challenge_name=name,
         tasks_count=tasks,
         live_site=live_site,
@@ -68,12 +69,19 @@ def get(
     project_id: Annotated[
         str, typer.Argument(help="Synapse ID of the challenge project")
     ],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
 ):
     """Get challenge info for a Synapse project."""
     try:
         chal = challenge.get_challenge(project_id)
     except UnknownSynapseID as err:
         sys.exit(err)
-    typer.echo(f"Challenge ID:          {chal.id}")
-    typer.echo(f"Project ID:            {chal.project_id}")
-    typer.echo(f"Participant Team ID:   {chal.participant_team_id}")
+    if as_json:
+        typer.echo(json.dumps(chal, indent=2))
+    else:
+        typer.echo(f"Challenge ID:          {chal['id']}")
+        typer.echo(f"Project ID:            {chal['projectId']}")
+        typer.echo(f"Participant Team ID:   {chal['participantTeamId']}")
