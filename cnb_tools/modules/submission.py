@@ -129,3 +129,29 @@ def print_submission_info(submission_id: int, verbose: bool = False) -> None:
     if verbose:
         status = annotation.get_submission_status(submission_id)
         print(annotation.format_annotations(status))
+
+
+def get_contributors(
+    evaluation_ids: list[int | str],
+    status: str = "SCORED",
+) -> set[str]:
+    """Get the set of contributor principal IDs from evaluation queues.
+
+    Scans all submissions with the given *status* across each queue and
+    returns every ``principalId`` listed in ``submission.contributors``.
+
+    Args:
+        evaluation_ids: One or more evaluation queue IDs.
+        status: Only consider submissions in this status. Default ``"SCORED"``.
+
+    Returns:
+        Set of Synapse principal IDs (strings) for all matching contributors.
+    """
+    syn = get_synapse_client()
+    all_contributors: set[str] = set()
+    for evaluation_id in evaluation_ids:
+        for sub, _ in syn.getSubmissionBundles(evaluation_id, status=status):
+            all_contributors.update(
+                contributor["principalId"] for contributor in sub.contributors
+            )
+    return all_contributors
