@@ -13,7 +13,7 @@ from enum import Enum
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.modules.base import UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID
 from cnb_tools.modules import annotation, submission
 
 
@@ -60,7 +60,7 @@ def change_status(
     skip_errors: Annotated[
         bool,
         typer.Option(
-            "--skip_errors",
+            "--skip-errors",
             help="Continue update even if unknown ID error is encountered (default: False)",
         ),
     ] = False,
@@ -97,7 +97,7 @@ def delete(
     skip_errors: Annotated[
         bool,
         typer.Option(
-            "--skip_errors",
+            "--skip-errors",
             help="Continue deletion even if unknown ID error is encountered (default: False)",
         ),
     ] = False,
@@ -134,7 +134,7 @@ def download(
 
 
 @app.command()
-def info(
+def get(
     submission_id: Annotated[int, typer.Argument(help="Submission ID")],
     verbose: Annotated[
         bool,
@@ -160,12 +160,14 @@ def reset(
     skip_errors: Annotated[
         bool,
         typer.Option(
-            "--skip_errors",
+            "--skip-errors",
             help="Continue update even if unknown ID error is encountered (default: False)",
         ),
     ] = False,
 ):
     """Reset one or more submission to RECEIVED."""
     change_status(
-        submission_ids=submission_ids, new_status="RECEIVED", skip_errors=skip_errors
+        submission_ids=submission_ids,
+        new_status=Status.received,
+        skip_errors=skip_errors,
     )
