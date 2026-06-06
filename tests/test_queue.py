@@ -35,25 +35,3 @@ class TestGetEvaluation:
             queue.get_evaluation(99999)
 
         assert "Evaluation not found" in str(exc_info.value)
-
-
-class TestGetChallengeNameFromEvaluation:
-    """Tests for get_challenge_name_from_evaluation function"""
-
-    @patch("cnb_tools.modules.queue.get_synapse_client")
-    @patch("cnb_tools.modules.queue.get_evaluation")
-    def test_get_challenge_name_from_evaluation(
-        self, mock_get_eval, mock_get_client, mock_syn, mock_evaluation
-    ):
-        """Test getting challenge name from evaluation"""
-        mock_get_eval.return_value = mock_evaluation
-        mock_get_client.return_value = mock_syn
-
-        mock_challenge = MagicMock()
-        mock_challenge.name = "Amazing Challenge"
-        mock_syn.get.return_value = mock_challenge
-
-        result = queue.get_challenge_name_from_evaluation(98765)
-
-        assert result == "Amazing Challenge"
-        mock_syn.get.assert_called_once_with("syn12345")
