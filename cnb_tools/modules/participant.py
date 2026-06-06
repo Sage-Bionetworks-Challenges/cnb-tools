@@ -6,52 +6,86 @@ teams and participants in Synapse challenges.
 
 import sys
 
-import typer
-from synapseclient import Team
+from synapseclient.models import Team, UserProfile
 from synapseclient.core.exceptions import SynapseHTTPError
 
-from cnb_tools.modules.base import get_synapse_client
+from cnb_tools.modules.client import get_synapse_client
 
 
 def get_participant_name(participant_id: int) -> str:
     """Get the name of a participant (team or user).
 
     Args:
-        participant_id: Team ID or User ID
+        participant_id: Team ID or User ID.
 
     Returns:
-        Team name or username
+        Team name or username.
     """
-    syn = get_synapse_client()
+    get_synapse_client()  # ensure login / caching
     try:
-        return syn.getTeam(participant_id).get("name")
+        team = Team.from_id(id=participant_id)
+        return team.name or ""
     except SynapseHTTPError:
-        return syn.getUserProfile(participant_id).get("userName")
+        profile = UserProfile.from_id(user_id=str(participant_id))
+        return profile.user_name or ""
 
 
 def create_team(
     name: str, description: str | None = None, can_public_join: bool = False
 ) -> Team:
-    """Create a new team or get an existing team by name.
+    """Create a new team or return an existing team with the given name.
+
+    Uses ``synapseclient.models.Team`` OOP. If a team with *name* already
+    exists the user is prompted to confirm reuse; otherwise a new team is
+    created and stored on Synapse.
 
     Args:
-        name: Team name
-        description: Team description (optional)
-        can_public_join: Whether the team can be joined publicly
+        name: Team name.
+        description: Team description (optional).
+        can_public_join: Whether the team can be joined publicly.
 
     Returns:
-        Team object (existing or new)
+        The existing or newly created ``synapseclient.models.Team``.
 
     Raises:
-        SystemExit: If user chooses not to use an existing team
+        SystemExit: If the user chooses not to use the existing team.
+    """
+    get_synapse_client()  # ensure login / caching
+    try:
+        team = Team.from_name(name=name)
+        response = input(f"Team '{name}' already exists. Use this team? (Y/n) ") or "y"
+        if response.lower() not in ("y", "yes"):
+            sys.exit("OK. Try again with a new challenge name.")
+        return team
+    except ValueError:
+        new_team = Team(
+            name=name,
+            description=description,
+            can_public_join=can_public_join,
+        )
+        return new_team.create()
+
+
+def remove_team_member(team_id: int | str, user_id: int | str) -> None:
+    """Remove a user from a team.
+
+    Args:
+        team_id: Synapse Team ID.
+        user_id: Synapse User ID to remove.
     """
     syn = get_synapse_client()
-    try:
-        team = syn.getTeam(name)
-        use_team = typer.confirm(f"Team '{name}' already exists. Use this team?")
-        if not use_team:
-            sys.exit("OK. Try again with a new challenge name.")
-    except ValueError:
-        team = Team(name=name, description=description, canPublicJoin=can_public_join)
-        # team = syn.store(team)
-    return team
+    syn.restDELETE(f"/team/{team_id}/member/{user_id}")
+
+
+def get_team_member_count(team_id: int | str) -> int:
+    """Return the number of users in a team.
+
+    Args:
+        team_id: Synapse Team ID.
+
+    Returns:
+        User count.
+    """
+    syn = get_synapse_client()
+    result = syn.restGET(f"/teamMembers/count/{team_id}")
+    return int(result.get("count", 0))

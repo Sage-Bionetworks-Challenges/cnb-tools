@@ -11,17 +11,39 @@ from typing_extensions import Annotated
 import typer
 
 from cnb_tools import __version__
-from cnb_tools.commands import submission_cli
-
+from cnb_tools.commands import (
+    challenge_cli,
+    discussion_cli,
+    queue_cli,
+    submission_cli,
+    team_cli,
+)
 
 app = typer.Typer(rich_markup_mode="rich")
 app.add_typer(
+    challenge_cli.app,
+    name="challenge",
+    help="Create and manage Synapse challenges.",
+)
+app.add_typer(
+    discussion_cli.app,
+    name="discussion",
+    help="Manage discussion forums and threads.",
+)
+app.add_typer(
+    queue_cli.app,
+    name="queue",
+    help="Manage evaluation queues and submission quotas.",
+)
+app.add_typer(
     submission_cli.app,
     name="submission",
-    help=(
-        "Manage submissions, e.g. download prediction file/Docker model, view "
-        "submission metadata, update status, etc."
-    ),
+    help=("Manage submissions."),
+)
+app.add_typer(
+    team_cli.app,
+    name="team",
+    help="Manage Synapse teams and their users.",
 )
 
 

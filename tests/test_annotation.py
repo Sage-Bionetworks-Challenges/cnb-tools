@@ -6,7 +6,7 @@ import pytest
 from synapseclient.core.exceptions import SynapseHTTPError
 
 from cnb_tools.modules import annotation
-from cnb_tools.modules.base import UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID
 
 
 class TestGetSubmissionStatus:
