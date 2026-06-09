@@ -1,14 +1,13 @@
-"""Module for creating challenge infrastructure on the Sage CNB portal.
+"""Module for creating a new challenge site on Synapse.
 
-Scaffolds the standard two-project structure used by challenges hosted on
-https://challenges.synapse.org: a live (public) project and a staging
-(private) project, with Participants/Organizers teams, per-task evaluation
-queues, data folders, and a wiki copied from the CNB challenge template.
+Scaffolds the single-project structure used by challenges hosted on
+https://challenges.synapse.org: a live project with Participants/Organizers
+teams, per-task evaluation queues, data folders, and a wiki copied from the
+Portal Challenge template.
 """
 
 import logging
 
-import synapseclient
 import synapseutils
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Folder, Project
@@ -22,11 +21,13 @@ from cnb_tools.modules.client import get_synapse_client
 logger = logging.getLogger(__name__)
 
 
-#: Synapse ID of the 'Curated Challenge Projects' submission view on the portal.
+# Synapse ID of the 'Curated Challenge Projects' submission view on the portal.
 PORTAL_TABLE = "syn51476218"
-#: Synapse ID of the CNB challenge wiki template project.
+
+# Synapse ID of the CNB challenge wiki template project.
 CHALLENGE_TEMPLATE_SYNID = "syn52941681"
-#: Synapse user/team ID for the Sage CNB admin team.
+
+# Synapse user/team ID for the Sage CNB admin team.
 SAGE_CNB_TEAM = "3379097"
 
 
@@ -38,16 +39,6 @@ def _create_project(name: str) -> Project:
     return project
 
 
-def _create_live_wiki(project_id: str) -> None:
-    """Create a placeholder 'coming soon' wiki on the live project."""
-    syn = get_synapse_client()
-    markdown = (
-        '<div align="center" class="alert alert-info">\n\n'
-        "###! More information coming soon!\n\n</div>\n"
-    )
-    syn.store(synapseclient.Wiki(title="", owner=project_id, markdown=markdown))
-
-
 def _update_wikipage_string(
     wikipage_string: str,
     challenge_id: str,
@@ -55,7 +46,7 @@ def _update_wikipage_string(
     challenge_name: str,
     syn_id: str,
 ) -> str:
-    """Replace CNB template placeholders with the real IDs for this challenge."""
+    """Replace portal template placeholders with the real IDs for this challenge."""
     replacements = {
         "challengeId=0": f"challengeId={challenge_id}",
         "{teamId}": team_id,
@@ -79,21 +70,25 @@ def _create_teams(challenge_name: str) -> dict[str, str]:
     team_org = participant.create_team(
         name=f"{challenge_name} Organizers",
         description="Challenge Organizing Team",
+        can_public_join=False,
     )
     return {
-        "team_part_id": str(team_part.id),
-        "team_org_id": str(team_org.id),
+        "participant_team_id": str(team_part.id),
+        "organizer_team_id": str(team_org.id),
     }
 
 
-def _create_challenge_widget(project_id: str, team_part_id: str):
+def _create_challenge_widget(project_id: str, participant_team_id: str):
     """Activate the live project as a challenge.
 
     Creates the challenge widget if it does not already exist, otherwise
     returns the existing challenge object.
     """
     try:
-        chal_obj = challenge_module.create_challenge(project_id, team_part_id)
+        chal_obj = challenge_module.create_challenge(
+            project_id,
+            participant_team_id,
+        )
         logger.info(f"Activated as Challenge (ID: {chal_obj['id']})")
     except SynapseHTTPError:
         chal_obj = challenge_module.get_challenge(project_id)
@@ -101,34 +96,40 @@ def _create_challenge_widget(project_id: str, team_part_id: str):
     return chal_obj
 
 
-def _create_data_folders(project_id: str, tasks_count: int) -> dict[int, str]:
-    """Create one data folder per task on the live project."""
-    folder_ids: dict[int, str] = {}
-    for i in range(tasks_count):
-        folder = Folder(name=f"Task {i + 1}", parent_id=project_id)
-        folder = folder.store()
-        folder_ids[i] = str(folder.id)
-        logger.info(f"Folder created: {folder.name} ({folder.id})")
-    return folder_ids
+def _create_data_folders(
+    project_id: str,
+    organizer_team_id: str,
+    participant_team_id: str,
+) -> None:
+    """Create Data and Private Data folders with subfolders.
 
+    - Data (Training, Validation): participants receive download access.
+    - Private Data (Groundtruth, Test): organizers only.
+    """
+    public_folder = Folder(name="Data", parent_id=project_id)
+    public_folder = public_folder.store()
+    logger.info(f"Folder created: {public_folder.name} ({public_folder.id})")
+    permissions.set_entity_permissions(
+        public_folder.id, organizer_team_id, permission_level="edit"
+    )
+    permissions.set_entity_permissions(
+        public_folder.id, participant_team_id, permission_level="download"
+    )
+    for name in ("Training", "Validation"):
+        sub = Folder(name=name, parent_id=public_folder.id)
+        sub.store()
+        logger.info(f"  Subfolder created: {name}")
 
-def _check_existing_and_delete_wiki(project_id: str) -> None:
-    """If the staging project already has a wiki, prompt the user to delete it."""
-    syn = get_synapse_client()
-    wiki = None
-    try:
-        wiki = syn.getWiki(project_id)
-    except SynapseHTTPError:
-        pass
-
-    if wiki is not None:
-        logger.info("The staging project already has a wiki.")
-        user_input = input("Delete the existing wiki before continuing? (y/N) ") or "n"
-        if user_input.lower() not in ("y", "yes"):
-            logger.info("Exiting.")
-            sys.exit(1)
-        syn.delete(wiki)
-        logger.info(f"Deleted wiki ({wiki.id}) from staging project.")
+    private_folder = Folder(name="Private Data", parent_id=project_id)
+    private_folder = private_folder.store()
+    logger.info(f"Folder created: {private_folder.name} ({private_folder.id})")
+    permissions.set_entity_permissions(
+        private_folder.id, organizer_team_id, permission_level="edit"
+    )
+    for name in ("Groundtruth", "Test"):
+        sub = Folder(name=name, parent_id=private_folder.id)
+        sub.store()
+        logger.info(f"  Subfolder created: {name}")
 
 
 def _add_to_portal(project_id: str) -> None:
@@ -151,10 +152,9 @@ def main(
     Scaffolds:
 
     - **Teams**: Participants (public join) and Organizers.
-    - **Live project**: placeholder wiki, one evaluation queue + data folder
-      per task, permissions granted to Organizers and the CNB admin team.
-    - **Staging project**: wiki copied from the CNB template and updated with
-      the real challenge/team/project IDs.
+    - **Live project**: wiki copied from the portal template, one evaluation
+      queue + data folder per task, permissions granted to Organizers and
+      the CNB admin team.
     - **Portal registration** (optional): adds the live project to the CNB
       portal's curated-challenges submission view.
 
@@ -169,27 +169,36 @@ def main(
             table. Default is ``True``.
 
     Returns:
-        A ``dict`` with keys ``live_projectid``, ``staging_projectid``,
+        A ``dict`` with keys ``live_projectid``,
         ``organizer_teamid``, and ``participant_teamid``.
     """
     syn = get_synapse_client()
     teams = _create_teams(challenge_name)
 
-    # --- Live project -------------------------------------------------------
+    # --- Project -------------------------------------------------------
     if live_site is None:
         project_live = _create_project(challenge_name)
         permissions.set_entity_permissions(
-            project_live.id, teams["team_org_id"], permission_level="moderate"
+            project_live.id,
+            teams["organizer_team_id"],
+            permission_level="moderate",
         )
         permissions.set_entity_permissions(
-            project_live.id, SAGE_CNB_TEAM, permission_level="admin"
+            project_live.id,
+            SAGE_CNB_TEAM,
+            permission_level="admin",
         )
-        _create_live_wiki(project_live.id)
+        project_entity = syn.get(project_live.id)
+        project_entity["Status"] = "Upcoming"
+        syn.store(project_entity)
     else:
         live_entity = syn.get(live_site, downloadFile=False)
         project_live = Project(id=live_site, name=live_entity.name)
 
-    challenge_obj = _create_challenge_widget(project_live.id, teams["team_part_id"])
+    challenge_obj = _create_challenge_widget(
+        project_live.id,
+        teams["participant_team_id"],
+    )
 
     for i in range(tasks_count):
         ev = queue_module.create_evaluation(
@@ -201,35 +210,21 @@ def main(
             ev.id, SAGE_CNB_TEAM, permission_level="admin"
         )
 
-    folders = _create_data_folders(project_live.id, tasks_count)
-    for folder_id in folders.values():
-        permissions.set_entity_permissions(
-            folder_id, teams["team_org_id"], permission_level="download"
-        )
-        permissions.set_entity_permissions(
-            folder_id, teams["team_part_id"], permission_level="download"
-        )
-
-    # --- Staging project ----------------------------------------------------
-    project_staging = _create_project(f"{challenge_name} - staging")
-    permissions.set_entity_permissions(
-        project_staging.id, teams["team_org_id"], permission_level="edit"
-    )
-    permissions.set_entity_permissions(
-        project_staging.id, SAGE_CNB_TEAM, permission_level="admin"
+    _create_data_folders(
+        project_live.id,
+        organizer_team_id=teams["organizer_team_id"],
+        participant_team_id=teams["participant_team_id"],
     )
 
-    _check_existing_and_delete_wiki(project_staging.id)
-    logger.info(f"Copying wiki template to {project_staging.name}")
-    new_wikiids = synapseutils.copyWiki(
-        syn, CHALLENGE_TEMPLATE_SYNID, project_staging.id
-    )
+    # --- Wiki ---------------------------------------------------------------
+    logger.info(f"Copying wiki template to {project_live.name}")
+    new_wikiids = synapseutils.copyWiki(syn, CHALLENGE_TEMPLATE_SYNID, project_live.id)
     for page in new_wikiids:
-        wikipage = syn.getWiki(project_staging.id, page["id"])
+        wikipage = syn.getWiki(project_live.id, page["id"])
         wikipage.markdown = _update_wikipage_string(
             wikipage.markdown,
             challenge_obj["id"],
-            teams["team_part_id"],
+            teams["participant_team_id"],
             challenge_name,
             project_live.id,
         )
@@ -239,8 +234,7 @@ def main(
         _add_to_portal(project_live.id)
 
     return {
-        "live_projectid": project_live.id,
-        "staging_projectid": project_staging.id,
-        "organizer_teamid": teams["team_org_id"],
-        "participant_teamid": teams["team_part_id"],
+        "live_project_synid": project_live.id,
+        "organizer_team_id": teams["team_org_id"],
+        "participant_team_id": teams["team_part_id"],
     }
