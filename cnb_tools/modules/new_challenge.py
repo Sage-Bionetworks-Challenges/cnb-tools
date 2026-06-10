@@ -147,30 +147,37 @@ def main(
     live_site: str | None = None,
     add_to_portal: bool = True,
 ) -> dict[str, str]:
-    """Create a new challenge on the Sage CNB portal.
+    """Create a new challenge ready for release on the Challenge Portal.
 
-    Scaffolds:
+    Create the full challenge project in a single call:
 
     - **Teams**: Participants (public join) and Organizers.
-    - **Live project**: wiki copied from the portal template, one evaluation
-      queue + data folder per task, permissions granted to Organizers and
-      the CNB admin team.
-    - **Portal registration** (optional): adds the live project to the CNB
+    - **Project**: permissions for Organizers and the CNB admin team,
+      ``Status`` annotation set to ``"Upcoming"``.
+    - **Evaluation queues**: one queue per task.
+    - **Data folders**: ``Data/`` (Training, Validation — open to participants)
+      and ``Private Data/`` (Groundtruth, Test — organizers only).
+    - **Wiki**: copied from the CNB portal template and updated with the
+      real challenge/team/project IDs.
+    - **Portal registration** (optional): adds the project to the CNB
       portal's curated-challenges submission view.
 
+    Tip: Example Use Case
+      Create a two-task challenge from a single command without
+      touching the Synapse web interface.
+
     Args:
-        challenge_name: Name of the new challenge.
-        tasks_count: Number of task evaluation queues and data folders to
-            create. Default is ``1``.
-        live_site: Synapse ID of an already-existing live project. If given,
-            no new live project is created and the caller is responsible for
-            its permissions and wiki. Default is ``None``.
-        add_to_portal: Whether to register the challenge in the CNB portal
-            table. Default is ``True``.
+      challenge_name: Name of the new challenge.
+      tasks_count: Number of task evaluation queues to create. Default ``1``.
+      live_site: Synapse ID of an already-existing project to use as the
+        live site. If given, no new project is created and the caller is
+        responsible for its permissions and wiki. Default ``None``.
+      add_to_portal: Whether to register the challenge in the Challenge Portal
+        table. Default ``True``.
 
     Returns:
-        A ``dict`` with keys ``live_projectid``,
-        ``organizer_teamid``, and ``participant_teamid``.
+      A dict with keys ``live_projectid``, ``organizer_teamid``, and
+      ``participant_teamid``.
     """
     syn = get_synapse_client()
     teams = _create_teams(challenge_name)

@@ -1,4 +1,8 @@
-"""Base module for cnb-tools, including Synapse client management and custom exceptions."""
+"""Base module for cnb-tools.
+
+Provides a shared Synapse client factory and custom exceptions used
+throughout the package.
+"""
 
 import synapseclient
 from synapseclient.core.exceptions import SynapseNoCredentialsError
@@ -7,11 +11,16 @@ from synapseclient.core.exceptions import SynapseNoCredentialsError
 def get_synapse_client() -> synapseclient.Synapse:
     """Return an authenticated Synapse client.
 
-    Authenticates using credentials from ``~/.synapseConfig`` or the
-    ``SYNAPSE_AUTH_TOKEN`` environment variable.
+    Tip: Credentials
+      Reads credentials from ``~/.synapseConfig`` or the
+      ``SYNAPSE_AUTH_TOKEN`` environment variable. Run ``synapse config``
+      to set up your credentials.
+
+    Returns:
+      An authenticated ``synapseclient.Synapse`` instance.
 
     Raises:
-        SynapseLoginError: If no credentials are available.
+      SynapseLoginError: If no credentials are found.
     """
     try:
         return synapseclient.login(silent=True)

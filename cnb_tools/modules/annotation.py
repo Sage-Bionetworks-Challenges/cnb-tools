@@ -6,9 +6,9 @@ submission annotations in Synapse challenges.
 
 import json
 
-from synapseclient import SubmissionStatus
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.core.retry import with_retry
+from synapseclient.models import SubmissionStatus
 
 from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 
@@ -16,18 +16,22 @@ from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 def get_submission_status(submission_id: int) -> SubmissionStatus:
     """Get the submission status object containing annotations.
 
+    Tip: Example Use Case
+      Read the current annotations on a submission before deciding
+      whether to update or overwrite them.
+
     Args:
-        submission_id: ID of the submission
+      submission_id: ID of the submission.
 
     Returns:
-        SubmissionStatus object with current annotations
+      ``SubmissionStatus`` object with current annotations.
 
     Raises:
-        UnknownSynapseID: If the submission ID is invalid
+      UnknownSynapseID: If the submission ID is invalid.
     """
-    syn = get_synapse_client()
+    get_synapse_client()  # ensure authentication
     try:
-        return syn.getSubmissionStatus(submission_id)
+        return SubmissionStatus(id=str(submission_id)).get()
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
             f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
@@ -35,17 +39,21 @@ def get_submission_status(submission_id: int) -> SubmissionStatus:
 
 
 def format_annotations(submission_status: SubmissionStatus) -> str:
-    """Format submission annotations for display.
+    """Format submission annotations as a human-readable string.
+
+    Tip: Example Use Case
+      Display the current status and all annotation key-value pairs
+      of a submission for quick review in the terminal.
 
     Args:
-        submission_status: SubmissionStatus object
+      submission_status: ``SubmissionStatus`` object.
 
     Returns:
-        Formatted string representation of status and annotations
+      Formatted string with the status and annotations as indented JSON.
     """
     output = f"     Status: {submission_status.status}\n"
     output += "Annotations:\n"
-    output += json.dumps(submission_status.submissionAnnotations, indent=2)
+    output += json.dumps(submission_status.submission_annotations, indent=2)
     return output
 
 
@@ -56,24 +64,29 @@ def update_annotations(
 ) -> SubmissionStatus:
     """Update submission annotations.
 
+    Tip: Example Use Case
+      After scoring a submission, write the scores back to the
+      submission so they appear in the challenge leaderboard.
+
     Args:
-        submission_id: ID of the submission
-        new_annotations: Dictionary of annotations to add/update
-        verbose: If True, print updated annotations
+      submission_id: ID of the submission.
+      new_annotations: Dictionary of annotations to add or update.
+      verbose: If True, print the updated annotations after storing.
 
     Returns:
-        Updated SubmissionStatus object
+      Updated ``SubmissionStatus`` object.
     """
-    syn = get_synapse_client()
     status = get_submission_status(submission_id)
-    status.submissionAnnotations.update(new_annotations)
-    status = syn.store(status)
+    if status.submission_annotations is None:
+        status.submission_annotations = {}
+    status.submission_annotations.update(new_annotations)
+    status = status.store()
 
     print(f"Submission ID {submission_id} annotations updated.")
 
     if verbose:
         print("Annotations:")
-        print(json.dumps(status.submissionAnnotations, indent=2))
+        print(json.dumps(status.submission_annotations, indent=2))
 
     return status
 
@@ -83,13 +96,17 @@ def update_annotations_from_file(
 ) -> SubmissionStatus:
     """Update submission annotations from a JSON file.
 
+    Tip: Example Use Case
+      After a scoring script writes results to ``scores.json``, pass
+      the file directly to attach all scores to the submission at once.
+
     Args:
-        submission_id: ID of the submission
-        annots_file: Path to JSON file containing annotations
-        verbose: If True, print updated annotations
+      submission_id: ID of the submission.
+      annots_file: Path to a JSON file containing annotation key-value pairs.
+      verbose: If True, print the updated annotations after storing.
 
     Returns:
-        Updated SubmissionStatus object
+      Updated ``SubmissionStatus`` object.
     """
     with open(annots_file, encoding="utf-8") as f:
         new_annotations = json.load(f)
@@ -109,19 +126,23 @@ def update_annotations_from_file(
 
 
 def update_submission_status(submission_id: int, new_status: str) -> SubmissionStatus:
-    """Update submission status.
+    """Update the status of a submission.
+
+    Tip: Example Use Case
+      Mark a submission as ``ACCEPTED`` after it passes validation,
+      or ``INVALID`` if it fails a required check.
 
     Args:
-        submission_id: ID of the submission
-        new_status: New status value (e.g., 'ACCEPTED', 'REJECTED', 'SCORED')
+      submission_id: ID of the submission.
+      new_status: New status value (e.g. ``"ACCEPTED"``, ``"INVALID"``,
+        ``"SCORED"``).
 
     Returns:
-        Updated SubmissionStatus object
+      Updated ``SubmissionStatus`` object.
     """
-    syn = get_synapse_client()
     status = get_submission_status(submission_id)
     status.status = new_status
-    status = syn.store(status)
+    status = status.store()
 
     print(f"Updated submission ID {submission_id} to status: {new_status}")
 

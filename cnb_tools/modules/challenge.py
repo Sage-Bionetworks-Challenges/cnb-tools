@@ -15,15 +15,19 @@ from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 def get_challenge(project_id: str) -> dict:
     """Get the Challenge associated with a Synapse project.
 
+    Tip: Example Use Case
+      Retrieve challenge metadata to display the challenge ID and
+      participant team before running a bulk status update.
+
     Args:
-        project_id: Synapse ID of the project.
+      project_id: Synapse ID of the project (e.g. ``"syn12345"``)
 
     Returns:
-        Challenge dict with keys ``id``, ``projectId``, ``participantTeamId``,
-        and ``etag``.
+      Challenge dict with keys ``id``, ``projectId``, ``participantTeamId``,
+      and ``etag``.
 
     Raises:
-        UnknownSynapseID: If the project has no associated challenge.
+      UnknownSynapseID: If the project has no associated challenge.
     """
     syn = get_synapse_client()
     try:
@@ -38,12 +42,16 @@ def get_challenge(project_id: str) -> dict:
 def create_challenge(project_id: str, team_id: str) -> dict:
     """Create a Challenge on a Synapse project and link a participant team.
 
+    Tip: Example Use Case
+      Register an existing Synapse project as a challenge and link the
+      Participants team so submissions can be accepted.
+
     Args:
-        project_id: Synapse ID of the project to host the challenge.
-        team_id: Synapse ID of the participant team.
+      project_id: Synapse ID of the project to host the challenge.
+      team_id: Synapse ID of the participant team.
 
     Returns:
-        The newly created Challenge dict.
+      The newly created Challenge dict.
     """
     syn = get_synapse_client()
     body = {"participantTeamId": team_id, "projectId": project_id}
@@ -53,8 +61,12 @@ def create_challenge(project_id: str, team_id: str) -> dict:
 def delete_challenge(challenge_id: str) -> None:
     """Delete a Challenge.
 
+    Tip: Example Use Case
+      Remove a test challenge created during development before the
+      official challenge is registered.
+
     Args:
-        challenge_id: A Synapse Challenge ID.
+      challenge_id: A Synapse Challenge ID.
     """
     syn = get_synapse_client()
     syn.restDELETE(f"/challenge/{challenge_id}")
@@ -63,11 +75,15 @@ def delete_challenge(challenge_id: str) -> None:
 def get_registered_teams(challenge_id: str) -> list[dict]:
     """Get all teams registered to a challenge.
 
+    Tip: Example Use Case
+      List all teams that have registered to verify a new team
+      appears after registration.
+
     Args:
-        challenge_id: A Synapse Challenge ID.
+      challenge_id: A Synapse Challenge ID.
 
     Returns:
-        List of challenge-team record dicts.
+      List of challenge-team record dicts.
     """
     syn = get_synapse_client()
     return list(syn._GET_paginated(f"/challenge/{challenge_id}/challengeTeam"))
