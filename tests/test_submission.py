@@ -12,26 +12,29 @@ from cnb_tools.modules.client import UnknownSynapseID
 class TestGetSubmission:
     """Tests for get_submission function"""
 
+    @patch("cnb_tools.modules.submission.Submission")
     @patch("cnb_tools.modules.submission.get_synapse_client")
     def test_get_submission_success(
-        self, mock_get_client, mock_syn, mock_submission_file
+        self, mock_get_client, MockSubmission, mock_submission_file
     ):
         """Test successfully getting a submission"""
-        mock_get_client.return_value = mock_syn
-        mock_syn.getSubmission.return_value = mock_submission_file
+        MockSubmission.return_value.get.return_value = mock_submission_file
 
-        result = submission.get_submission(12345, download_file=False)
+        result = submission.get_submission(12345)
 
-        mock_syn.getSubmission.assert_called_once_with(12345, downloadFile=False)
+        MockSubmission.assert_called_once_with(id="12345")
+        MockSubmission.return_value.get.assert_called_once()
         assert result == mock_submission_file
 
+    @patch("cnb_tools.modules.submission.Submission")
     @patch("cnb_tools.modules.submission.get_synapse_client")
-    def test_get_submission_invalid_id(self, mock_get_client, mock_syn):
+    def test_get_submission_invalid_id(self, mock_get_client, MockSubmission):
         """Test error handling for invalid submission ID"""
-        mock_get_client.return_value = mock_syn
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Submission not found"}
-        mock_syn.getSubmission.side_effect = SynapseHTTPError(response=mock_response)
+        MockSubmission.return_value.get.side_effect = SynapseHTTPError(
+            response=mock_response
+        )
 
         with pytest.raises(UnknownSynapseID) as exc_info:
             submission.get_submission(99999)
@@ -42,19 +45,14 @@ class TestGetSubmission:
 class TestDeleteSubmission:
     """Tests for delete_submission function"""
 
+    @patch("cnb_tools.modules.submission.Submission")
     @patch("cnb_tools.modules.submission.get_synapse_client")
-    @patch("cnb_tools.modules.submission.get_submission")
-    def test_delete_submission(
-        self, mock_get_sub, mock_get_client, mock_syn, mock_submission_file, capsys
-    ):
+    def test_delete_submission(self, mock_get_client, MockSubmission, capsys):
         """Test deleting a submission"""
-        mock_get_client.return_value = mock_syn
-        mock_get_sub.return_value = mock_submission_file
-
         submission.delete_submission(12345)
 
-        mock_get_sub.assert_called_once_with(12345)
-        mock_syn.delete.assert_called_once_with(mock_submission_file)
+        MockSubmission.assert_called_once_with(id="12345")
+        MockSubmission.return_value.delete.assert_called_once()
 
         captured = capsys.readouterr()
         assert "Submission deleted: 12345" in captured.out
@@ -124,13 +122,14 @@ class TestGetSubmitterName:
 class TestGetChallengeName:
     """Tests for get_challenge_name function"""
 
+    @patch("cnb_tools.modules.submission.Evaluation")
     @patch("cnb_tools.modules.submission.get_synapse_client")
-    def test_get_challenge_name(self, mock_get_client, mock_syn):
+    def test_get_challenge_name(self, mock_get_client, MockEvaluation, mock_syn):
         """Test getting challenge name from evaluation"""
         mock_get_client.return_value = mock_syn
         mock_eval = MagicMock()
-        mock_eval.contentSource = "syn98765"
-        mock_syn.getEvaluation.return_value = mock_eval
+        mock_eval.content_source = "syn98765"
+        MockEvaluation.return_value.get.return_value = mock_eval
 
         mock_challenge = MagicMock()
         mock_challenge.name = "Test Challenge"
@@ -139,6 +138,7 @@ class TestGetChallengeName:
         result = submission.get_challenge_name(12345)
 
         assert result == "Test Challenge"
+        MockEvaluation.assert_called_once_with(id="12345")
         mock_syn.get.assert_called_once_with("syn98765")
 
 
