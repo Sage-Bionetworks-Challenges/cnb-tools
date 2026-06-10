@@ -8,9 +8,7 @@
 ### Features
 - Add new CLI commands:
   `cnb-tools challenge SUBCOMMAND`
-  `cnb-tools discussion SUBCOMMAND`
   `cnb-tools queue SUBCOMMAND`
-  `cnb-tools team SUBCOMMAND`
 
 ### Docs
 - Add How-To tutorial on how the Validation Toolkit can be used
