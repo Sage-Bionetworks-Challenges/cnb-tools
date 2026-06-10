@@ -56,7 +56,13 @@ def get_challenge_name_from_evaluation(evaluation_id: int) -> str:
     return syn.get(parent_id).name
 
 
-def create_evaluation(name: str, description: str, project_id: str) -> Evaluation:
+def create_evaluation(
+    name: str,
+    description: str,
+    project_id: str,
+    submission_instructions_message: str = "Please see the challenge wiki for submission instructions.",
+    submission_receipt_message: str = "Your submission has been received and is queued for evaluation.",
+) -> Evaluation:
     """Create and store a new evaluation queue on a Synapse project.
 
     Tip: Example Use Case
@@ -67,13 +73,19 @@ def create_evaluation(name: str, description: str, project_id: str) -> Evaluatio
       name: Queue name.
       description: Queue description.
       project_id: Synapse ID of the parent project.
+      submission_instructions_message: Instructions shown to submitters. Must be a non-empty string.
+      submission_receipt_message: Message shown to submitters after submission. Must be a non-empty string.
 
     Returns:
       The newly created ``Evaluation`` object.
     """
     get_synapse_client()  # ensure authentication
     return Evaluation(
-        name=name, description=description, content_source=project_id
+        name=name,
+        description=description,
+        content_source=project_id,
+        submission_instructions_message=submission_instructions_message, # TODO: this should be optional, remove once synapseclient supports that
+        submission_receipt_message=submission_receipt_message,  # TODO: this should be optional, remove once synapseclient supports that
     ).store()
 
 
@@ -139,6 +151,4 @@ def create_evaluation_round(
     if limits:
         body["limits"] = limits
 
-    return syn.restPOST(
-        f"/evaluation/{evaluation_id}/round", json.dumps(body)
-    )
+    return syn.restPOST(f"/evaluation/{evaluation_id}/round", json.dumps(body))

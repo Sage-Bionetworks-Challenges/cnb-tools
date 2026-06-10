@@ -151,16 +151,12 @@ def main(
 
     Create the full challenge project in a single call:
 
-    - **Teams**: Participants (public join) and Organizers.
-    - **Project**: permissions for Organizers and the CNB admin team,
-      ``Status`` annotation set to ``"Upcoming"``.
+    - **Teams**: Participants and Organizers.
     - **Evaluation queues**: one queue per task.
     - **Data folders**: ``Data/`` (Training, Validation — open to participants)
       and ``Private Data/`` (Groundtruth, Test — organizers only).
-    - **Wiki**: copied from the CNB portal template and updated with the
-      real challenge/team/project IDs.
-    - **Portal registration** (optional): adds the project to the CNB
-      portal's curated-challenges submission view.
+    - **Wiki**: copied from the portal template and updated with the real challenge/team/project IDs.
+    - **Portal registration** (optional): adds the project to the Curated Challenges table.
 
     Tip: Example Use Case
       Create a two-task challenge from a single command without
@@ -176,8 +172,8 @@ def main(
         table. Default ``True``.
 
     Returns:
-      A dict with keys ``live_projectid``, ``organizer_teamid``, and
-      ``participant_teamid``.
+      A dict with keys ``live_project_synid``, ``organizer_team_id``, and
+      ``participant_team_id``.
     """
     syn = get_synapse_client()
     teams = _create_teams(challenge_name)
@@ -242,6 +238,6 @@ def main(
 
     return {
         "live_project_synid": project_live.id,
-        "organizer_team_id": teams["team_org_id"],
-        "participant_team_id": teams["team_part_id"],
+        "organizer_team_id": teams["organizer_team_id"],
+        "participant_team_id": teams["participant_team_id"],
     }
