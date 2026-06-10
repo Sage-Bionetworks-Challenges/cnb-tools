@@ -1,6 +1,6 @@
 """CLI command: challenge
 
-Manage Synapse challenges.
+Manage challenges.
 
 Example:
     $ cnb-tools challenge --help
@@ -17,6 +17,12 @@ from cnb_tools.modules import challenge, new_challenge, permissions
 from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 app = typer.Typer()
+
+# Synapse principal ID for all authenticated users.
+_AUTHENTICATED_USERS = 273948
+
+# Synapse principal ID for anonymous/public access.
+_PUBLIC = 273949
 
 
 @app.command()
@@ -41,11 +47,12 @@ def create(
         bool,
         typer.Option(
             "--no-portal",
-            help="Skip registering the challenge in the CNB portal table",
+            help="Skip registering the challenge in the Challenge Portal table",
         ),
     ] = False,
 ):
-    """Create a new challenge on the Sage CNB portal.
+    """Create a new challenge on Synapse. Use --no-portal to skip registering
+    the challenge on the Synapse Challenge Portal (challenges.synapse.org)
 
     Creates a live project, a staging project, Participants and Organizers
     teams, per-task evaluation queues and data folders, and copies the CNB
@@ -57,16 +64,10 @@ def create(
         live_site=live_site,
         add_to_portal=not no_portal,
     )
-    typer.echo(f"✅ Challenge scaffold complete:")
-    typer.echo(f"   Live project:    {result['live_projectid']}")
-    typer.echo(f"   Participants:    {result['participant_teamid']}")
-    typer.echo(f"   Organizers:      {result['organizer_teamid']}")
-
-
-#: Synapse principal ID for all authenticated users.
-_AUTHENTICATED_USERS = 273948
-#: Synapse principal ID for anonymous/public access.
-_PUBLIC = 273949
+    typer.echo(f"✅ Challenge creation complete:")
+    typer.echo(f"   Live project synID:    {result['live_project_synid']}")
+    typer.echo(f"   Participants teamID:    {result['participant_teamid']}")
+    typer.echo(f"   Organizers teamID:      {result['organizer_teamid']}")
 
 
 @app.command()
@@ -152,3 +153,20 @@ def get(
         typer.echo(f"Challenge ID:          {chal['id']}")
         typer.echo(f"Project ID:            {chal['projectId']}")
         typer.echo(f"Participant Team ID:   {chal['participantTeamId']}")
+
+
+@app.command()
+def close(
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project to close")
+    ],
+):
+    """Close a challenge.
+
+    Sets the project Status annotation to 'Closed', downgrades the
+    participant team's evaluation queue permissions from 'Can submit' to
+    'Can view', and locks the participant team so no new members can join
+    or request membership.
+    """
+    new_challenge.close_challenge(project_id)
+    typer.echo(f"\u2705 Challenge {project_id} is now closed.")

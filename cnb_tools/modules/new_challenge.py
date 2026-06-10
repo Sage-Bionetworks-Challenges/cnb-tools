@@ -133,7 +133,7 @@ def _create_data_folders(
 
 
 def _add_to_portal(project_id: str) -> None:
-    """Register the live project in the CNB portal's curated projects table."""
+    """Register the live project in the Challenge Portal's curated projects table."""
     syn = get_synapse_client()
     project_view = syn.get(PORTAL_TABLE)
     project_view.scopeIds.append(project_id)
@@ -241,3 +241,47 @@ def main(
         "organizer_team_id": teams["organizer_team_id"],
         "participant_team_id": teams["participant_team_id"],
     }
+
+
+def close_challenge(project_id: str) -> None:
+    """Close a challenge by locking submissions and the participant team.
+
+    Performs three actions in sequence:
+
+    1. Sets the project's ``Status`` annotation to ``"Closed"``.
+    2. Downgrades the participant team's evaluation queue permissions from
+       ``"submit"`` to ``"view"`` on every queue in the project.
+    3. Locks the participant team so no new members can join or request
+       membership.
+
+    Tip: Example Use Case
+      Run this after the submission deadline to prevent new submissions
+      while keeping the project and results visible.
+
+    Args:
+      project_id: Synapse ID of the challenge project.
+    """
+    syn = get_synapse_client()
+
+    challenge_obj = challenge_module.get_challenge(project_id)
+    participant_team_id = challenge_obj["participantTeamId"]
+
+    # 1. Mark the project as Closed
+    entity = syn.get(project_id)
+    entity["Status"] = "Closed"
+    syn.store(entity)
+    logger.info(f"Project {project_id} Status set to 'Closed'")
+
+    # 2. Downgrade participant team permissions on every queue
+    eval_ids = queue_module.get_evaluation_ids_by_project(project_id)
+    for eval_id in eval_ids:
+        permissions.set_evaluation_permissions(
+            eval_id, participant_team_id, permission_level="view"
+        )
+        logger.info(
+            f"Evaluation {eval_id}: participant team downgraded to view-only"
+        )
+
+    # 3. Lock the participant team
+    participant.lock_team(participant_team_id)
+    logger.info(f"Participant team {participant_team_id} locked (no public join or requests)")

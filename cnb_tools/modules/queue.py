@@ -37,6 +37,24 @@ def get_evaluation(evaluation_id: int) -> Evaluation:
         ) from err
 
 
+def get_evaluation_ids_by_project(project_id: str) -> list[str]:
+    """Return the IDs of all evaluation queues linked to a Synapse project.
+
+    Tip: Example Use Case
+      List every queue associated with a challenge project before bulk-
+      updating permissions or closing the challenge.
+
+    Args:
+      project_id: Synapse ID of the challenge project.
+
+    Returns:
+      List of evaluation queue ID strings.
+    """
+    get_synapse_client()  # ensure authentication
+    evaluations = Evaluation.get_evaluations_by_project(project_id=project_id)
+    return [ev.id for ev in evaluations if ev.id]
+
+
 def get_challenge_name_from_evaluation(evaluation_id: int) -> str:
     """Get the challenge name for an evaluation queue.
 
@@ -84,14 +102,9 @@ def create_evaluation(
         name=name,
         description=description,
         content_source=project_id,
-        submission_instructions_message=submission_instructions_message, # TODO: this should be optional, remove once synapseclient supports that
+        submission_instructions_message=submission_instructions_message,  # TODO: this should be optional, remove once synapseclient supports that
         submission_receipt_message=submission_receipt_message,  # TODO: this should be optional, remove once synapseclient supports that
     ).store()
-
-
-# ---------------------------------------------------------------------------
-# Evaluation round management
-# ---------------------------------------------------------------------------
 
 
 def create_evaluation_round(

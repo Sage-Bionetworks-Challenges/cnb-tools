@@ -4,6 +4,7 @@ This module provides utility functions that extend synapseclient for managing
 teams and participants in Synapse challenges.
 """
 
+import json
 import sys
 
 from synapseclient.models import Team, UserProfile
@@ -103,3 +104,20 @@ def get_team_member_count(team_id: int | str) -> int:
     syn = get_synapse_client()
     result = syn.restGET(f"/teamMembers/count/{team_id}")
     return int(result.get("count", 0))
+
+
+def lock_team(team_id: int | str) -> None:
+    """Prevent new members from joining or requesting to join a team.
+
+    Tip: Example Use Case
+      Lock the Participants team when closing a challenge so no new
+      participants can register after the submission deadline.
+
+    Args:
+      team_id: Synapse Team ID.
+    """
+    syn = get_synapse_client()
+    team_data = syn.restGET(f"/team/{team_id}")
+    team_data["canPublicJoin"] = False
+    team_data["canRequestMembership"] = False
+    syn.restPUT("/team", json.dumps(team_data))
