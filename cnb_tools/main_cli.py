@@ -13,10 +13,8 @@ import typer
 from cnb_tools import __version__
 from cnb_tools.commands import (
     challenge_cli,
-    discussion_cli,
     queue_cli,
     submission_cli,
-    team_cli,
 )
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -24,11 +22,6 @@ app.add_typer(
     challenge_cli.app,
     name="challenge",
     help="Create and manage Synapse challenges.",
-)
-app.add_typer(
-    discussion_cli.app,
-    name="discussion",
-    help="Manage discussion forums and threads.",
 )
 app.add_typer(
     queue_cli.app,
@@ -39,11 +32,6 @@ app.add_typer(
     submission_cli.app,
     name="submission",
     help=("Manage submissions."),
-)
-app.add_typer(
-    team_cli.app,
-    name="team",
-    help="Manage Synapse teams and their users.",
 )
 
 

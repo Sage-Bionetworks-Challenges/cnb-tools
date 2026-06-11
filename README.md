@@ -12,7 +12,7 @@
   <a href="https://pypi.org/project/cnb-tools/" title="cnb-tools on PyPI">
     <img alt="PyPI version" src="https://img.shields.io/pypi/v/cnb-tools?style=flat-square&logo=pypi&logoColor=white&color=%23679EC1">
   </a>
-  <img alt="Supported Python versions" src="https://img.shields.io/badge/python-3.10 | 3.11 | 3.12 -%23EB8231?style=flat-square&logo=python&logoColor=white">
+  <img alt="Supported Python versions" src="https://img.shields.io/badge/python-3.10 | 3.11 | 3.12 | 3.13-%23EB8231?style=flat-square&logo=python&logoColor=white">
   <a href="https://github.com/Sage-Bionetworks-Challenges/cnb-tools/blob/main/LICENSE" title="License">
     <img alt="License" src="https://img.shields.io/github/license/Sage-Bionetworks-Challenges/cnb-tools?style=flat-square&logo=github&color=%236DB56D">
   </a>

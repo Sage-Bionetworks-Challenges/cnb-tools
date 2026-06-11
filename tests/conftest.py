@@ -6,7 +6,11 @@ from unittest.mock import MagicMock
 
 import pandas as pd
 import pytest
-from synapseclient import Evaluation, SubmissionStatus
+from synapseclient.models import (
+    Evaluation as ModelEvaluation,
+    Submission as ModelSubmission,
+    SubmissionStatus as ModelSubmissionStatus,
+)
 
 
 def pytest_configure(config):
@@ -24,46 +28,43 @@ def mock_syn():
 @pytest.fixture
 def mock_submission_status():
     """Fixture for mocked SubmissionStatus."""
-    status = MagicMock(spec=SubmissionStatus)
+    status = MagicMock(spec=ModelSubmissionStatus)
     status.status = "SCORED"
-    status.submissionAnnotations = MagicMock()
-    status.submissionAnnotations.__getitem__ = lambda self, key: {
-        "score": 0.95,
-        "passed": True,
-    }.get(key)
+    status.submission_annotations = {"score": 0.95, "passed": True}
     return status
 
 
 @pytest.fixture
 def mock_submission_file():
     """Fixture for mocked file submission."""
-    sub = MagicMock()
+    sub = MagicMock(spec=ModelSubmission)
     sub.id = "12345"
-    sub.evaluationId = "98765"
-    sub.createdOn = "2025-11-26T10:30:00.000Z"
-    sub.get.side_effect = lambda key: {"teamId": 111, "userId": 222}.get(key)
+    sub.evaluation_id = "98765"
+    sub.created_on = "2025-11-26T10:30:00.000Z"
+    sub.team_id = 111
+    sub.user_id = 222
+    sub.docker_digest = None
     return sub
 
 
 @pytest.fixture
 def mock_submission_docker():
     """Fixture for mocked Docker submission."""
-    sub = MagicMock()
+    sub = MagicMock(spec=ModelSubmission)
     sub.id = "12345"
-    sub.evaluationId = "98765"
-    sub.dockerRepositoryName = "docker.synapse.org/syn12345/model"
-    sub.dockerDigest = "sha256:abc123"
-    sub.__contains__ = lambda self, key: key == "dockerDigest"
+    sub.evaluation_id = "98765"
+    sub.docker_repository_name = "docker.synapse.org/syn12345/model"
+    sub.docker_digest = "sha256:abc123"
     return sub
 
 
 @pytest.fixture
 def mock_evaluation():
     """Fixture for mocked Evaluation."""
-    eval_obj = MagicMock(spec=Evaluation)
+    eval_obj = MagicMock(spec=ModelEvaluation)
     eval_obj.id = "98765"
     eval_obj.name = "Test Queue"
-    eval_obj.contentSource = "syn12345"
+    eval_obj.content_source = "syn12345"
     return eval_obj
 
 

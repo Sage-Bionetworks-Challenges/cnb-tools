@@ -1,18 +1,22 @@
 ## In development
 
 ### Features
-- Add new CLI command: `cnb-tools challenge SUBCOMMAND`
 
 ### Docs
 - Add How-To tutorial on how the Validation Toolkit can be used
 
-### Bug fixes
-- Refactor all modules to remove custom classes ([#24](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/24))
-  - Convert `annotation.py`, `submission.py`, `participant.py`, and `queue.py` to functional utilities
-  - All modules now act as extensions to `synapseclient` rather than wrapping it with custom classes
-  - Synapse authentication is now handled automatically within each function via `get_synapse_client()`
-  - Simplifies API usage and prevents confusion with synapseclient's native classes
+## 0.4.0
 
+### Features
+- Add new CLI commands:
+  `cnb-tools challenge SUBCOMMAND`
+  `cnb-tools queue SUBCOMMAND`
+
+
+### Bug fixes
+- Refactor all modules to remove custom classes ([#24](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/24)); all modules now act as extensions to `synapseclient`
+  - Convert `annotation.py`, `submission.py`, `participant.py`, and `queue.py` to functional utilities
+  - Synapse authentication is now handled automatically within each function via `get_synapse_client()`
 ### Internal
 - Drop support for Python 3.9 (reached [end of life](https://devguide.python.org/versions/))
 - Add unit tests

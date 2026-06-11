@@ -4,6 +4,7 @@ This module provides utility functions that extend synapseclient for managing
 teams and participants in Synapse challenges.
 """
 
+import json
 import sys
 
 from synapseclient.models import Team, UserProfile
@@ -13,13 +14,17 @@ from cnb_tools.modules.client import get_synapse_client
 
 
 def get_participant_name(participant_id: int) -> str:
-    """Get the name of a participant (team or user).
+    """Get the display name of a participant (team or individual user).
+
+    Tip: Example Use Case
+      Resolve a raw principal ID to a readable name when building a
+      list of registered teams or participants.
 
     Args:
-        participant_id: Team ID or User ID.
+      participant_id: Synapse Team ID or User ID.
 
     Returns:
-        Team name or username.
+      Team name or username.
     """
     get_synapse_client()  # ensure login / caching
     try:
@@ -35,20 +40,21 @@ def create_team(
 ) -> Team:
     """Create a new team or return an existing team with the given name.
 
-    Uses ``synapseclient.models.Team`` OOP. If a team with *name* already
-    exists the user is prompted to confirm reuse; otherwise a new team is
-    created and stored on Synapse.
+    Tip: Example Use Case
+      Create the Participants team for a new challenge. If the team name
+      was used before, you will be prompted to reuse the existing team.
 
     Args:
-        name: Team name.
-        description: Team description (optional).
-        can_public_join: Whether the team can be joined publicly.
+      name: Team name.
+      description: Team description (optional).
+      can_public_join: If True, anyone can join without an invitation.
+        Mutually exclusive with ``can_request_membership``.
 
     Returns:
-        The existing or newly created ``synapseclient.models.Team``.
+      The existing or newly created ``synapseclient.models.Team``.
 
     Raises:
-        SystemExit: If the user chooses not to use the existing team.
+      SystemExit: If the team already exists and the user declines to reuse it.
     """
     get_synapse_client()  # ensure login / caching
     try:
@@ -62,6 +68,7 @@ def create_team(
             name=name,
             description=description,
             can_public_join=can_public_join,
+            can_request_membership=not can_public_join,
         )
         return new_team.create()
 
@@ -69,9 +76,13 @@ def create_team(
 def remove_team_member(team_id: int | str, user_id: int | str) -> None:
     """Remove a user from a team.
 
+    Tip: Example Use Case
+      Remove a participant who violated the challenge rules from the
+      Participants team to revoke their submission access.
+
     Args:
-        team_id: Synapse Team ID.
-        user_id: Synapse User ID to remove.
+      team_id: Synapse Team ID.
+      user_id: Synapse User ID to remove.
     """
     syn = get_synapse_client()
     syn.restDELETE(f"/team/{team_id}/member/{user_id}")
@@ -80,12 +91,33 @@ def remove_team_member(team_id: int | str, user_id: int | str) -> None:
 def get_team_member_count(team_id: int | str) -> int:
     """Return the number of users in a team.
 
+    Tip: Example Use Case
+      Check how many participants have registered after sending out
+      the challenge announcement.
+
     Args:
-        team_id: Synapse Team ID.
+      team_id: Synapse Team ID.
 
     Returns:
-        User count.
+      Number of members in the team.
     """
     syn = get_synapse_client()
     result = syn.restGET(f"/teamMembers/count/{team_id}")
     return int(result.get("count", 0))
+
+
+def lock_team(team_id: int | str) -> None:
+    """Prevent new members from joining or requesting to join a team.
+
+    Tip: Example Use Case
+      Lock the Participants team when closing a challenge so no new
+      participants can register after the submission deadline.
+
+    Args:
+      team_id: Synapse Team ID.
+    """
+    syn = get_synapse_client()
+    team_data = syn.restGET(f"/team/{team_id}")
+    team_data["canPublicJoin"] = False
+    team_data["canRequestMembership"] = False
+    syn.restPUT("/team", json.dumps(team_data))

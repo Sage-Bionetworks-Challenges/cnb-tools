@@ -12,24 +12,29 @@ from cnb_tools.modules.client import UnknownSynapseID
 class TestGetEvaluation:
     """Tests for get_evaluation function"""
 
+    @patch("cnb_tools.modules.queue.Evaluation")
     @patch("cnb_tools.modules.queue.get_synapse_client")
-    def test_get_evaluation_success(self, mock_get_client, mock_syn, mock_evaluation):
+    def test_get_evaluation_success(
+        self, mock_get_client, MockEvaluation, mock_evaluation
+    ):
         """Test successfully getting an evaluation"""
-        mock_get_client.return_value = mock_syn
-        mock_syn.getEvaluation.return_value = mock_evaluation
+        MockEvaluation.return_value.get.return_value = mock_evaluation
 
         result = queue.get_evaluation(98765)
 
-        mock_syn.getEvaluation.assert_called_once_with(98765)
+        MockEvaluation.assert_called_once_with(id="98765")
+        MockEvaluation.return_value.get.assert_called_once()
         assert result == mock_evaluation
 
+    @patch("cnb_tools.modules.queue.Evaluation")
     @patch("cnb_tools.modules.queue.get_synapse_client")
-    def test_get_evaluation_invalid_id(self, mock_get_client, mock_syn):
+    def test_get_evaluation_invalid_id(self, mock_get_client, MockEvaluation):
         """Test error handling for invalid evaluation ID"""
-        mock_get_client.return_value = mock_syn
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Evaluation not found"}
-        mock_syn.getEvaluation.side_effect = SynapseHTTPError(response=mock_response)
+        MockEvaluation.return_value.get.side_effect = SynapseHTTPError(
+            response=mock_response
+        )
 
         with pytest.raises(UnknownSynapseID) as exc_info:
             queue.get_evaluation(99999)

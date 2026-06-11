@@ -9,6 +9,7 @@ from synapseclient.models import (
     Dataset,
     DatasetCollection,
     EntityView,
+    Evaluation,
     File,
     Folder,
     MaterializedView,
@@ -130,10 +131,9 @@ def set_evaluation_permissions(
             ``"admin"``, or ``"remove"``.
     """
     _valid_eval_level(permission_level)
-    syn = get_synapse_client()
-    evaluation = syn.getEvaluation(evaluation_id)
-    syn.setPermissions(
-        evaluation,
-        principalId=principal_id,
-        accessType=_EVAL_PERMS[permission_level],
+    get_synapse_client()  # ensure authentication
+    evaluation = Evaluation(id=str(evaluation_id)).get()
+    evaluation.update_acl(
+        principal_id=principal_id,
+        access_type=_EVAL_PERMS[permission_level],
     )
