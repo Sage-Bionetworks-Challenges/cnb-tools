@@ -121,3 +121,27 @@ def lock_team(team_id: int | str) -> None:
     team_data["canPublicJoin"] = False
     team_data["canRequestMembership"] = False
     syn.restPUT("/team", json.dumps(team_data))
+
+
+def disable_team_email(team_id: int | str) -> None:
+    """Prevent non-members from sending emails to a team.
+
+    Modifies the team ACL so that the team's own entry only has READ
+    access, removing any SEND_MESSAGE permission. This stops random
+    Synapse users from emailing the entire participant team.
+
+    Tip: Example Use Case
+      Lock down the Participants team inbox so that participants cannot
+      mass-email each other and are directed to the discussion forum or
+      organizers instead.
+
+    Args:
+      team_id: Synapse Team ID.
+    """
+    syn = get_synapse_client()
+    acl = syn.restGET(f"/team/{team_id}/acl")
+    for entry in acl.get("resourceAccess", []):
+        if entry.get("principalId") == int(team_id):
+            entry["accessType"] = ["READ"]
+            break
+    syn.restPUT("/team/acl", json.dumps(acl))
