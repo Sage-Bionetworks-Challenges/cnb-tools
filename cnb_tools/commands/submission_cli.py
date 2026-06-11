@@ -163,6 +163,36 @@ def get(
 
 
 @app.command()
+def get_contributors(
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+):
+    """Get contributors for a submission."""
+    sub = submission.get_submission(submission_id)
+
+    if sub.team_id:
+        team = (
+            submission.get_submitter_name(sub.team_id)
+            if human_readable
+            else sub.team_id
+        )
+        typer.echo(f"Team: {team}\n")
+
+    contributors = submission.get_submission_contributors(submission_id)
+    if contributors:
+        typer.echo("Contributors:")
+        for user in contributors:
+            principal_id = user.get("principalId")
+            name = (
+                submission.get_submitter_name(int(principal_id))
+                if human_readable
+                else principal_id
+            )
+            typer.echo(f"  {name}")
+    else:
+        typer.echo("No contributors found.")
+
+
+@app.command()
 def reset(
     submission_ids: Annotated[
         list[int], typer.Argument(help="One or more submission ID(s)")

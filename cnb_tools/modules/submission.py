@@ -152,6 +152,26 @@ def print_submission_info(submission_id: int, verbose: bool = False) -> None:
         print(annotation.format_annotations(status))
 
 
+def get_submission_contributors(submission_id: int) -> list[str]:
+    """Get the contributors for a single submission from its metadata.
+
+    Tip: Example Use Case
+      Quickly list everyone credited on a specific submission without
+      scanning an entire evaluation queue.
+
+    Args:
+      submission_id: ID of the submission.
+
+    Returns:
+      List of Synapse principal IDs (strings) for the submission's contributors.
+
+    Raises:
+      UnknownSynapseID: If the submission ID is invalid.
+    """
+    sub = get_submission(submission_id)
+    return list(sub.contributors) if sub.contributors else []
+
+
 def get_contributors(
     evaluation_ids: list[int | str],
     status: str = "SCORED",
