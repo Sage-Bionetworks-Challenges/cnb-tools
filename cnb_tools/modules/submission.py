@@ -130,7 +130,10 @@ def get_challenge_name(evaluation_id: int) -> str:
         ) from err
 
 
-def print_submission_info(submission_id: int, verbose: bool = False) -> None:
+def print_submission_info(
+    submission_id: int,
+    verbose: bool = False,
+) -> None:
     """Print information about a submission.
 
     Args:
@@ -138,18 +141,40 @@ def print_submission_info(submission_id: int, verbose: bool = False) -> None:
         verbose: If True, also print submission annotations
     """
     sub = get_submission(submission_id)
-    challenge = get_challenge_name(sub.evaluation_id)
     submitter_id = sub.team_id or sub.user_id
-    submitter = get_submitter_name(submitter_id)
 
-    print(f"         ID: {submission_id}")
-    print(f"  Challenge: {challenge}")
-    print(f"       Date: {sub.created_on[:10]}")
-    print(f"  Submitter: {submitter}")
+    challenge_display = get_challenge_name(sub.evaluation_id)
+    submitter_display = get_submitter_name(submitter_id)
+
+    print(f"ID:        {submission_id}")
+    print(f"Challenge: {challenge_display}")
+    print(f"Date:      {sub.created_on[:10]}")
+    print(f"Submitter: {submitter_display}")
 
     if verbose:
         status = annotation.get_submission_status(submission_id)
         print(annotation.format_annotations(status))
+
+
+def get_submission_contributors(submission_id: int) -> list[dict[str, object]]:
+    """Get the contributors for a single submission from its metadata.
+
+    Tip: Example Use Case
+      Quickly list everyone credited on a specific submission without
+      scanning an entire evaluation queue.
+
+    Args:
+      submission_id: ID of the submission.
+
+    Returns:
+      List of contributor records from the submission metadata (each record
+      includes at least ``principalId`` and ``createdOn``).
+
+    Raises:
+      UnknownSynapseID: If the submission ID is invalid.
+    """
+    sub = get_submission(submission_id)
+    return list(sub.contributors) if sub.contributors else []
 
 
 def get_contributors(
