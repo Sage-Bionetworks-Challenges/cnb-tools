@@ -146,10 +146,10 @@ def print_submission_info(
     challenge_display = get_challenge_name(sub.evaluation_id)
     submitter_display = get_submitter_name(submitter_id)
 
-    print(f"         ID: {submission_id}")
-    print(f"  Challenge: {challenge}")
-    print(f"       Date: {sub.created_on[:10]}")
-    print(f"  Submitter: {submitter}")
+    print(f"ID:        {submission_id}")
+    print(f"Challenge: {challenge_display}")
+    print(f"Date:      {sub.created_on[:10]}")
+    print(f"Submitter: {submitter_display}")
 
     if verbose:
         status = annotation.get_submission_status(submission_id)
