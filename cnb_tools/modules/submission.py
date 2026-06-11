@@ -156,7 +156,7 @@ def print_submission_info(
         print(annotation.format_annotations(status))
 
 
-def get_submission_contributors(submission_id: int) -> list[str]:
+def get_submission_contributors(submission_id: int) -> list[dict[str, object]]:
     """Get the contributors for a single submission from its metadata.
 
     Tip: Example Use Case
@@ -167,7 +167,8 @@ def get_submission_contributors(submission_id: int) -> list[str]:
       submission_id: ID of the submission.
 
     Returns:
-      List of Synapse principal IDs (strings) for the submission's contributors.
+      List of contributor records from the submission metadata (each record
+      includes at least ``principalId`` and ``createdOn``).
 
     Raises:
       UnknownSynapseID: If the submission ID is invalid.
