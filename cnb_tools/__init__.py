@@ -113,4 +113,9 @@ __all__ = [
     "print_submission_info",
     "get_submission_contributors",
     "get_contributors",
+    "__version__",
 ]
+
+
+def __dir__() -> list[str]:
+    return sorted(__all__)
