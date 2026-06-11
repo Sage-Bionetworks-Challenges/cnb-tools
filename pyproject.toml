@@ -1,15 +1,16 @@
-[tool.poetry]
+[project]
 name = "cnb-tools"
 version = "0.4.0"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
-license = "Apache-2.0"
-authors = ["Sage CNB Team <cnb@sagebase.org>"]
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Sage CNB Team", email = "cnb@sagebase.org"},
+]
 maintainers = [
-    "Verena Chung <verena.chung@sagebase.org>",
+    {name = "Verena Chung", email = "verena.chung@sagebase.org"},
 ]
 readme = "README.md"
-repository = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools"
-documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
+requires-python = ">=3.10,<3.14"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -24,32 +25,33 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
-    "Topic :: Software Development :: Libraries :: Python Modules"
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "typer>=0.9.0",
+    "synapseclient>=4.7.0",
+    "click>=8.0.0,<8.2.0",
+    "pandas>=2.0.3",
 ]
 
-[tool.poetry.dependencies]
-python = ">=3.10,<3.14"
-typer = {extras = ["all"], version = "^0.9.0"}
-synapseclient = "^4.7.0"
-click = ">=8.0.0,<8.2.0"
-pandas = ">=2.0.3"
-
-[tool.poetry.scripts]
+[project.scripts]
 cnb-tools = "cnb_tools.main_cli:app"
 
-[tool.poetry.urls]
+[project.urls]
+Repository = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools"
+Documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
 "Bug Tracker" = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues"
 
-[tool.poetry.group.test.dependencies]
-pytest = ">=7.4.3"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = ">=1.5.3"
-mkdocs-material = ">=9.4.14"
-mkdocstrings = ">=0.24.0"
-mkdocstrings-python = ">=1.7.5"
-termynal = ">=0.11.1"
+[dependency-groups]
+test = ["pytest>=7.4.3"]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.4.14",
+    "mkdocstrings>=0.24.0",
+    "mkdocstrings-python>=1.7.5",
+    "termynal>=0.11.1",
+]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
