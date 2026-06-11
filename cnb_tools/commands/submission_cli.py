@@ -155,9 +155,10 @@ def get(
     """Get information about a submission"""
     if as_json:
         import json
+        import dataclasses
 
         sub = submission.get_submission(submission_id)
-        typer.echo(json.dumps(dict(sub), indent=2, default=str))
+        typer.echo(json.dumps(dataclasses.asdict(sub), indent=2, default=str))
     else:
         submission.print_submission_info(submission_id, verbose)
 
