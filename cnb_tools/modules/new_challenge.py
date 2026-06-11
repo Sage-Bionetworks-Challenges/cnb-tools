@@ -177,6 +177,7 @@ def main(
     """
     syn = get_synapse_client()
     teams = _create_teams(challenge_name)
+    participant.disable_team_email(teams["participant_team_id"])
 
     # --- Project -------------------------------------------------------
     if live_site is None:
