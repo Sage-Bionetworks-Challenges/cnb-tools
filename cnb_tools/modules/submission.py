@@ -130,17 +130,21 @@ def get_challenge_name(evaluation_id: int) -> str:
         ) from err
 
 
-def print_submission_info(submission_id: int, verbose: bool = False) -> None:
+def print_submission_info(
+    submission_id: int, verbose: bool = False, pretty_print: bool = False
+) -> None:
     """Print information about a submission.
 
     Args:
         submission_id: ID of the submission
         verbose: If True, also print submission annotations
+        pretty_print: If True, resolve IDs to human-readable names
     """
     sub = get_submission(submission_id)
-    challenge = get_challenge_name(sub.evaluation_id)
     submitter_id = sub.team_id or sub.user_id
-    submitter = get_submitter_name(submitter_id)
+
+    challenge_display = get_challenge_name(sub.evaluation_id)
+    submitter_display = get_submitter_name(submitter_id)
 
     print(f"         ID: {submission_id}")
     print(f"  Challenge: {challenge}")

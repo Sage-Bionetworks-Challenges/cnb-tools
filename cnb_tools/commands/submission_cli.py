@@ -165,6 +165,14 @@ def get(
 @app.command()
 def get_contributors(
     submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+    human_readable: Annotated[
+        bool,
+        typer.Option(
+            "--pretty-print",
+            "-pp",
+            help="Resolve IDs to team/user names (default: false)",
+        ),
+    ] = False,
 ):
     """Get contributors for a submission."""
     sub = submission.get_submission(submission_id)
