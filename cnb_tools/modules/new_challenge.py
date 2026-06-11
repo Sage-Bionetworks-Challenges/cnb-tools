@@ -279,10 +279,10 @@ def close_challenge(project_id: str) -> None:
         permissions.set_evaluation_permissions(
             eval_id, participant_team_id, permission_level="view"
         )
-        logger.info(
-            f"Evaluation {eval_id}: participant team downgraded to view-only"
-        )
+        logger.info(f"Evaluation {eval_id}: participant team downgraded to view-only")
 
     # 3. Lock the participant team
     participant.lock_team(participant_team_id)
-    logger.info(f"Participant team {participant_team_id} locked (no public join or requests)")
+    logger.info(
+        f"Participant team {participant_team_id} locked (no public join or requests)"
+    )
