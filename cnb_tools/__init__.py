@@ -21,7 +21,10 @@ from cnb_tools.modules.client import (
     UnknownSynapseID,
 )
 try:
-    from cnb_tools.modules.new_challenge import main as create_new_challenge, close_challenge
+    from cnb_tools.modules.new_challenge import (
+        close_challenge,
+        main as create_new_challenge,
+    )
 except ModuleNotFoundError as err:
     # Avoid breaking `import cnb_tools` if the optional `synapseutils` dependency
     # is not installed.
