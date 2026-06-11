@@ -155,11 +155,50 @@ def get(
     """Get information about a submission"""
     if as_json:
         import json
+        import dataclasses
 
         sub = submission.get_submission(submission_id)
-        typer.echo(json.dumps(dict(sub), indent=2, default=str))
+        typer.echo(json.dumps(dataclasses.asdict(sub), indent=2, default=str))
     else:
         submission.print_submission_info(submission_id, verbose)
+
+
+@app.command()
+def get_contributors(
+    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+    human_readable: Annotated[
+        bool,
+        typer.Option(
+            "--pretty-print",
+            "-pp",
+            help="Resolve IDs to team/user names (default: false)",
+        ),
+    ] = False,
+):
+    """Get contributors for a submission."""
+    sub = submission.get_submission(submission_id)
+
+    if sub.team_id:
+        team = (
+            submission.get_submitter_name(sub.team_id)
+            if human_readable
+            else sub.team_id
+        )
+        typer.echo(f"Team: {team}\n")
+
+    contributors = submission.get_submission_contributors(submission_id)
+    if contributors:
+        typer.echo("Contributors:")
+        for user in contributors:
+            principal_id = user.get("principalId")
+            name = (
+                submission.get_submitter_name(int(principal_id))
+                if human_readable
+                else principal_id
+            )
+            typer.echo(f"  {name}")
+    else:
+        typer.echo("No contributors found.")
 
 
 @app.command()

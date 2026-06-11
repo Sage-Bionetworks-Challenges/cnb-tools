@@ -44,6 +44,24 @@ def mock_submission_file():
     sub.team_id = 111
     sub.user_id = 222
     sub.docker_digest = None
+    sub.contributors = None
+    return sub
+
+
+@pytest.fixture
+def mock_submission_with_contributors():
+    """Fixture for mocked team submission with contributors."""
+    sub = MagicMock(spec=ModelSubmission)
+    sub.id = "12345"
+    sub.evaluation_id = "98765"
+    sub.created_on = "2025-11-26T10:30:00.000Z"
+    sub.team_id = 111
+    sub.user_id = None
+    sub.docker_digest = None
+    sub.contributors = [
+        {"principalId": "333", "createdOn": "2025-11-26T10:30:00.000Z"},
+        {"principalId": "444", "createdOn": "2025-11-26T10:30:00.000Z"},
+    ]
     return sub
 
 

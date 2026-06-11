@@ -164,9 +164,9 @@ class TestPrintSubmissionInfo:
         submission.print_submission_info(12345, verbose=False)
 
         captured = capsys.readouterr()
-        assert "ID: 12345" in captured.out
+        assert "ID:        12345" in captured.out
         assert "Challenge: Test Challenge" in captured.out
-        assert "Date: 2025-11-26" in captured.out
+        assert "Date:      2025-11-26" in captured.out
         assert "Submitter: Test Team" in captured.out
 
     @patch("cnb_tools.modules.submission.annotation")
@@ -194,3 +194,33 @@ class TestPrintSubmissionInfo:
 
         mock_annotation.get_submission_status.assert_called_once_with(12345)
         mock_annotation.format_annotations.assert_called_once_with(mock_status)
+
+
+class TestGetSubmissionContributors:
+    """Tests for get_submission_contributors function"""
+
+    @patch("cnb_tools.modules.submission.get_submission")
+    def test_returns_contributor_ids(
+        self, mock_get_sub, mock_submission_with_contributors
+    ):
+        """Test that contributor principal IDs are returned"""
+        mock_get_sub.return_value = mock_submission_with_contributors
+
+        result = submission.get_submission_contributors(12345)
+
+        assert result == [
+            {"principalId": "333", "createdOn": "2025-11-26T10:30:00.000Z"},
+            {"principalId": "444", "createdOn": "2025-11-26T10:30:00.000Z"},
+        ]
+        mock_get_sub.assert_called_once_with(12345)
+
+    @patch("cnb_tools.modules.submission.get_submission")
+    def test_returns_empty_list_when_no_contributors(
+        self, mock_get_sub, mock_submission_file
+    ):
+        """Test that an empty list is returned when there are no contributors"""
+        mock_get_sub.return_value = mock_submission_file
+
+        result = submission.get_submission_contributors(12345)
+
+        assert result == []
