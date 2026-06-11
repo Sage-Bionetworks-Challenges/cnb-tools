@@ -2,6 +2,8 @@
 
 ### Features
 
+### Docs
+- Add How-To tutorial on how the Validation Toolkit can be used
 
 ## 0.4.0
 
@@ -10,8 +12,6 @@
   `cnb-tools challenge SUBCOMMAND`
   `cnb-tools queue SUBCOMMAND`
 
-### Docs
-- Add How-To tutorial on how the Validation Toolkit can be used
 
 ### Bug fixes
 - Refactor all modules to remove custom classes ([#24](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/24)); all modules now act as extensions to `synapseclient`
