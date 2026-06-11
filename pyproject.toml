@@ -43,7 +43,7 @@ Documentation = "https://sage-bionetworks-challenges.github.io/cnb-tools"
 "Bug Tracker" = "https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues"
 
 [dependency-groups]
-test = ["pytest>=7.4.3"]
+test = ["pytest>=7.4.3", "pytest-cov>=4.0.0"]
 docs = [
     "mkdocs>=1.5.3",
     "mkdocs-material>=9.4.14",
