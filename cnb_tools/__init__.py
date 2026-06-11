@@ -20,10 +20,25 @@ from cnb_tools.modules.client import (
     SynapseLoginError,
     UnknownSynapseID,
 )
-from cnb_tools.modules.new_challenge import (
-    main as create_new_challenge,
-    close_challenge,
-)
+try:
+    from cnb_tools.modules.new_challenge import main as create_new_challenge, close_challenge
+except ModuleNotFoundError as err:
+    # Avoid breaking `import cnb_tools` if the optional `synapseutils` dependency
+    # is not installed.
+    if err.name != "synapseutils":
+        raise
+
+    def create_new_challenge(*args, **kwargs):
+        raise ModuleNotFoundError(
+            "Optional dependency 'synapseutils' is required for create_new_challenge(). "
+            "Install it with `pip install synapseutils`."
+        ) from err
+
+    def close_challenge(*args, **kwargs):
+        raise ModuleNotFoundError(
+            "Optional dependency 'synapseutils' is required for close_challenge(). "
+            "Install it with `pip install synapseutils`."
+        ) from err
 from cnb_tools.modules.participant import (
     get_participant_name,
     create_team,
