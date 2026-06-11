@@ -124,11 +124,11 @@ def lock_team(team_id: int | str) -> None:
 
 
 def disable_team_email(team_id: int | str) -> None:
-    """Prevent non-members from sending emails to a team.
+    """Prevent team members from sending emails to the entire team.
 
-    Modifies the team ACL so that the team's own entry only has READ
-    access, removing any SEND_MESSAGE permission. This stops random
-    Synapse users from emailing the entire participant team.
+    Modifies the team ACL entry for the team principal (principalId == team_id)
+    to remove the SEND_MESSAGE permission, preventing participants from mass-emailing
+    the Participants team.
 
     Tip: Example Use Case
       Lock down the Participants team inbox so that participants cannot
