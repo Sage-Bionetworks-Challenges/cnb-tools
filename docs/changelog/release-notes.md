@@ -5,6 +5,13 @@
 ### Docs
 - Add How-To tutorial on how the Validation Toolkit can be used
 
+## 0.4.1
+
+### Features
+- Export all public module functions from `cnb_tools` package root ([#41](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/41))
+- Add `submission get-contributors` CLI command and supporting module function ([#39](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/39))
+- Disable participant team email notifications by default on challenge creation ([#40](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/40))
+
 ## 0.4.0
 
 ### Features
