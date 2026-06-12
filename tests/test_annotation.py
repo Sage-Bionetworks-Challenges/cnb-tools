@@ -12,27 +12,26 @@ from cnb_tools.modules.client import UnknownSynapseID
 class TestGetSubmissionStatus:
     """Tests for get_submission_status function"""
 
-    @patch("cnb_tools.modules.annotation.SubmissionStatus")
     @patch("cnb_tools.modules.annotation.get_synapse_client")
     def test_get_submission_status_success(
-        self, mock_get_client, MockStatus, mock_submission_status
+        self, mock_get_client, mock_syn, mock_submission_status
     ):
         """Test successfully getting submission status"""
-        MockStatus.return_value.get.return_value = mock_submission_status
+        mock_get_client.return_value = mock_syn
+        mock_syn.getSubmissionStatus.return_value = mock_submission_status
 
         result = annotation.get_submission_status(12345)
 
-        MockStatus.assert_called_once_with(id="12345")
-        MockStatus.return_value.get.assert_called_once()
+        mock_syn.getSubmissionStatus.assert_called_once_with(12345)
         assert result == mock_submission_status
 
-    @patch("cnb_tools.modules.annotation.SubmissionStatus")
     @patch("cnb_tools.modules.annotation.get_synapse_client")
-    def test_get_submission_status_invalid_id(self, mock_get_client, MockStatus):
+    def test_get_submission_status_invalid_id(self, mock_get_client, mock_syn):
         """Test error handling for invalid submission ID"""
+        mock_get_client.return_value = mock_syn
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Submission not found"}
-        MockStatus.return_value.get.side_effect = SynapseHTTPError(
+        mock_syn.getSubmissionStatus.side_effect = SynapseHTTPError(
             response=mock_response
         )
 
@@ -45,32 +44,36 @@ class TestUpdateAnnotations:
     """Tests for update_annotations function"""
 
     @patch("cnb_tools.modules.annotation.get_submission_status")
+    @patch("cnb_tools.modules.annotation.get_synapse_client")
     def test_update_annotations_success(
-        self, mock_get_status, mock_submission_status, capsys
+        self, mock_get_client, mock_get_status, mock_syn, mock_submission_status, capsys
     ):
         """Test successfully updating annotations"""
+        mock_get_client.return_value = mock_syn
         mock_get_status.return_value = mock_submission_status
-        mock_submission_status.submission_annotations = {}
-        mock_submission_status.store.return_value = mock_submission_status
+        mock_submission_status.submissionAnnotations = {}
+        mock_syn.store.return_value = mock_submission_status
 
         new_annots = {"new_field": "value"}
         result = annotation.update_annotations(12345, new_annots, verbose=False)
 
-        assert mock_submission_status.submission_annotations == new_annots
-        mock_submission_status.store.assert_called_once()
+        assert mock_submission_status.submissionAnnotations == new_annots
+        mock_syn.store.assert_called_once_with(mock_submission_status)
 
         captured = capsys.readouterr()
         assert "Submission ID 12345 annotations updated" in captured.out
         assert result == mock_submission_status
 
     @patch("cnb_tools.modules.annotation.get_submission_status")
+    @patch("cnb_tools.modules.annotation.get_synapse_client")
     def test_update_annotations_verbose(
-        self, mock_get_status, mock_submission_status, capsys
+        self, mock_get_client, mock_get_status, mock_syn, mock_submission_status, capsys
     ):
         """Test updating annotations with verbose output"""
+        mock_get_client.return_value = mock_syn
         mock_get_status.return_value = mock_submission_status
-        mock_submission_status.submission_annotations = {"score": 0.95, "passed": True}
-        mock_submission_status.store.return_value = mock_submission_status
+        mock_submission_status.submissionAnnotations = {"score": 0.95, "passed": True}
+        mock_syn.store.return_value = mock_submission_status
 
         annotation.update_annotations(12345, {"test": "value"}, verbose=True)
 
@@ -109,17 +112,19 @@ class TestUpdateSubmissionStatus:
     """Tests for update_submission_status function"""
 
     @patch("cnb_tools.modules.annotation.get_submission_status")
+    @patch("cnb_tools.modules.annotation.get_synapse_client")
     def test_update_submission_status(
-        self, mock_get_status, mock_submission_status, capsys
+        self, mock_get_client, mock_get_status, mock_syn, mock_submission_status, capsys
     ):
         """Test updating submission status"""
+        mock_get_client.return_value = mock_syn
         mock_get_status.return_value = mock_submission_status
-        mock_submission_status.store.return_value = mock_submission_status
+        mock_syn.store.return_value = mock_submission_status
 
         result = annotation.update_submission_status(12345, "ACCEPTED")
 
         assert mock_submission_status.status == "ACCEPTED"
-        mock_submission_status.store.assert_called_once()
+        mock_syn.store.assert_called_once_with(mock_submission_status)
 
         captured = capsys.readouterr()
         assert "Updated submission ID 12345 to status: ACCEPTED" in captured.out
