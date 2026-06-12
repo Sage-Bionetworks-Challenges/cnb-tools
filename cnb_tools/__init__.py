@@ -7,6 +7,8 @@ from cnb_tools.modules.annotation import (
     format_annotations,
     update_annotations,
     update_annotations_from_file,
+    update_legacy_annotations,
+    update_legacy_annotations_from_file,
     update_submission_status,
 )
 from cnb_tools.modules.challenge import (
@@ -20,6 +22,7 @@ from cnb_tools.modules.client import (
     SynapseLoginError,
     UnknownSynapseID,
 )
+
 try:
     from cnb_tools.modules.new_challenge import (
         close_challenge,
@@ -42,6 +45,8 @@ except ModuleNotFoundError as err:
             "Optional dependency 'synapseutils' is required for close_challenge(). "
             "Install it with `pip install synapseutils`."
         ) from err
+
+
 from cnb_tools.modules.participant import (
     get_participant_name,
     create_team,
@@ -78,6 +83,8 @@ __all__ = [
     "format_annotations",
     "update_annotations",
     "update_annotations_from_file",
+    "update_legacy_annotations",
+    "update_legacy_annotations_from_file",
     "update_submission_status",
     # challenge
     "get_challenge",
