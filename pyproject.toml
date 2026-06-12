@@ -1,6 +1,6 @@
 [project]
 name = "cnb-tools"
-version = "0.4.1"
+version = "0.4.2"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = {text = "Apache-2.0"}
 authors = [
