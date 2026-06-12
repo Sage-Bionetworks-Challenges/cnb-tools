@@ -6,9 +6,14 @@ submission annotations in Synapse challenges.
 
 import json
 
+# TODO: Revert to OOP approach once synapseclient bug is fixed.
+# See: https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/43
+# from synapseclient.models import SubmissionStatus
+
+from synapseclient import SubmissionStatus
+from synapseclient.annotations import to_submission_status_annotations
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.core.retry import with_retry
-from synapseclient.models import SubmissionStatus
 
 from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 
@@ -29,9 +34,12 @@ def get_submission_status(submission_id: int) -> SubmissionStatus:
     Raises:
       UnknownSynapseID: If the submission ID is invalid.
     """
-    get_synapse_client()  # ensure authentication
+    # TODO: Revert to OOP approach once synapseclient bug is fixed.
+    # get_synapse_client()  # ensure authentication
+    # return SubmissionStatus(id=str(submission_id)).get()
+    syn = get_synapse_client()
     try:
-        return SubmissionStatus(id=str(submission_id)).get()
+        return syn.getSubmissionStatus(submission_id)
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
             f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
@@ -53,7 +61,9 @@ def format_annotations(submission_status: SubmissionStatus) -> str:
     """
     output = f"     Status: {submission_status.status}\n"
     output += "Annotations:\n"
-    output += json.dumps(submission_status.submission_annotations, indent=2)
+    # TODO: Revert to OOP approach once synapseclient bug is fixed.
+    # output += json.dumps(submission_status.submission_annotations, indent=2)
+    output += json.dumps(submission_status.submissionAnnotations, indent=2)
     return output
 
 
@@ -76,6 +86,27 @@ def update_annotations(
     Returns:
       Updated ``SubmissionStatus`` object.
     """
+    # TODO: Revert to OOP approach once synapseclient bug is fixed.
+    # status = get_submission_status(submission_id)
+    # status.submission_annotations = {
+    #     **(status.submission_annotations or {}),
+    #     **new_annotations,
+    # }
+    # status = status.store()
+    syn = get_synapse_client()
+    status = get_submission_status(submission_id)
+    status.submissionAnnotations.update(new_annotations)
+    status = syn.store(status)
+
+    print(f"Submission ID {submission_id} annotations updated.")
+
+    if verbose:
+        print("Annotations:")
+        # TODO: Revert to OOP approach once synapseclient bug is fixed.
+        # print(json.dumps(status.submission_annotations, indent=2))
+        print(json.dumps(status.submissionAnnotations, indent=2))
+
+    return status
     status = get_submission_status(submission_id)
     if status.submission_annotations is None:
         status.submission_annotations = {}
