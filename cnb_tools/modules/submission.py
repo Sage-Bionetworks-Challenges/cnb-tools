@@ -206,3 +206,58 @@ def get_contributors(
             if bundle.submission and bundle.submission.contributors:
                 all_contributors.update(bundle.submission.contributors)
     return all_contributors
+
+
+def batch_download_submissions(
+    evaluation_id: int,
+    dest: str = ".",
+    status: str | None = None,
+) -> None:
+    """Download all submission files from an evaluation queue.
+
+    Files are organized into subdirectories named after each submitter.
+    Each file is renamed to ``<submission_id><original_extension>`` so
+    organizers can trace a file back to its submission. Docker submissions
+    are skipped with an informational message.
+
+    Tip: Example Use Case
+      Download every prediction file submitted to a challenge queue at
+      the end of the challenge for offline analysis or archival.
+
+    Args:
+      evaluation_id: Evaluation queue ID.
+      dest: Root destination directory (default: current directory).
+        Subdirectories per submitter are created automatically.
+      status: Only download submissions in this status (e.g.
+        ``"SCORED"``, ``"ACCEPTED"``). If ``None``, all submissions are
+        downloaded regardless of status.
+    """
+    syn = get_synapse_client()
+    base = Path(dest)
+    count = 0
+
+    for sub in syn.getSubmissions(evaluation_id, status=status):
+        submission_id = sub["id"]
+        submitter_id = sub.get("teamId") or sub.get("userId")
+        submitter_name = get_submitter_name(int(submitter_id)).replace(" ", "_")
+
+        download_dir = base / submitter_name
+        download_dir.mkdir(parents=True, exist_ok=True)
+
+        if sub.get("dockerDigest"):
+            print(
+                f"Skipping submission {submission_id} "
+                f"(Docker image — use `cnb-tools submission download` to get pull command)"
+            )
+            continue
+
+        downloaded = syn.getSubmission(
+            submission_id, downloadLocation=str(download_dir)
+        )
+        original = Path(downloaded.filePath)
+        renamed = download_dir / f"{submission_id}{original.suffix}"
+        original.rename(renamed)
+        print(f"Downloaded submission {submission_id} → {renamed}")
+        count += 1
+
+    print(f"\nDone. {count} file(s) downloaded to: {Path(dest).resolve()}")
