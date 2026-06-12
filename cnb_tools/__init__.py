@@ -65,6 +65,7 @@ from cnb_tools.modules.submission import (
     get_submission,
     delete_submission,
     download_submission,
+    batch_download_submissions,
     get_submitter_name,
     get_challenge_name,
     print_submission_info,
@@ -116,6 +117,7 @@ __all__ = [
     "print_submission_info",
     "get_submission_contributors",
     "get_contributors",
+    "batch_download_submissions",
     "__version__",
 ]
 
