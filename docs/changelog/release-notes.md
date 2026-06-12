@@ -5,6 +5,14 @@
 ### Docs
 - Add How-To tutorial on how the Validation Toolkit can be used
 
+## 0.4.2
+
+### Features
+- Add function for bulk prediction file downloads ([#45](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/45))
+
+### Bug fixes
+- Revert to pre-OOP approach for annotating submissions; add support for updating legacy annotations ([#44](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/44))
+
 ## 0.4.1
 
 ### Features
