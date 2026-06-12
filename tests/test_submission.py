@@ -224,3 +224,110 @@ class TestGetSubmissionContributors:
         result = submission.get_submission_contributors(12345)
 
         assert result == []
+
+
+class TestBatchDownloadSubmissions:
+    """Tests for batch_download_submissions function"""
+
+    @patch("cnb_tools.modules.submission.get_submitter_name")
+    @patch("cnb_tools.modules.submission.get_synapse_client")
+    def test_downloads_file_submissions(
+        self, mock_get_client, mock_get_submitter, mock_syn, tmp_path, capsys
+    ):
+        """Test that file submissions are downloaded and renamed"""
+        mock_get_client.return_value = mock_syn
+        mock_get_submitter.return_value = "Test Team"
+
+        sub = {"id": "12345", "teamId": "111", "userId": None, "dockerDigest": None}
+        mock_syn.getSubmissions.return_value = [sub]
+
+        # Create a real file that Path.rename can act on
+        original_file = tmp_path / "predictions.csv"
+        original_file.touch()
+        downloaded = MagicMock()
+        downloaded.filePath = str(original_file)
+        mock_syn.getSubmission.return_value = downloaded
+
+        submission.batch_download_submissions(98765, dest=str(tmp_path))
+
+        mock_syn.getSubmissions.assert_called_once_with(98765, status=None)
+        mock_syn.getSubmission.assert_called_once_with(
+            "12345", downloadLocation=str(tmp_path / "Test_Team")
+        )
+
+        captured = capsys.readouterr()
+        assert "Downloaded submission 12345" in captured.out
+        assert "1 file(s) downloaded" in captured.out
+
+    @patch("cnb_tools.modules.submission.get_submitter_name")
+    @patch("cnb_tools.modules.submission.get_synapse_client")
+    def test_skips_docker_submissions(
+        self, mock_get_client, mock_get_submitter, mock_syn, tmp_path, capsys
+    ):
+        """Test that Docker submissions are skipped"""
+        mock_get_client.return_value = mock_syn
+        mock_get_submitter.return_value = "Test Team"
+
+        sub = {
+            "id": "12345",
+            "teamId": "111",
+            "userId": None,
+            "dockerDigest": "sha256:abc123",
+        }
+        mock_syn.getSubmissions.return_value = [sub]
+
+        submission.batch_download_submissions(98765, dest=str(tmp_path))
+
+        mock_syn.getSubmission.assert_not_called()
+
+        captured = capsys.readouterr()
+        assert "Skipping submission 12345" in captured.out
+        assert "0 file(s) downloaded" in captured.out
+
+    @patch("cnb_tools.modules.submission.get_submitter_name")
+    @patch("cnb_tools.modules.submission.get_synapse_client")
+    def test_filters_by_status(
+        self, mock_get_client, mock_get_submitter, mock_syn, tmp_path
+    ):
+        """Test that the status filter is passed to getSubmissions"""
+        mock_get_client.return_value = mock_syn
+        mock_syn.getSubmissions.return_value = []
+
+        submission.batch_download_submissions(
+            98765, dest=str(tmp_path), status="SCORED"
+        )
+
+        mock_syn.getSubmissions.assert_called_once_with(98765, status="SCORED")
+
+    @patch("cnb_tools.modules.submission.get_submitter_name")
+    @patch("cnb_tools.modules.submission.get_synapse_client")
+    def test_organizes_by_submitter(
+        self, mock_get_client, mock_get_submitter, mock_syn, tmp_path, capsys
+    ):
+        """Test that files from different submitters go into separate directories"""
+        mock_get_client.return_value = mock_syn
+
+        subs = [
+            {"id": "111", "teamId": "11", "userId": None, "dockerDigest": None},
+            {"id": "222", "teamId": "22", "userId": None, "dockerDigest": None},
+        ]
+        mock_syn.getSubmissions.return_value = subs
+        mock_get_submitter.side_effect = ["Team A", "Team B"]
+
+        for sub_id in ["111", "222"]:
+            f = tmp_path / f"{sub_id}.csv"
+            f.touch()
+
+        def fake_get_submission(sid, downloadLocation):
+            dl = MagicMock()
+            dl.filePath = str(tmp_path / f"{sid}.csv")
+            return dl
+
+        mock_syn.getSubmission.side_effect = fake_get_submission
+
+        submission.batch_download_submissions(98765, dest=str(tmp_path))
+
+        captured = capsys.readouterr()
+        assert "Team_A" in captured.out
+        assert "Team_B" in captured.out
+        assert "2 file(s) downloaded" in captured.out
