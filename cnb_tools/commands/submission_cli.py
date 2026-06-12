@@ -31,11 +31,16 @@ app = typer.Typer()
 
 @app.command()
 def annotate(
-    submission_id: Annotated[int, typer.Argument(help="Submission ID")],
+    submission_ids: Annotated[
+        list[int], typer.Argument(help="One or more submission ID(s)")
+    ],
     json_file: Annotated[
         Path,
-        typer.Argument(
-            help="Filepath to JSON file containing annotations", exists=True
+        typer.Option(
+            "--file",
+            "-f",
+            help="Filepath to JSON file containing annotations",
+            exists=True,
         ),
     ],
     verbose: Annotated[
@@ -46,9 +51,45 @@ def annotate(
             help="Output final submission annotations (default: false)",
         ),
     ] = False,
+    legacy: Annotated[
+        bool,
+        typer.Option(
+            "--legacy",
+            help=(
+                "Use legacy structured annotation format (stringAnnos/longAnnos/"
+                "doubleAnnos) for compatibility with older leaderboard widgets "
+                "(default: false)"
+            ),
+        ),
+    ] = False,
+    skip_errors: Annotated[
+        bool,
+        typer.Option(
+            "--skip-errors",
+            help="Continue if an unknown ID error is encountered (default: false)",
+        ),
+    ] = False,
 ):
-    """Annotate one or more submission(s) with a JSON file."""
-    annotation.update_annotations_from_file(submission_id, str(json_file), verbose)
+    """Annotate one or more submission(s) with a JSON file.
+
+    When --legacy is set, also writes annotations in the legacy
+    stringAnnos/longAnnos/doubleAnnos format for compatibility with
+    older leaderboard widgets.
+    """
+    for submission_id in submission_ids:
+        try:
+            if legacy:
+                annotation.update_legacy_annotations_from_file(
+                    submission_id, str(json_file), verbose=verbose
+                )
+            annotation.update_annotations_from_file(
+                submission_id, str(json_file), verbose
+            )
+        except UnknownSynapseID as err:
+            if skip_errors:
+                print(f"Unknown submission ID: {submission_id} - skipping...")
+                continue
+            sys.exit(err)
 
 
 @app.command()

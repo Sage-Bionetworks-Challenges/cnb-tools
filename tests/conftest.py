@@ -24,13 +24,19 @@ def mock_syn():
     """Fixture for mocked Synapse client."""
     return MagicMock()
 
+# def mock_submission_status():
+#     """Fixture for mocked SubmissionStatus."""
+#     status = MagicMock(spec=ModelSubmissionStatus)
+#     status.status = "SCORED"
+#     status.submission_annotations = {"score": 0.95, "passed": True}
+#     return status
 
 @pytest.fixture
 def mock_submission_status():
-    """Fixture for mocked SubmissionStatus."""
-    status = MagicMock(spec=ModelSubmissionStatus)
+    """Fixture for mocked SubmissionStatus (legacy pre-OOP format)."""
+    status = MagicMock()
     status.status = "SCORED"
-    status.submission_annotations = {"score": 0.95, "passed": True}
+    status.submissionAnnotations = {"score": 0.95, "passed": True}
     return status
 
 
