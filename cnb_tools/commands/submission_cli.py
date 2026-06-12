@@ -202,6 +202,37 @@ def get_contributors(
 
 
 @app.command()
+def batch_download(
+    evaluation_id: Annotated[int, typer.Argument(help="Evaluation queue ID")],
+    dest: Annotated[
+        Path,
+        typer.Option(
+            "--dest",
+            "-d",
+            help="Root destination directory (default: current directory)",
+        ),
+    ] = ".",
+    status: Annotated[
+        str | None,
+        typer.Option(
+            "--status",
+            "-s",
+            help=(
+                "Only download submissions with this status "
+                "(e.g. SCORED, ACCEPTED). Downloads all statuses if omitted."
+            ),
+        ),
+    ] = None,
+):
+    """Batch-download all submission files from an evaluation queue.
+
+    Files are saved under DEST/<submitter>/<submission_id><ext>.
+    Docker submissions are skipped.
+    """
+    submission.batch_download_submissions(evaluation_id, str(dest), status)
+
+
+@app.command()
 def reset(
     submission_ids: Annotated[
         list[int], typer.Argument(help="One or more submission ID(s)")
