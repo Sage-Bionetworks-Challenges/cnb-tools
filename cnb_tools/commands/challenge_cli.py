@@ -58,7 +58,7 @@ def create(
     Creates a live project, Participants and Organizers teams, per-task
     evaluation queues, and data folders, and copies the CNB wiki template
     to the project.
-    """"
+    """
     result = new_challenge.main(
         challenge_name=name,
         tasks_count=tasks,
