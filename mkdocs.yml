@@ -15,8 +15,8 @@ nav:
   - User Guide:
     - Introduction: user-guide/introduction.md
     - Cheat sheet: user-guide/cheat-sheet.md
-    - How-To&#58; Write a Validation Script: user-guide/validation-toolkit.md
-    - How-To&#58; Write a Scoring Script: user-guide/scoring-toolkit.md
+    - "How-To: Write a Validation Script": user-guide/validation-toolkit.md
+    - "How-To: Write a Scoring Script": user-guide/scoring-toolkit.md
     - Contributing: user-guide/contributing.md
   - Reference:
     - CLI: reference/cli.md
