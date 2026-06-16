@@ -205,3 +205,16 @@ class TestCheckValidValues:
         col = pd.Series(["low", None], name="label")
         result = validation_toolkit.check_valid_values(col, {"low", "medium", "high"})
         assert result == ""
+
+    def test_mixed_type_valid_values_does_not_raise(self):
+        """Mixed-type valid_values set should not raise TypeError when sorting"""
+        col = pd.Series([1, "a", "b"], name="label")
+        result = validation_toolkit.check_valid_values(col, {1, "a", "b"})
+        assert result == ""
+
+    def test_mixed_type_invalid_values_does_not_raise(self):
+        """Mixed-type invalid values should not raise TypeError when sorting"""
+        col = pd.Series([1, "a", "unknown"], name="label")
+        result = validation_toolkit.check_valid_values(col, {1, "a"})
+        assert "'label' contains invalid value(s)" in result
+        assert "unknown" in result
