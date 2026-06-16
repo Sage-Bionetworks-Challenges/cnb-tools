@@ -189,12 +189,11 @@ def teams(
             return team_id, name
 
         results: dict[str, str] = {}
-        with ThreadPoolExecutor() as pool:
+        with ThreadPoolExecutor(max_workers=min(8, len(registered))) as pool:
             futures = {pool.submit(_resolve, e): e for e in registered}
             for future in as_completed(futures):
                 team_id, name = future.result()
                 results[team_id] = name
-
         for entry in registered:
             team_id = entry.get("teamId", "")
             name = results.get(team_id, "")
