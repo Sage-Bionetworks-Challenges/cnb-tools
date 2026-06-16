@@ -16,10 +16,12 @@ nav:
     - Introduction: user-guide/introduction.md
     - Cheat sheet: user-guide/cheat-sheet.md
     - How-To&#58; Write a Validation Script: user-guide/validation-toolkit.md
+    - How-To&#58; Write a Scoring Script: user-guide/scoring-toolkit.md
     - Contributing: user-guide/contributing.md
   - Reference:
     - CLI: reference/cli.md
     - Validation Toolkit: reference/validation-toolkit.md
+    - Scoring Toolkit: reference/scoring-toolkit.md
   - Changelog: 
     - changelog/release-notes.md
     - How to upgrade: changelog/upgrade.md
