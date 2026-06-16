@@ -196,7 +196,7 @@ def check_valid_values(pred_col: Series, valid_values: set) -> str:
     if invalid:
         return (
             f"'{pred_col.name}' contains invalid value(s): "
-            f"{', '.join(map(str, sorted(invalid)))}. "
-            f"Accepted values: {', '.join(map(str, sorted(valid_values)))}."
+            f"{', '.join(map(str, sorted(invalid, key=str)))}. "
+            f"Accepted values: {', '.join(map(str, sorted(valid_values, key=str)))}."
         )
     return ""
