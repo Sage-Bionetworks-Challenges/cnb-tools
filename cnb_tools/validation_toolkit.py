@@ -144,7 +144,10 @@ def check_not_constant(pred_col: Series) -> str:
        An error message, if any (default is an empty string)
 
     """
-    if pred_col.dropna().nunique() <= 1:
+    clean = pred_col.dropna()
+    if clean.empty:
+        return f"'{pred_col.name}' column contains no non-null values."
+    if clean.nunique() == 1:
         return f"'{pred_col.name}' column contains only one unique value."
     return ""
 

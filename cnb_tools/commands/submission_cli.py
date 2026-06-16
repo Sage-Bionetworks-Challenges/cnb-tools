@@ -78,7 +78,7 @@ def annotate(
     older leaderboard widgets.
     """
 
-    def _annotate_one(submission_id: int) -> tuple[int, Exception | None]:
+    def _annotate_one(submission_id: int) -> tuple[int, BaseException | None]:
         try:
             if legacy:
                 annotation.update_legacy_annotations_from_file(
@@ -91,8 +91,8 @@ def annotate(
         except UnknownSynapseID as err:
             return (submission_id, err)
 
-    errors: list[tuple[int, Exception]] = []
-    with ThreadPoolExecutor() as pool:
+    errors: list[tuple[int, BaseException]] = []
+    with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
         futures = {pool.submit(_annotate_one, sid): sid for sid in submission_ids}
         for future in as_completed(futures):
             sid, err = future.result()
@@ -121,15 +121,15 @@ def change_status(
 ):
     """Update one or more submission statuses."""
 
-    def _change_one(submission_id: int) -> tuple[int, Exception | None]:
+    def _change_one(submission_id: int) -> tuple[int, BaseException | None]:
         try:
             annotation.update_submission_status(submission_id, new_status.value)
             return (submission_id, None)
         except UnknownSynapseID as err:
             return (submission_id, err)
 
-    errors: list[tuple[int, Exception]] = []
-    with ThreadPoolExecutor() as pool:
+    errors: list[tuple[int, BaseException]] = []
+    with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
         futures = {pool.submit(_change_one, sid): sid for sid in submission_ids}
         for future in as_completed(futures):
             sid, err = future.result()
@@ -172,15 +172,15 @@ def delete(
     print()
     if force:
 
-        def _delete_one(submission_id: int) -> tuple[int, Exception | None]:
+        def _delete_one(submission_id: int) -> tuple[int, BaseException | None]:
             try:
                 submission.delete_submission(submission_id)
                 return (submission_id, None)
             except UnknownSynapseID as err:
                 return (submission_id, err)
 
-        errors: list[tuple[int, Exception]] = []
-        with ThreadPoolExecutor() as pool:
+        errors: list[tuple[int, BaseException]] = []
+        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
             futures = {pool.submit(_delete_one, sid): sid for sid in submission_ids}
             for future in as_completed(futures):
                 sid, err = future.result()
@@ -269,7 +269,7 @@ def get_contributors(
         typer.echo("Contributors:")
         if human_readable:
             principal_ids = [user.get("principalId") for user in contributors]
-            with ThreadPoolExecutor() as pool:
+            with ThreadPoolExecutor(max_workers=min(8, len(principal_ids))) as pool:
                 names = list(
                     pool.map(
                         lambda p: submission.get_submitter_name(int(p)), principal_ids

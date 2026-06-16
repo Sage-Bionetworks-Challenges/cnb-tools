@@ -152,6 +152,13 @@ class TestCheckNotConstant:
         result = validation_toolkit.check_not_constant(col)
         assert "'predictions' column contains only one unique value" in result
 
+    def test_all_nan(self):
+        """All-NaN column should report no non-null values, not 'one unique value'"""
+        col = pd.Series([None, None, None], name="predictions")
+        result = validation_toolkit.check_not_constant(col)
+        assert "no non-null values" in result
+        assert "one unique value" not in result
+
 
 class TestCheckValuesRange:
     """Tests for check_values_range function"""
