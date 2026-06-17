@@ -91,18 +91,18 @@ def annotate(
         except UnknownSynapseID as err:
             return (submission_id, err)
 
-    errors: list[tuple[int, BaseException]] = []
-    with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
-        futures = {pool.submit(_annotate_one, sid): sid for sid in submission_ids}
-        for future in as_completed(futures):
-            sid, err = future.result()
-            if err is not None:
-                if skip_errors:
+    if skip_errors:
+        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+            futures = {pool.submit(_annotate_one, sid): sid for sid in submission_ids}
+            for future in as_completed(futures):
+                sid, err = future.result()
+                if err is not None:
                     print(f"Unknown submission ID: {sid} - skipping...")
-                else:
-                    errors.append((sid, err))
-    if errors:
-        sys.exit(errors[0][1])
+    else:
+        for sid in submission_ids:
+            _, err = _annotate_one(sid)
+            if err is not None:
+                sys.exit(err)
 
 
 @app.command()
@@ -128,18 +128,18 @@ def change_status(
         except UnknownSynapseID as err:
             return (submission_id, err)
 
-    errors: list[tuple[int, BaseException]] = []
-    with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
-        futures = {pool.submit(_change_one, sid): sid for sid in submission_ids}
-        for future in as_completed(futures):
-            sid, err = future.result()
-            if err is not None:
-                if skip_errors:
+    if skip_errors:
+        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+            futures = {pool.submit(_change_one, sid): sid for sid in submission_ids}
+            for future in as_completed(futures):
+                sid, err = future.result()
+                if err is not None:
                     print(f"Unknown submission ID: {sid} - skipping...")
-                else:
-                    errors.append((sid, err))
-    if errors:
-        sys.exit(errors[0][1])
+    else:
+        for sid in submission_ids:
+            _, err = _change_one(sid)
+            if err is not None:
+                sys.exit(err)
 
 
 @app.command()
@@ -179,18 +179,18 @@ def delete(
             except UnknownSynapseID as err:
                 return (submission_id, err)
 
-        errors: list[tuple[int, BaseException]] = []
-        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
-            futures = {pool.submit(_delete_one, sid): sid for sid in submission_ids}
-            for future in as_completed(futures):
-                sid, err = future.result()
-                if err is not None:
-                    if skip_errors:
+        if skip_errors:
+            with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+                futures = {pool.submit(_delete_one, sid): sid for sid in submission_ids}
+                for future in as_completed(futures):
+                    sid, err = future.result()
+                    if err is not None:
                         print(f"Unknown submission ID: {sid} - skipping...")
-                    else:
-                        errors.append((sid, err))
-        if errors:
-            sys.exit(errors[0][1])
+        else:
+            for sid in submission_ids:
+                _, err = _delete_one(sid)
+                if err is not None:
+                    sys.exit(err)
     else:
         print("No deletion was done.")
 
