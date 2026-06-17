@@ -8,6 +8,7 @@ Example:
 
 import json
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from typing import Optional
 from typing_extensions import Annotated
@@ -54,9 +55,9 @@ def create(
     """Create a new challenge on Synapse. Use --no-portal to skip registering
     the challenge on the Synapse Challenge Portal (challenges.synapse.org)
 
-    Creates a live project, a staging project, Participants and Organizers
-    teams, per-task evaluation queues and data folders, and copies the CNB
-    wiki template to the staging project.
+    Creates a live project, Participants and Organizers teams, per-task
+    evaluation queues, and data folders, and copies the CNB wiki template
+    to the project.
     """
     result = new_challenge.main(
         challenge_name=name,
@@ -153,6 +154,53 @@ def get(
         typer.echo(f"Challenge ID:          {chal['id']}")
         typer.echo(f"Project ID:            {chal['projectId']}")
         typer.echo(f"Participant Team ID:   {chal['participantTeamId']}")
+
+
+@app.command()
+def teams(
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
+):
+    """List all teams registered to a challenge."""
+    try:
+        chal = challenge.get_challenge(project_id)
+    except UnknownSynapseID as err:
+        sys.exit(err)
+    registered = challenge.get_registered_teams(chal["id"])
+    if as_json:
+        typer.echo(json.dumps(registered, indent=2))
+    else:
+        if not registered:
+            typer.echo("No teams registered.")
+            return
+        from cnb_tools.modules.participant import get_participant_name
+
+        def _resolve(entry: dict) -> tuple[str, str]:
+            team_id = entry.get("teamId", "")
+            try:
+                name = get_participant_name(int(team_id))
+            except Exception:
+                name = ""
+            return team_id, name
+
+        results: dict[str, str] = {}
+        with ThreadPoolExecutor(max_workers=min(8, len(registered))) as pool:
+            futures = {pool.submit(_resolve, e): e for e in registered}
+            for future in as_completed(futures):
+                team_id, name = future.result()
+                results[team_id] = name
+        for entry in registered:
+            team_id = entry.get("teamId", "")
+            name = results.get(team_id, "")
+            line = f"  {team_id}"
+            if name:
+                line += f"  {name}"
+            typer.echo(line)
 
 
 @app.command()

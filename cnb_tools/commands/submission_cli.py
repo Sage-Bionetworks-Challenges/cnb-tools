@@ -7,6 +7,7 @@ Example:
 """
 
 import sys
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 from enum import Enum
@@ -76,7 +77,8 @@ def annotate(
     stringAnnos/longAnnos/doubleAnnos format for compatibility with
     older leaderboard widgets.
     """
-    for submission_id in submission_ids:
+
+    def _annotate_one(submission_id: int) -> tuple[int, BaseException | None]:
         try:
             if legacy:
                 annotation.update_legacy_annotations_from_file(
@@ -85,11 +87,22 @@ def annotate(
             annotation.update_annotations_from_file(
                 submission_id, str(json_file), verbose
             )
+            return (submission_id, None)
         except UnknownSynapseID as err:
-            if skip_errors:
-                print(f"Unknown submission ID: {submission_id} - skipping...")
-                continue
-            sys.exit(err)
+            return (submission_id, err)
+
+    if skip_errors:
+        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+            futures = {pool.submit(_annotate_one, sid): sid for sid in submission_ids}
+            for future in as_completed(futures):
+                sid, err = future.result()
+                if err is not None:
+                    print(f"Unknown submission ID: {sid} - skipping...")
+    else:
+        for sid in submission_ids:
+            _, err = _annotate_one(sid)
+            if err is not None:
+                sys.exit(err)
 
 
 @app.command()
@@ -107,14 +120,26 @@ def change_status(
     ] = False,
 ):
     """Update one or more submission statuses."""
-    for submission_id in submission_ids:
+
+    def _change_one(submission_id: int) -> tuple[int, BaseException | None]:
         try:
             annotation.update_submission_status(submission_id, new_status.value)
+            return (submission_id, None)
         except UnknownSynapseID as err:
-            if skip_errors:
-                print(f"Unknown submission ID: {submission_id} - skipping...")
-                continue
-            sys.exit(err)
+            return (submission_id, err)
+
+    if skip_errors:
+        with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+            futures = {pool.submit(_change_one, sid): sid for sid in submission_ids}
+            for future in as_completed(futures):
+                sid, err = future.result()
+                if err is not None:
+                    print(f"Unknown submission ID: {sid} - skipping...")
+    else:
+        for sid in submission_ids:
+            _, err = _change_one(sid)
+            if err is not None:
+                sys.exit(err)
 
 
 @app.command()
@@ -146,14 +171,26 @@ def delete(
     """Delete one or more submissions."""
     print()
     if force:
-        for submission_id in submission_ids:
+
+        def _delete_one(submission_id: int) -> tuple[int, BaseException | None]:
             try:
                 submission.delete_submission(submission_id)
+                return (submission_id, None)
             except UnknownSynapseID as err:
-                if skip_errors:
-                    print(f"Unknown submission ID: {submission_id} - skipping...")
-                    continue
-                sys.exit(err)
+                return (submission_id, err)
+
+        if skip_errors:
+            with ThreadPoolExecutor(max_workers=min(8, len(submission_ids))) as pool:
+                futures = {pool.submit(_delete_one, sid): sid for sid in submission_ids}
+                for future in as_completed(futures):
+                    sid, err = future.result()
+                    if err is not None:
+                        print(f"Unknown submission ID: {sid} - skipping...")
+        else:
+            for sid in submission_ids:
+                _, err = _delete_one(sid)
+                if err is not None:
+                    sys.exit(err)
     else:
         print("No deletion was done.")
 
@@ -230,14 +267,19 @@ def get_contributors(
     contributors = submission.get_submission_contributors(submission_id)
     if contributors:
         typer.echo("Contributors:")
-        for user in contributors:
-            principal_id = user.get("principalId")
-            name = (
-                submission.get_submitter_name(int(principal_id))
-                if human_readable
-                else principal_id
-            )
-            typer.echo(f"  {name}")
+        if human_readable:
+            principal_ids = [user.get("principalId") for user in contributors]
+            with ThreadPoolExecutor(max_workers=min(8, len(principal_ids))) as pool:
+                names = list(
+                    pool.map(
+                        lambda p: submission.get_submitter_name(int(p)), principal_ids
+                    )
+                )
+            for name in names:
+                typer.echo(f"  {name}")
+        else:
+            for user in contributors:
+                typer.echo(f"  {user.get('principalId')}")
     else:
         typer.echo("No contributors found.")
 

@@ -1,5 +1,6 @@
 """Unit tests for cnb_tools.validation_toolkit"""
 
+import pandas as pd
 from cnb_tools import validation_toolkit
 
 
@@ -79,7 +80,33 @@ class TestCheckNanValues:
     def test_with_nan_values(self, pred_values_invalid):
         """Test when NaN values are present"""
         result = validation_toolkit.check_nan_values(pred_values_invalid["predictions"])
-        assert "'predictions' column contains 1 NaN value(s)" in result
+        assert "'predictions' column contains" in result
+        assert "NaN" in result
+
+    def test_with_inf_values(self):
+        """Test that inf values are flagged when include_inf=True"""
+        import numpy as np
+
+        col = pd.Series([0.5, np.inf], name="predictions")
+        result = validation_toolkit.check_nan_values(col, include_inf=True)
+        assert "infinite" in result
+
+    def test_inf_ignored_by_default(self):
+        """Test that inf values are ignored when include_inf=False (default)"""
+        import numpy as np
+
+        col = pd.Series([0.5, np.inf], name="predictions")
+        result = validation_toolkit.check_nan_values(col)
+        assert result == ""
+
+    def test_with_nan_and_inf_values(self):
+        """Test when both NaN and infinite values are present"""
+        import numpy as np
+
+        col = pd.Series([None, np.inf], name="predictions")
+        result = validation_toolkit.check_nan_values(col, include_inf=True)
+        assert "NaN" in result
+        assert "infinite" in result
 
 
 class TestCheckBinaryValues:
@@ -92,12 +119,45 @@ class TestCheckBinaryValues:
         )
         assert result == ""
 
-    def test_invalid_binary_values(self, pred_values_invalid):
+    def test_invalid_binary_values(self):
         """Test invalid binary values"""
-        result = validation_toolkit.check_binary_values(
-            pred_values_invalid["predictions"]
-        )
+        col = pd.Series([0, 1, 2], name="predictions")
+        result = validation_toolkit.check_binary_values(col)
         assert "'predictions' values should only be 0 or 1" in result
+
+    def test_nan_does_not_trigger_binary_error(self):
+        """NaN values should not produce a binary error (check_nan_values handles them)"""
+        col = pd.Series([0, 1, None], name="predictions")
+        result = validation_toolkit.check_binary_values(col)
+        assert result == ""
+
+
+class TestCheckNotConstant:
+    """Tests for check_not_constant function"""
+
+    def test_not_constant(self, pred_values_valid):
+        """Test when column has multiple unique values"""
+        result = validation_toolkit.check_not_constant(pred_values_valid["predictions"])
+        assert result == ""
+
+    def test_constant(self):
+        """Test when all values are the same"""
+        col = pd.Series([0, 0, 0], name="predictions")
+        result = validation_toolkit.check_not_constant(col)
+        assert "'predictions' column contains only one unique value" in result
+
+    def test_constant_ignores_nan(self):
+        """NaN values are ignored when checking for constant columns"""
+        col = pd.Series([1, 1, None], name="predictions")
+        result = validation_toolkit.check_not_constant(col)
+        assert "'predictions' column contains only one unique value" in result
+
+    def test_all_nan(self):
+        """All-NaN column should report no non-null values, not 'one unique value'"""
+        col = pd.Series([None, None, None], name="predictions")
+        result = validation_toolkit.check_not_constant(col)
+        assert "no non-null values" in result
+        assert "one unique value" not in result
 
 
 class TestCheckValuesRange:
@@ -123,3 +183,45 @@ class TestCheckValuesRange:
             pred_values_invalid["probabilities"]
         )
         assert "'probabilities' values should be between [0, 1]" in result
+
+    def test_nan_does_not_trigger_range_error(self):
+        """NaN values should be ignored; use check_nan_values to catch them"""
+        col = pd.Series([0.5, None], name="probabilities")
+        result = validation_toolkit.check_values_range(col)
+        assert result == ""
+
+
+class TestCheckValidValues:
+    """Tests for check_valid_values function"""
+
+    def test_all_valid(self):
+        """Test when all values are in the allowed set"""
+        col = pd.Series(["low", "medium", "high"], name="label")
+        result = validation_toolkit.check_valid_values(col, {"low", "medium", "high"})
+        assert result == ""
+
+    def test_invalid_values(self):
+        """Test when values outside the allowed set are present"""
+        col = pd.Series(["low", "medium", "unknown"], name="label")
+        result = validation_toolkit.check_valid_values(col, {"low", "medium", "high"})
+        assert "'label' contains invalid value(s)" in result
+        assert "unknown" in result
+
+    def test_nan_ignored(self):
+        """NaN values should not be flagged as invalid values"""
+        col = pd.Series(["low", None], name="label")
+        result = validation_toolkit.check_valid_values(col, {"low", "medium", "high"})
+        assert result == ""
+
+    def test_mixed_type_valid_values_does_not_raise(self):
+        """Mixed-type valid_values set should not raise TypeError when sorting"""
+        col = pd.Series([1, "a", "b"], name="label")
+        result = validation_toolkit.check_valid_values(col, {1, "a", "b"})
+        assert result == ""
+
+    def test_mixed_type_invalid_values_does_not_raise(self):
+        """Mixed-type invalid values should not raise TypeError when sorting"""
+        col = pd.Series([1, "a", "unknown"], name="label")
+        result = validation_toolkit.check_valid_values(col, {1, "a"})
+        assert "'label' contains invalid value(s)" in result
+        assert "unknown" in result
