@@ -1,9 +1,21 @@
-## In development
+## 0.5.0
 
 ### Features
+- Add `challenge teams` command to list all registered teams for a challenge
+- Parallelize batch operations in `submission annotate`, `submission change-status`, `submission delete`, and `submission get-contributors` for faster execution
+- Add `check_valid_values()` and `check_not_constant()` functions to the Validation Toolkit
+
+### Bug fixes
+- Bump minimum `typer` version to `>=0.12.0` to support `str | None` union type syntax
+- Fix incorrect NaN handling in `check_binary_values()` and `check_values_range()`
+- Fix `check_nan_values()` to support optional `include_inf` parameter
+- Fix `check_not_constant()` to distinguish between all-NaN and single-value columns
+- Fix `check_valid_values()` to handle mixed-type value sets without raising `TypeError`
+- Fix parallel batch commands to preserve fail-fast behavior when `--skip-errors` is not set
 
 ### Docs
 - Add How-To tutorial on how the Validation Toolkit can be used
+- Update CLI reference to document all commands including `challenge`, `queue`, and missing `submission` subcommands
 
 ## 0.4.2
 
