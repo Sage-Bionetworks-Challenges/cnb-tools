@@ -204,6 +204,31 @@ def teams(
 
 
 @app.command()
+def queues(
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
+):
+    """List all evaluation queues for a challenge project."""
+    try:
+        evaluations = queue.get_evaluations_by_project(project_id)
+    except UnknownSynapseID as err:
+        sys.exit(err)
+    if not evaluations:
+        typer.echo(f"No evaluation queues found for {project_id}.")
+        return
+    if as_json:
+        typer.echo(json.dumps([dataclasses.asdict(ev) for ev in evaluations], indent=2))
+    else:
+        for ev in evaluations:
+            typer.echo(f"{ev.id}  {ev.name}")
+
+
+@app.command()
 def close(
     project_id: Annotated[
         str, typer.Argument(help="Synapse ID of the challenge project to close")
