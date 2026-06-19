@@ -62,6 +62,7 @@ from cnb_tools.modules.permissions import (
 from cnb_tools.modules.queue import (
     get_evaluation,
     get_evaluation_ids_by_project,
+    get_evaluations_by_project,
     get_challenge_name_from_evaluation,
     create_evaluation,
     create_evaluation_round,

@@ -56,6 +56,12 @@ cnb-tools challenge launch syn12345
 While the challenge is running, submissions come in and organizers need to
 validate them, update statuses, and annotate results.
 
+**Check challenge statistics (participants, teams, queues, submissions, threads):**
+
+```bash
+cnb-tools challenge stats syn12345
+```
+
 **Check which submission teams are registered:**
 
 ```bash

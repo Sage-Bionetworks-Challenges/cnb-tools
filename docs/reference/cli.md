@@ -124,6 +124,24 @@ Name | Type | Description | Default
 --|--|--|--
 `--json` | boolean | Output raw JSON instead of formatted text | False
 
+### `queues`
+
+List all evaluation queues for a challenge project.
+
+```bash
+cnb-tools challenge queues PROJECT_ID [--json]
+```
+
+Replace the following:
+
+- _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--json` | boolean | Output raw JSON instead of formatted text | False
+
 ### `close`
 
 Close a challenge. Sets the project `Status` annotation to `Closed`, downgrades
@@ -137,6 +155,26 @@ cnb-tools challenge close PROJECT_ID
 Replace the following:
 
 - _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+### `stats`
+
+Show basic statistics for a challenge: number of registered participants,
+registered teams, evaluation queues, total submissions (fetched in parallel
+across all queues), and discussion thread count.
+
+```bash
+cnb-tools challenge stats PROJECT_ID [--json]
+```
+
+Replace the following:
+
+- _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--json` | boolean | Output raw JSON instead of formatted text | False
 
 ---
 

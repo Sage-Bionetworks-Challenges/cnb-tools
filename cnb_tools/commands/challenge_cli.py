@@ -6,6 +6,7 @@ Example:
     $ cnb-tools challenge --help
 """
 
+import dataclasses
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -14,7 +15,7 @@ from typing import Optional
 from typing_extensions import Annotated
 import typer
 
-from cnb_tools.modules import challenge, new_challenge, permissions
+from cnb_tools.modules import challenge, new_challenge, participant, permissions, queue
 from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 app = typer.Typer()
@@ -204,6 +205,31 @@ def teams(
 
 
 @app.command()
+def queues(
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
+):
+    """List all evaluation queues for a challenge project."""
+    try:
+        evaluations = queue.get_evaluations_by_project(project_id)
+    except UnknownSynapseID as err:
+        sys.exit(err)
+    if not evaluations:
+        typer.echo(f"No evaluation queues found for {project_id}.")
+        return
+    if as_json:
+        typer.echo(json.dumps([dataclasses.asdict(ev) for ev in evaluations], indent=2))
+    else:
+        for ev in evaluations:
+            typer.echo(f"{ev.id}  {ev.name}")
+
+
+@app.command()
 def close(
     project_id: Annotated[
         str, typer.Argument(help="Synapse ID of the challenge project to close")
@@ -218,3 +244,78 @@ def close(
     """
     new_challenge.close_challenge(project_id)
     typer.echo(f"\u2705 Challenge {project_id} is now closed.")
+
+
+@app.command()
+def stats(
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
+    as_json: Annotated[
+        bool,
+        typer.Option("--json", help="Output raw JSON instead of formatted text"),
+    ] = False,
+):
+    """Show basic statistics for a challenge.
+
+    Reports registered participants, registered teams, evaluation queues,
+    total submissions across all queues (fetched in parallel), and
+    discussion thread count.
+    """
+    syn = get_synapse_client()
+
+    try:
+        chal = challenge.get_challenge(project_id)
+    except UnknownSynapseID as err:
+        sys.exit(err)
+
+    challenge_id = chal["id"]
+    participant_team_id = chal["participantTeamId"]
+
+    num_participants = participant.get_team_member_count(participant_team_id)
+    num_teams = len(challenge.get_registered_teams(challenge_id))
+
+    try:
+        evaluations = queue.get_evaluations_by_project(project_id)
+    except UnknownSynapseID:
+        evaluations = []
+    num_queues = len(evaluations)
+
+    def _count_submissions(ev) -> int:
+        return sum(1 for _ in syn.getSubmissions(ev.id))
+
+    if evaluations:
+        with ThreadPoolExecutor(max_workers=min(8, len(evaluations))) as pool:
+            num_submissions = sum(pool.map(_count_submissions, evaluations))
+    else:
+        num_submissions = 0
+
+    try:
+        forum = syn.restGET(f"/entity/{project_id}/forum")
+        thread_resp = syn.restGET(
+            f"/forum/{forum['id']}/threads",
+            params={"limit": 1, "filter": "NO_FILTER"},
+        )
+        num_threads: int | None = thread_resp.get("totalNumberOfResults", 0)
+    except Exception:
+        num_threads = None
+
+    if as_json:
+        result: dict = {
+            "project_id": project_id,
+            "registered_participants": num_participants,
+            "registered_teams": num_teams,
+            "evaluation_queues": num_queues,
+            "total_submissions": num_submissions,
+            "discussion_threads": num_threads,
+        }
+        typer.echo(json.dumps(result, indent=2))
+    else:
+        typer.echo(f"Registered participants:  {num_participants}")
+        typer.echo(f"Registered teams:         {num_teams}")
+        typer.echo(f"Evaluation queues:        {num_queues}")
+        typer.echo(f"Total submissions:        {num_submissions}")
+        typer.echo(
+            f"Discussion threads:       "
+            f"{num_threads if num_threads is not None else 'N/A'}"
+        )

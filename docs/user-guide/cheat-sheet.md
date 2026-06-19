@@ -27,10 +27,11 @@ get_registered_teams(challenge_id)         # list all registered teams
 ### Queue
 
 ```python
-from cnb_tools import get_evaluation, get_evaluation_ids_by_project, create_evaluation, create_evaluation_round
+from cnb_tools import get_evaluation, get_evaluation_ids_by_project, get_evaluations_by_project, create_evaluation, create_evaluation_round
 
 get_evaluation(evaluation_id)                        # get queue details
 get_evaluation_ids_by_project(project_id)            # list all queue IDs for a project
+get_evaluations_by_project(project_id)               # list all queue objects for a project
 create_evaluation(name, description, project_id)     # create a new queue
 create_evaluation_round(evaluation_id, ...)          # add a submission round
 ```

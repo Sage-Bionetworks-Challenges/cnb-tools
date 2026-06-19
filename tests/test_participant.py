@@ -112,3 +112,28 @@ class TestDisableTeamEmail:
         acl = json.loads(mock_syn.restPUT.call_args[0][1])
         other_entry = next(e for e in acl["resourceAccess"] if e["principalId"] == 456)
         assert "SEND_MESSAGE" in other_entry["accessType"]
+
+
+class TestGetTeamMemberCount:
+    """Tests for get_team_member_count function"""
+
+    @patch("cnb_tools.modules.participant.get_synapse_client")
+    def test_returns_member_count(self, mock_get_client, mock_syn):
+        """Test successfully retrieving a team's member count"""
+        mock_get_client.return_value = mock_syn
+        mock_syn.restGET.return_value = {"count": 42}
+
+        result = participant.get_team_member_count(123)
+
+        mock_syn.restGET.assert_called_once_with("/teamMembers/count/123")
+        assert result == 42
+
+    @patch("cnb_tools.modules.participant.get_synapse_client")
+    def test_returns_zero_when_count_missing(self, mock_get_client, mock_syn):
+        """Test returns 0 when the API response has no count key"""
+        mock_get_client.return_value = mock_syn
+        mock_syn.restGET.return_value = {}
+
+        result = participant.get_team_member_count(123)
+
+        assert result == 0

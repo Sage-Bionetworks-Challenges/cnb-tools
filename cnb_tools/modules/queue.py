@@ -55,6 +55,31 @@ def get_evaluation_ids_by_project(project_id: str) -> list[str]:
     return [ev.id for ev in evaluations if ev.id]
 
 
+def get_evaluations_by_project(project_id: str) -> list[Evaluation]:
+    """Return all evaluation queues linked to a Synapse project.
+
+    Tip: Example Use Case
+      Inspect all queues for a challenge project, e.g. to display their
+      names and IDs before running a bulk operation.
+
+    Args:
+      project_id: Synapse ID of the challenge project.
+
+    Returns:
+      List of ``Evaluation`` objects.
+
+    Raises:
+      UnknownSynapseID: If the project ID is invalid.
+    """
+    get_synapse_client()  # ensure authentication
+    try:
+        return list(Evaluation.get_evaluations_by_project(project_id=project_id))
+    except SynapseHTTPError as err:
+        raise UnknownSynapseID(
+            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+        ) from err
+
+
 def get_challenge_name_from_evaluation(evaluation_id: int) -> str:
     """Get the challenge name for an evaluation queue.
 
