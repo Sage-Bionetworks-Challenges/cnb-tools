@@ -9,7 +9,7 @@ import json
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Evaluation
 
-from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 
 def get_evaluation(evaluation_id: int) -> Evaluation:
@@ -33,7 +33,7 @@ def get_evaluation(evaluation_id: int) -> Evaluation:
         return Evaluation(id=str(evaluation_id)).get()
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the ID and try again."
         ) from err
 
 
@@ -76,7 +76,7 @@ def get_evaluations_by_project(project_id: str) -> list[Evaluation]:
         return list(Evaluation.get_evaluations_by_project(project_id=project_id))
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the ID and try again."
         ) from err
 
 
@@ -103,8 +103,12 @@ def create_evaluation(
     name: str,
     description: str,
     project_id: str,
-    submission_instructions_message: str = "Please see the challenge wiki for submission instructions.",
-    submission_receipt_message: str = "Your submission has been received and is queued for evaluation.",
+    submission_instructions_message: str = (
+        "Please see the challenge wiki for submission instructions."
+    ),
+    submission_receipt_message: str = (
+        "Your submission has been received and is queued for evaluation."
+    ),
 ) -> Evaluation:
     """Create and store a new evaluation queue on a Synapse project.
 
@@ -116,8 +120,10 @@ def create_evaluation(
       name: Queue name.
       description: Queue description.
       project_id: Synapse ID of the parent project.
-      submission_instructions_message: Instructions shown to submitters. Must be a non-empty string.
-      submission_receipt_message: Message shown to submitters after submission. Must be a non-empty string.
+      submission_instructions_message: Instructions shown to submitters.
+        Must be a non-empty string.
+      submission_receipt_message: Message shown to submitters after submission.
+        Must be a non-empty string.
 
     Returns:
       The newly created ``Evaluation`` object.
@@ -127,8 +133,10 @@ def create_evaluation(
         name=name,
         description=description,
         content_source=project_id,
-        submission_instructions_message=submission_instructions_message,  # TODO: this should be optional, remove once synapseclient supports that
-        submission_receipt_message=submission_receipt_message,  # TODO: this should be optional, remove once synapseclient supports that
+        # TODO: make optional once synapseclient supports it
+        submission_instructions_message=submission_instructions_message,
+        # TODO: make optional once synapseclient supports it
+        submission_receipt_message=submission_receipt_message,
     ).store()
 
 

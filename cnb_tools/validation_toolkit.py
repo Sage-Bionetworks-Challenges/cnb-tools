@@ -1,9 +1,7 @@
 from pandas import Series
 
 
-def check_missing_keys(
-    gold_col: Series, pred_col: Series, verbose: bool = False
-) -> str:
+def check_missing_keys(gold_col: Series, pred_col: Series, verbose: bool = False) -> str:
     """Check for missing keys.
 
     Tip: Example Use Case
@@ -28,9 +26,7 @@ def check_missing_keys(
     return error
 
 
-def check_unknown_keys(
-    gold_col: Series, pred_col: Series, verbose: bool = False
-) -> str:
+def check_unknown_keys(gold_col: Series, pred_col: Series, verbose: bool = False) -> str:
     """Check for unknown keys.
 
     Tip: Example Use Case
@@ -152,9 +148,7 @@ def check_not_constant(pred_col: Series) -> str:
     return ""
 
 
-def check_values_range(
-    pred_col: Series, min_val: int | float = 0, max_val: int | float = 1
-) -> str:
+def check_values_range(pred_col: Series, min_val: int | float = 0, max_val: int | float = 1) -> str:
     """Check that values are between min and max values, inclusive.
 
     Tip: Example Use Case

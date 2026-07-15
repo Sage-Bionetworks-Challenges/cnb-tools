@@ -3,8 +3,8 @@ import importlib.metadata
 __version__ = importlib.metadata.version("cnb-tools")
 
 from cnb_tools.modules.annotation import (
-    get_submission_status,
     format_annotations,
+    get_submission_status,
     update_annotations,
     update_annotations_from_file,
     update_legacy_annotations,
@@ -12,20 +12,22 @@ from cnb_tools.modules.annotation import (
     update_submission_status,
 )
 from cnb_tools.modules.challenge import (
-    get_challenge,
     create_challenge,
     delete_challenge,
+    get_challenge,
     get_registered_teams,
 )
 from cnb_tools.modules.client import (
-    get_synapse_client,
     SynapseLoginError,
     UnknownSynapseID,
+    get_synapse_client,
 )
 
 try:
     from cnb_tools.modules.new_challenge import (
         close_challenge,
+    )
+    from cnb_tools.modules.new_challenge import (
         main as create_new_challenge,
     )
 except ModuleNotFoundError as err:
@@ -48,35 +50,35 @@ except ModuleNotFoundError as err:
 
 
 from cnb_tools.modules.participant import (
-    get_participant_name,
     create_team,
-    remove_team_member,
+    disable_team_email,
+    get_participant_name,
     get_team_member_count,
     lock_team,
-    disable_team_email,
+    remove_team_member,
 )
 from cnb_tools.modules.permissions import (
     set_entity_permissions,
     set_evaluation_permissions,
 )
 from cnb_tools.modules.queue import (
+    create_evaluation,
+    create_evaluation_round,
+    get_challenge_name_from_evaluation,
     get_evaluation,
     get_evaluation_ids_by_project,
     get_evaluations_by_project,
-    get_challenge_name_from_evaluation,
-    create_evaluation,
-    create_evaluation_round,
 )
 from cnb_tools.modules.submission import (
-    get_submission,
+    batch_download_submissions,
     delete_submission,
     download_submission,
-    batch_download_submissions,
-    get_submitter_name,
     get_challenge_name,
-    print_submission_info,
-    get_submission_contributors,
     get_contributors,
+    get_submission,
+    get_submission_contributors,
+    get_submitter_name,
+    print_submission_info,
 )
 
 __all__ = [

@@ -30,9 +30,7 @@ class TestGetChallenge:
         assert result["participantTeamId"] == "99"
 
     @patch("cnb_tools.modules.challenge.get_synapse_client")
-    def test_raises_unknown_synapse_id_when_not_a_challenge(
-        self, mock_get_client, mock_syn
-    ):
+    def test_raises_unknown_synapse_id_when_not_a_challenge(self, mock_get_client, mock_syn):
         """Test error raised when project has no associated challenge"""
         mock_get_client.return_value = mock_syn
         mock_response = Mock()
@@ -90,9 +88,7 @@ class TestGetRegisteredTeams:
     def test_returns_list_of_team_records(self, mock_get_client, mock_syn):
         """Test successfully listing registered teams"""
         mock_get_client.return_value = mock_syn
-        mock_syn._GET_paginated.return_value = iter(
-            [{"teamId": "10"}, {"teamId": "20"}]
-        )
+        mock_syn._GET_paginated.return_value = iter([{"teamId": "10"}, {"teamId": "20"}])
 
         result = challenge.get_registered_teams("1")
 

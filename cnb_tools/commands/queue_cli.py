@@ -10,8 +10,9 @@ import dataclasses
 import json
 import sys
 from typing import Optional
-from typing_extensions import Annotated
+
 import typer
+from typing_extensions import Annotated
 
 from cnb_tools.modules import queue
 from cnb_tools.modules.client import UnknownSynapseID
@@ -64,15 +65,11 @@ def add_round(
     ] = None,
     weekly_limit: Annotated[
         Optional[int],
-        typer.Option(
-            "--weekly", help="Max submissions per participant per calendar week"
-        ),
+        typer.Option("--weekly", help="Max submissions per participant per calendar week"),
     ] = None,
     monthly_limit: Annotated[
         Optional[int],
-        typer.Option(
-            "--monthly", help="Max submissions per participant per calendar month"
-        ),
+        typer.Option("--monthly", help="Max submissions per participant per calendar month"),
     ] = None,
     total_limit: Annotated[
         Optional[int],

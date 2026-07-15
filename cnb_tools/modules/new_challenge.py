@@ -13,8 +13,7 @@ from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Folder, Project
 
 from cnb_tools.modules import challenge as challenge_module
-from cnb_tools.modules import participant
-from cnb_tools.modules import permissions
+from cnb_tools.modules import participant, permissions
 from cnb_tools.modules import queue as queue_module
 from cnb_tools.modules.client import get_synapse_client
 
@@ -155,7 +154,8 @@ def main(
     - **Evaluation queues**: one queue per task.
     - **Data folders**: ``Data/`` (Training, Validation — open to participants)
       and ``Private Data/`` (Groundtruth, Test — organizers only).
-    - **Wiki**: copied from the portal template and updated with the real challenge/team/project IDs.
+    - **Wiki**: copied from the portal template and updated with the real
+      challenge/team/project IDs.
     - **Portal registration** (optional): adds the project to the Curated Challenges table.
 
     Tip: Example Use Case

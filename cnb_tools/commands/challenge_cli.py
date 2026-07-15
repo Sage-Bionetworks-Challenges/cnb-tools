@@ -10,10 +10,10 @@ import dataclasses
 import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
-
 from typing import Optional
-from typing_extensions import Annotated
+
 import typer
+from typing_extensions import Annotated
 
 from cnb_tools.modules import challenge, new_challenge, participant, permissions, queue
 from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
@@ -66,7 +66,7 @@ def create(
         live_site=live_site,
         add_to_portal=not no_portal,
     )
-    typer.echo(f"✅ Challenge creation complete:")
+    typer.echo("✅ Challenge creation complete:")
     typer.echo(f"   Live project synID:    {result['live_project_synid']}")
     typer.echo(f"   Participants teamID:    {result['participant_teamid']}")
     typer.echo(f"   Organizers teamID:      {result['organizer_teamid']}")
@@ -74,18 +74,14 @@ def create(
 
 @app.command()
 def launch(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
 ):
     """Launch a challenge by making the project publicly viewable.
 
     Grants READ access to all authenticated Synapse users on the project
     and sets the project's Status annotation to 'Active'.
     """
-    permissions.set_entity_permissions(
-        project_id, _AUTHENTICATED_USERS, permission_level="view"
-    )
+    permissions.set_entity_permissions(project_id, _AUTHENTICATED_USERS, permission_level="view")
     permissions.set_entity_permissions(project_id, _PUBLIC, permission_level="view")
     syn = get_synapse_client()
     entity = syn.get(project_id)
@@ -117,9 +113,7 @@ def register(
 
 @app.command()
 def unregister(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
 ):
     """Unregister a Synapse project as a challenge.
 
@@ -136,9 +130,7 @@ def unregister(
 
 @app.command()
 def get(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -159,9 +151,7 @@ def get(
 
 @app.command()
 def teams(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -206,9 +196,7 @@ def teams(
 
 @app.command()
 def queues(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -231,9 +219,7 @@ def queues(
 
 @app.command()
 def close(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project to close")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project to close")],
 ):
     """Close a challenge.
 
@@ -248,9 +234,7 @@ def close(
 
 @app.command()
 def stats(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -315,7 +299,4 @@ def stats(
         typer.echo(f"Registered teams:         {num_teams}")
         typer.echo(f"Evaluation queues:        {num_queues}")
         typer.echo(f"Total submissions:        {num_submissions}")
-        typer.echo(
-            f"Discussion threads:       "
-            f"{num_threads if num_threads is not None else 'N/A'}"
-        )
+        typer.echo(f"Discussion threads:       {num_threads if num_threads is not None else 'N/A'}")
