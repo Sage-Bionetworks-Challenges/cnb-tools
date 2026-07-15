@@ -1,6 +1,5 @@
 .github
 .gitignore
-.pep8speaks.yml
 
 dist/
 docs/
