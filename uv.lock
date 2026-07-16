@@ -196,7 +196,7 @@ wheels = [
 
 [[package]]
 name = "cnb-tools"
-version = "0.5.0"
+version = "0.5.1"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
@@ -229,7 +229,7 @@ test = [
 requires-dist = [
     { name = "click", specifier = ">=8.3.3" },
     { name = "pandas", specifier = ">=2.0.3" },
-    { name = "synapseclient", specifier = ">=4.7.0" },
+    { name = "synapseclient", specifier = ">=4.13.0" },
     { name = "typer", specifier = ">=0.12.0" },
 ]
 

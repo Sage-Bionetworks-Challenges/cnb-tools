@@ -1,6 +1,6 @@
 [project]
 name = "cnb-tools"
-version = "0.5.0"
+version = "0.5.1"
 description = "Convenience tools/functions for challenges and benchmarking on Synapse.org"
 license = {text = "Apache-2.0"}
 authors = [
@@ -29,7 +29,7 @@ classifiers = [
 ]
 dependencies = [
     "typer>=0.12.0",
-    "synapseclient>=4.7.0",
+    "synapseclient>=4.13.0",
     "click>=8.3.3",
     "pandas>=2.0.3",
 ]
