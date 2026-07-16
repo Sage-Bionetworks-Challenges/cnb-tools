@@ -13,9 +13,7 @@ class TestGetSubmissionStatus:
     """Tests for get_submission_status function"""
 
     @patch("cnb_tools.modules.annotation.get_synapse_client")
-    def test_get_submission_status_success(
-        self, mock_get_client, mock_syn, mock_submission_status
-    ):
+    def test_get_submission_status_success(self, mock_get_client, mock_syn, mock_submission_status):
         """Test successfully getting submission status"""
         mock_get_client.return_value = mock_syn
         mock_syn.getSubmissionStatus.return_value = mock_submission_status
@@ -31,9 +29,7 @@ class TestGetSubmissionStatus:
         mock_get_client.return_value = mock_syn
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Submission not found"}
-        mock_syn.getSubmissionStatus.side_effect = SynapseHTTPError(
-            response=mock_response
-        )
+        mock_syn.getSubmissionStatus.side_effect = SynapseHTTPError(response=mock_response)
 
         with pytest.raises(UnknownSynapseID) as exc_info:
             annotation.get_submission_status(99999)
@@ -142,9 +138,7 @@ class TestSubmissionAnnotationsToDict:
                 {"key": "public_key", "value": "pub_val", "isPrivate": False},
             ]
         }
-        result = annotation._submission_annotations_to_dict(
-            annotations, is_private=True
-        )
+        result = annotation._submission_annotations_to_dict(annotations, is_private=True)
         assert result == {"score": "0.95"}
 
     def test_returns_public_annotations(self):
@@ -155,9 +149,7 @@ class TestSubmissionAnnotationsToDict:
                 {"key": "public_key", "value": "pub_val", "isPrivate": False},
             ]
         }
-        result = annotation._submission_annotations_to_dict(
-            annotations, is_private=False
-        )
+        result = annotation._submission_annotations_to_dict(annotations, is_private=False)
         assert result == {"public_key": "pub_val"}
 
     def test_skips_scope_and_object_id(self):
@@ -167,9 +159,7 @@ class TestSubmissionAnnotationsToDict:
             "objectId": [{"key": "objectId", "value": "67890", "isPrivate": True}],
             "stringAnnos": [{"key": "score", "value": "0.95", "isPrivate": True}],
         }
-        result = annotation._submission_annotations_to_dict(
-            annotations, is_private=True
-        )
+        result = annotation._submission_annotations_to_dict(annotations, is_private=True)
         assert result == {"score": "0.95"}
 
     def test_empty_annotations(self):
@@ -184,9 +174,7 @@ class TestSubmissionAnnotationsToDict:
             "longAnnos": [{"key": "rank", "value": 1, "isPrivate": True}],
             "doubleAnnos": [{"key": "score", "value": 0.95, "isPrivate": True}],
         }
-        result = annotation._submission_annotations_to_dict(
-            annotations, is_private=True
-        )
+        result = annotation._submission_annotations_to_dict(annotations, is_private=True)
         assert result == {"status": "pass", "rank": 1, "score": 0.95}
 
 
@@ -264,9 +252,7 @@ class TestUpdateLegacyAnnotations:
         """Test that new annotations are merged with existing ones"""
         mock_get_client.return_value = mock_syn
         mock_status = MagicMock()
-        existing = {
-            "stringAnnos": [{"key": "old_key", "value": "old_val", "isPrivate": True}]
-        }
+        existing = {"stringAnnos": [{"key": "old_key", "value": "old_val", "isPrivate": True}]}
         mock_status.get.return_value = existing
         mock_get_status.return_value = mock_status
         mock_to_annots.return_value = {}

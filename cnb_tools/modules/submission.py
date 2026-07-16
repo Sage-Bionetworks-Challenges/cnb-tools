@@ -9,8 +9,8 @@ from pathlib import Path
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Evaluation, Submission, SubmissionBundle
 
-from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
 from cnb_tools.modules import annotation
+from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 
 def get_submission(submission_id: int) -> Submission:
@@ -34,7 +34,7 @@ def get_submission(submission_id: int) -> Submission:
         return Submission(id=str(submission_id)).get()
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the ID and try again."
         ) from err
 
 
@@ -126,7 +126,7 @@ def get_challenge_name(evaluation_id: int) -> str:
         return syn.get(parent_id).name
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the ID and try again."
         ) from err
 
 
@@ -251,9 +251,7 @@ def batch_download_submissions(
             )
             continue
 
-        downloaded = syn.getSubmission(
-            submission_id, downloadLocation=str(download_dir)
-        )
+        downloaded = syn.getSubmission(submission_id, downloadLocation=str(download_dir))
         original = Path(downloaded.filePath)
         renamed = download_dir / f"{submission_id}{original.suffix}"
         original.rename(renamed)

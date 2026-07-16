@@ -8,8 +8,9 @@ import pandas as pd
 import pytest
 from synapseclient.models import (
     Evaluation as ModelEvaluation,
+)
+from synapseclient.models import (
     Submission as ModelSubmission,
-    SubmissionStatus as ModelSubmissionStatus,
 )
 
 
@@ -24,12 +25,14 @@ def mock_syn():
     """Fixture for mocked Synapse client."""
     return MagicMock()
 
+
 # def mock_submission_status():
 #     """Fixture for mocked SubmissionStatus."""
 #     status = MagicMock(spec=ModelSubmissionStatus)
 #     status.status = "SCORED"
 #     status.submission_annotations = {"score": 0.95, "passed": True}
 #     return status
+
 
 @pytest.fixture
 def mock_submission_status():

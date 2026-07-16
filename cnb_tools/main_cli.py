@@ -7,8 +7,9 @@ Examples:
 """
 
 from typing import Optional
-from typing_extensions import Annotated
+
 import typer
+from typing_extensions import Annotated
 
 from cnb_tools import __version__
 from cnb_tools.commands import (

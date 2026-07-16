@@ -8,14 +8,14 @@ Example:
 
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from enum import Enum
 from pathlib import Path
 
-from enum import Enum
-from typing_extensions import Annotated
 import typer
+from typing_extensions import Annotated
 
-from cnb_tools.modules.client import UnknownSynapseID
 from cnb_tools.modules import annotation, submission
+from cnb_tools.modules.client import UnknownSynapseID
 
 
 class Status(str, Enum):
@@ -32,9 +32,7 @@ app = typer.Typer()
 
 @app.command()
 def annotate(
-    submission_ids: Annotated[
-        list[int], typer.Argument(help="One or more submission ID(s)")
-    ],
+    submission_ids: Annotated[list[int], typer.Argument(help="One or more submission ID(s)")],
     json_file: Annotated[
         Path,
         typer.Option(
@@ -84,9 +82,7 @@ def annotate(
                 annotation.update_legacy_annotations_from_file(
                     submission_id, str(json_file), verbose=verbose
                 )
-            annotation.update_annotations_from_file(
-                submission_id, str(json_file), verbose
-            )
+            annotation.update_annotations_from_file(submission_id, str(json_file), verbose)
             return (submission_id, None)
         except UnknownSynapseID as err:
             return (submission_id, err)
@@ -107,9 +103,7 @@ def annotate(
 
 @app.command()
 def change_status(
-    submission_ids: Annotated[
-        list[int], typer.Argument(help="One or more submission ID(s)")
-    ],
+    submission_ids: Annotated[list[int], typer.Argument(help="One or more submission ID(s)")],
     new_status: Annotated[Status, typer.Argument()],
     skip_errors: Annotated[
         bool,
@@ -232,8 +226,8 @@ def get(
 ):
     """Get information about a submission"""
     if as_json:
-        import json
         import dataclasses
+        import json
 
         sub = submission.get_submission(submission_id)
         typer.echo(json.dumps(dataclasses.asdict(sub), indent=2, default=str))
@@ -257,11 +251,7 @@ def get_contributors(
     sub = submission.get_submission(submission_id)
 
     if sub.team_id:
-        team = (
-            submission.get_submitter_name(sub.team_id)
-            if human_readable
-            else sub.team_id
-        )
+        team = submission.get_submitter_name(sub.team_id) if human_readable else sub.team_id
         typer.echo(f"Team: {team}\n")
 
     contributors = submission.get_submission_contributors(submission_id)
@@ -271,9 +261,7 @@ def get_contributors(
             principal_ids = [user.get("principalId") for user in contributors]
             with ThreadPoolExecutor(max_workers=min(8, len(principal_ids))) as pool:
                 names = list(
-                    pool.map(
-                        lambda p: submission.get_submitter_name(int(p)), principal_ids
-                    )
+                    pool.map(lambda p: submission.get_submitter_name(int(p)), principal_ids)
                 )
             for name in names:
                 typer.echo(f"  {name}")
@@ -317,9 +305,7 @@ def batch_download(
 
 @app.command()
 def reset(
-    submission_ids: Annotated[
-        list[int], typer.Argument(help="One or more submission ID(s)")
-    ],
+    submission_ids: Annotated[list[int], typer.Argument(help="One or more submission ID(s)")],
     skip_errors: Annotated[
         bool,
         typer.Option(

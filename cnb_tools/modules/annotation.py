@@ -9,13 +9,12 @@ import json
 # TODO: Revert to OOP approach once synapseclient bug is fixed.
 # See: https://github.com/Sage-Bionetworks-Challenges/cnb-tools/issues/43
 # from synapseclient.models import SubmissionStatus
-
 from synapseclient import SubmissionStatus
 from synapseclient.annotations import to_submission_status_annotations
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.core.retry import with_retry
 
-from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 
 def get_submission_status(submission_id: int) -> SubmissionStatus:
@@ -42,7 +41,7 @@ def get_submission_status(submission_id: int) -> SubmissionStatus:
         return syn.getSubmissionStatus(submission_id)
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. " "Check the ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the ID and try again."
         ) from err
 
 
@@ -115,8 +114,7 @@ def _submission_annotations_to_dict(annotations: dict, is_private: bool = True) 
         annot["key"]: annot["value"]
         for annotation_type in annotations
         for annot in annotations[annotation_type]
-        if annotation_type not in ["scopeId", "objectId"]
-        and annot["isPrivate"] == is_private
+        if annotation_type not in ["scopeId", "objectId"] and annot["isPrivate"] == is_private
     }
 
 
@@ -148,12 +146,8 @@ def update_legacy_annotations(
     status = get_submission_status(submission_id)
 
     existing_annots = status.get("annotations", {})
-    private_annotations = _submission_annotations_to_dict(
-        existing_annots, is_private=True
-    )
-    public_annotations = _submission_annotations_to_dict(
-        existing_annots, is_private=False
-    )
+    private_annotations = _submission_annotations_to_dict(existing_annots, is_private=True)
+    public_annotations = _submission_annotations_to_dict(existing_annots, is_private=False)
 
     if is_private:
         private_annotations.update(new_annotations)
@@ -251,9 +245,7 @@ def update_legacy_annotations_from_file(
     }
 
     return with_retry(
-        lambda: update_legacy_annotations(
-            submission_id, new_annotations, is_private, verbose
-        ),
+        lambda: update_legacy_annotations(submission_id, new_annotations, is_private, verbose),
         wait=3,
         retries=10,
         retry_status_codes=[412, 429, 500, 502, 503, 504],

@@ -13,8 +13,7 @@ from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Folder, Project
 
 from cnb_tools.modules import challenge as challenge_module
-from cnb_tools.modules import participant
-from cnb_tools.modules import permissions
+from cnb_tools.modules import participant, permissions
 from cnb_tools.modules import queue as queue_module
 from cnb_tools.modules.client import get_synapse_client
 
@@ -109,9 +108,7 @@ def _create_data_folders(
     public_folder = Folder(name="Data", parent_id=project_id)
     public_folder = public_folder.store()
     logger.info(f"Folder created: {public_folder.name} ({public_folder.id})")
-    permissions.set_entity_permissions(
-        public_folder.id, organizer_team_id, permission_level="edit"
-    )
+    permissions.set_entity_permissions(public_folder.id, organizer_team_id, permission_level="edit")
     permissions.set_entity_permissions(
         public_folder.id, participant_team_id, permission_level="download"
     )
@@ -155,7 +152,8 @@ def main(
     - **Evaluation queues**: one queue per task.
     - **Data folders**: ``Data/`` (Training, Validation — open to participants)
       and ``Private Data/`` (Groundtruth, Test — organizers only).
-    - **Wiki**: copied from the portal template and updated with the real challenge/team/project IDs.
+    - **Wiki**: copied from the portal template and updated with the real
+      challenge/team/project IDs.
     - **Portal registration** (optional): adds the project to the Curated Challenges table.
 
     Tip: Example Use Case
@@ -210,9 +208,7 @@ def main(
             description=f"Task {i + 1} Submission",
             project_id=project_live.id,
         )
-        permissions.set_evaluation_permissions(
-            ev.id, SAGE_CNB_TEAM, permission_level="admin"
-        )
+        permissions.set_evaluation_permissions(ev.id, SAGE_CNB_TEAM, permission_level="admin")
 
     _create_data_folders(
         project_live.id,
@@ -283,6 +279,4 @@ def close_challenge(project_id: str) -> None:
 
     # 3. Lock the participant team
     participant.lock_team(participant_team_id)
-    logger.info(
-        f"Participant team {participant_team_id} locked (no public join or requests)"
-    )
+    logger.info(f"Participant team {participant_team_id} locked (no public join or requests)")

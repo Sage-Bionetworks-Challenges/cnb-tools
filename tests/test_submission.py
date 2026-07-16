@@ -14,9 +14,7 @@ class TestGetSubmission:
 
     @patch("cnb_tools.modules.submission.Submission")
     @patch("cnb_tools.modules.submission.get_synapse_client")
-    def test_get_submission_success(
-        self, mock_get_client, MockSubmission, mock_submission_file
-    ):
+    def test_get_submission_success(self, mock_get_client, MockSubmission, mock_submission_file):
         """Test successfully getting a submission"""
         MockSubmission.return_value.get.return_value = mock_submission_file
 
@@ -32,9 +30,7 @@ class TestGetSubmission:
         """Test error handling for invalid submission ID"""
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Submission not found"}
-        MockSubmission.return_value.get.side_effect = SynapseHTTPError(
-            response=mock_response
-        )
+        MockSubmission.return_value.get.side_effect = SynapseHTTPError(response=mock_response)
 
         with pytest.raises(UnknownSynapseID) as exc_info:
             submission.get_submission(99999)
@@ -200,9 +196,7 @@ class TestGetSubmissionContributors:
     """Tests for get_submission_contributors function"""
 
     @patch("cnb_tools.modules.submission.get_submission")
-    def test_returns_contributor_ids(
-        self, mock_get_sub, mock_submission_with_contributors
-    ):
+    def test_returns_contributor_ids(self, mock_get_sub, mock_submission_with_contributors):
         """Test that contributor principal IDs are returned"""
         mock_get_sub.return_value = mock_submission_with_contributors
 
@@ -215,9 +209,7 @@ class TestGetSubmissionContributors:
         mock_get_sub.assert_called_once_with(12345)
 
     @patch("cnb_tools.modules.submission.get_submission")
-    def test_returns_empty_list_when_no_contributors(
-        self, mock_get_sub, mock_submission_file
-    ):
+    def test_returns_empty_list_when_no_contributors(self, mock_get_sub, mock_submission_file):
         """Test that an empty list is returned when there are no contributors"""
         mock_get_sub.return_value = mock_submission_file
 
@@ -286,16 +278,12 @@ class TestBatchDownloadSubmissions:
 
     @patch("cnb_tools.modules.submission.get_submitter_name")
     @patch("cnb_tools.modules.submission.get_synapse_client")
-    def test_filters_by_status(
-        self, mock_get_client, mock_get_submitter, mock_syn, tmp_path
-    ):
+    def test_filters_by_status(self, mock_get_client, mock_get_submitter, mock_syn, tmp_path):
         """Test that the status filter is passed to getSubmissions"""
         mock_get_client.return_value = mock_syn
         mock_syn.getSubmissions.return_value = []
 
-        submission.batch_download_submissions(
-            98765, dest=str(tmp_path), status="SCORED"
-        )
+        submission.batch_download_submissions(98765, dest=str(tmp_path), status="SCORED")
 
         mock_syn.getSubmissions.assert_called_once_with(98765, status="SCORED")
 

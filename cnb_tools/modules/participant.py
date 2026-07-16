@@ -7,8 +7,8 @@ teams and participants in Synapse challenges.
 import json
 import sys
 
-from synapseclient.models import Team, UserProfile
 from synapseclient.core.exceptions import SynapseHTTPError
+from synapseclient.models import Team, UserProfile
 
 from cnb_tools.modules.client import get_synapse_client
 
@@ -35,9 +35,7 @@ def get_participant_name(participant_id: int) -> str:
         return profile.user_name or ""
 
 
-def create_team(
-    name: str, description: str | None = None, can_public_join: bool = False
-) -> Team:
+def create_team(name: str, description: str | None = None, can_public_join: bool = False) -> Team:
     """Create a new team or return an existing team with the given name.
 
     Tip: Example Use Case

@@ -75,17 +75,12 @@ _OOP_CLASSES = {
 
 def _valid_entity_level(level: str) -> None:
     if level not in _ENTITY_PERMS:
-        raise ValueError(
-            f"permission_level must be one of {sorted(_ENTITY_PERMS)}. "
-            f"Got '{level}'."
-        )
+        raise ValueError(f"permission_level must be one of {sorted(_ENTITY_PERMS)}. Got '{level}'.")
 
 
 def _valid_eval_level(level: str) -> None:
     if level not in _EVAL_PERMS:
-        raise ValueError(
-            f"permission_level must be one of {sorted(_EVAL_PERMS)}. " f"Got '{level}'."
-        )
+        raise ValueError(f"permission_level must be one of {sorted(_EVAL_PERMS)}. Got '{level}'.")
 
 
 def set_entity_permissions(

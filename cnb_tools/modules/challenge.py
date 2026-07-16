@@ -9,7 +9,7 @@ import json
 
 from synapseclient.core.exceptions import SynapseHTTPError
 
-from cnb_tools.modules.client import get_synapse_client, UnknownSynapseID
+from cnb_tools.modules.client import UnknownSynapseID, get_synapse_client
 
 
 def get_challenge(project_id: str) -> dict:
@@ -34,8 +34,7 @@ def get_challenge(project_id: str) -> dict:
         return syn.restGET(f"/entity/{project_id}/challenge")
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
-            f"⛔ {err.response.json().get('reason')}. "
-            "Check the project ID and try again."
+            f"⛔ {err.response.json().get('reason')}. Check the project ID and try again."
         ) from err
 
 
