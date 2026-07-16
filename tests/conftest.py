@@ -12,6 +12,9 @@ from synapseclient.models import (
 from synapseclient.models import (
     Submission as ModelSubmission,
 )
+from synapseclient.models import (
+    SubmissionStatus as ModelSubmissionStatus,
+)
 
 
 def pytest_configure(config):
@@ -36,10 +39,10 @@ def mock_syn():
 
 @pytest.fixture
 def mock_submission_status():
-    """Fixture for mocked SubmissionStatus (legacy pre-OOP format)."""
-    status = MagicMock()
+    """Fixture for mocked SubmissionStatus (OOP model)."""
+    status = MagicMock(spec=ModelSubmissionStatus)
     status.status = "SCORED"
-    status.submissionAnnotations = {"score": 0.95, "passed": True}
+    status.submission_annotations = {"score": 0.95, "passed": True}
     return status
 
 
