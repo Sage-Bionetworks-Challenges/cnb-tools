@@ -6,6 +6,7 @@
 - Replace `pep8speaks` + `flake8` with `ruff` for linting and formatting
 - Bump `click` minimum to `>=8.3.3` to address CVE (PYSEC-2026-2132)
 - Bump `synapseclient` minimum to `>=4.13.0`
+- Revert `SubmissionStatus` to OOP model approach (upstream bug fixed in synapseclient v4.11.0)
 
 ## 0.5.0
 
