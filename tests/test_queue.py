@@ -14,9 +14,7 @@ class TestGetEvaluation:
 
     @patch("cnb_tools.modules.queue.Evaluation")
     @patch("cnb_tools.modules.queue.get_synapse_client")
-    def test_get_evaluation_success(
-        self, mock_get_client, MockEvaluation, mock_evaluation
-    ):
+    def test_get_evaluation_success(self, mock_get_client, MockEvaluation, mock_evaluation):
         """Test successfully getting an evaluation"""
         MockEvaluation.return_value.get.return_value = mock_evaluation
 
@@ -32,9 +30,7 @@ class TestGetEvaluation:
         """Test error handling for invalid evaluation ID"""
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Evaluation not found"}
-        MockEvaluation.return_value.get.side_effect = SynapseHTTPError(
-            response=mock_response
-        )
+        MockEvaluation.return_value.get.side_effect = SynapseHTTPError(response=mock_response)
 
         with pytest.raises(UnknownSynapseID) as exc_info:
             queue.get_evaluation(99999)
@@ -47,9 +43,7 @@ class TestGetEvaluationsByProject:
 
     @patch("cnb_tools.modules.queue.Evaluation")
     @patch("cnb_tools.modules.queue.get_synapse_client")
-    def test_returns_list_of_evaluations(
-        self, mock_get_client, MockEvaluation, mock_evaluation
-    ):
+    def test_returns_list_of_evaluations(self, mock_get_client, MockEvaluation, mock_evaluation):
         """Test successfully listing evaluations for a project"""
         MockEvaluation.get_evaluations_by_project.return_value = [mock_evaluation]
 
@@ -72,9 +66,7 @@ class TestGetEvaluationsByProject:
 
     @patch("cnb_tools.modules.queue.Evaluation")
     @patch("cnb_tools.modules.queue.get_synapse_client")
-    def test_raises_unknown_synapse_id_on_invalid_project(
-        self, mock_get_client, MockEvaluation
-    ):
+    def test_raises_unknown_synapse_id_on_invalid_project(self, mock_get_client, MockEvaluation):
         """Test error handling for invalid project ID"""
         mock_response = Mock()
         mock_response.json.return_value = {"reason": "Entity not found"}

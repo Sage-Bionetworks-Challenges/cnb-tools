@@ -162,9 +162,7 @@ def _to_week(date_str: str) -> str:
 
 @app.command()
 def submissions(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     weekly: Annotated[
         bool,
         typer.Option("--weekly", help="Group by ISO week instead of day"),
@@ -187,9 +185,7 @@ def submissions(
         typer.echo(f"No evaluation queues found for {project_id}.")
         return
 
-    console.print(
-        f"Found [bold]{len(evaluations)}[/bold] queue(s). Fetching submissions...\n"
-    )
+    console.print(f"Found [bold]{len(evaluations)}[/bold] queue(s). Fetching submissions...\n")
 
     all_dates: list[str] = []
 
@@ -241,9 +237,7 @@ def submissions(
 
 @app.command()
 def participants(
-    project_id: Annotated[
-        str, typer.Argument(help="Synapse ID of the challenge project")
-    ],
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
 ):
     """Show a breakdown of participants by organization type.
 
@@ -259,15 +253,11 @@ def participants(
         sys.exit(err)
 
     team_id = chal["participantTeamId"]
-    console.print(
-        f"Project [bold]{project_id}[/bold] → participant team [bold]{team_id}[/bold]"
-    )
+    console.print(f"Project [bold]{project_id}[/bold] → participant team [bold]{team_id}[/bold]")
 
     members = list(syn._GET_paginated(f"/teamMembers/{team_id}"))
     user_ids = [m["member"]["ownerId"] for m in members]
-    console.print(
-        f"Found [bold]{len(user_ids)}[/bold] member(s). Fetching profiles...\n"
-    )
+    console.print(f"Found [bold]{len(user_ids)}[/bold] member(s). Fetching profiles...\n")
 
     def _classify(uid: str) -> str:
         profile = UserProfile.from_id(user_id=int(uid))
