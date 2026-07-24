@@ -266,11 +266,12 @@ def stats(
     num_queues = len(evaluations)
 
     def _count_submissions(ev) -> int:
-        return sum(1 for _ in syn.getSubmissions(ev.id))
+        return syn.restGET(f"/evaluation/{ev.id}/submission/count")
 
     if evaluations:
         with ThreadPoolExecutor(max_workers=min(8, len(evaluations))) as pool:
-            num_submissions = sum(pool.map(_count_submissions, evaluations))
+            submissions_per_queue = list(pool.map(_count_submissions, evaluations))
+        num_submissions = sum(submissions_per_queue)
     else:
         num_submissions = 0
 
