@@ -28,10 +28,6 @@ from cnb_tools.modules.queue import get_evaluations_by_project
 
 app = typer.Typer()
 
-# ---------------------------------------------------------------------------
-# Participant classification
-# ---------------------------------------------------------------------------
-
 _ACADEMIA_KEYWORDS = {
     "university",
     "université",
@@ -135,11 +131,6 @@ def _classify_org(company: str, industry: str) -> str:
     return "Other"
 
 
-# ---------------------------------------------------------------------------
-# Submission trends helpers
-# ---------------------------------------------------------------------------
-
-
 def _fetch_submission_dates(syn, evaluation_id: str) -> list[str]:
     dates = []
     for sub in syn.getSubmissions(evaluation_id):
@@ -155,27 +146,22 @@ def _to_week(date_str: str) -> str:
     return f"{dt.isocalendar()[0]}-W{dt.isocalendar()[1]:02d}"
 
 
-# ---------------------------------------------------------------------------
-# Commands
-# ---------------------------------------------------------------------------
-
-
 @app.command()
 def submissions(
     project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
     weekly: Annotated[
         bool,
-        typer.Option("--weekly", help="Group by ISO week instead of day"),
+        typer.Option("--weekly", help="Summarize by week"),
     ] = False,
     ignore_empty: Annotated[
         bool,
         typer.Option("--ignore-empty", help="Hide rows with zero counts"),
     ] = False,
 ):
-    """Show a histogram of submissions over time.
+    """Summarize submissions over time.
 
     Fetches all submissions across every evaluation queue and prints a bar
-    chart grouped by day (default) or ISO week (--weekly).
+    chart grouped by day (default) or week (--weekly).
     """
     syn = get_synapse_client()
     console = Console()
@@ -237,7 +223,6 @@ def submissions(
         bar = "[green]" + "█" * filled + "[/green]"
         pct = f"{count / total * 100:.1f}"
         table.add_row(key, bar, str(count), pct)
-
     console.print(table)
 
 
@@ -249,10 +234,10 @@ def participants(
         typer.Option("--ignore-empty", help="Hide categories with zero participants"),
     ] = False,
 ):
-    """Show a breakdown of participants by organization type.
+    """Summarize a breakdown of participants by sector type.
 
     Classifies each participant based on the company and industry fields in
-    their Synapse profile using keyword matching. Results are estimates.
+    their Synapse profile using keyword matching. Results are estimates of sector type.
     """
     syn = get_synapse_client()
     console = Console()
@@ -310,7 +295,6 @@ def participants(
         bar = f"[{color}]" + "█" * filled + f"[/{color}]"
         pct = f"{count / total * 100:.1f}" if count > 0 else "0.0"
         table.add_row(f"[{color}]{category}[/{color}]", bar, str(count), pct)
-
     console.print(table)
     console.print(
         "[dim]Note: Categories are estimated using keyword matching on self-reported "
@@ -326,7 +310,7 @@ def queues(
         typer.Option("--ignore-empty", help="Hide queues with zero submissions"),
     ] = False,
 ):
-    """Show a breakdown of submissions per evaluation queue.
+    """Summarize a breakdown of submissions per evaluation queue.
 
     Fetches the submission count for each queue in parallel and prints a
     bar chart sorted by queue name.
@@ -379,5 +363,4 @@ def queues(
         bar = "[green]" + "█" * filled + "[/green]"
         pct = f"{count / total * 100:.1f}" if total > 0 else "0.0"
         table.add_row(name, bar, str(count), pct)
-
     console.print(table)
