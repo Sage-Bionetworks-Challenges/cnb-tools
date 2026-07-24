@@ -108,6 +108,30 @@ participant team, and update the project status:
 cnb-tools challenge close syn12345
 ```
 
+In addition to closing, you can also observe the challenge activity over time:
+
+**Visualize submission trends over time:**
+
+```bash
+# By day (default)
+cnb-tools summarize submissions syn12345
+
+# Grouped by ISO week
+cnb-tools summarize submissions syn12345 --weekly
+```
+
+**See how many submissions each queue received:**
+
+```bash
+cnb-tools summarize queues syn12345
+```
+
+**See where participants are coming from (by org type):**
+
+```bash
+cnb-tools summarize participants syn12345
+```
+
 ---
 
 ## Next Steps
