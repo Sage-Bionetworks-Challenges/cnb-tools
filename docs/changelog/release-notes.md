@@ -2,20 +2,16 @@
 
 ### Features
 - Add `cnb-tools summarize` CLI group with three subcommands:
-  - `summarize submissions` — histogram of submissions by day or ISO week
-  - `summarize participants` — participant breakdown by organization type (Academia, Industry, Government, Non-profit, Other, Not specified)
-  - `summarize queues` — submission count per evaluation queue
-- All `summarize` subcommands accept `--ignore-empty` to hide zero rows
+  - `summarize submissions`
+  - `summarize participants`
+  - `summarize queues`
 
 ### Internal
 - Remove `get_evaluation_ids_by_project` (use `get_evaluations_by_project` instead)
 - Simplify `get_evaluations_by_project` to pass `limit=100` (API max) in a single call
-- Remove `--graph` flag from `challenge stats`
 
 ### Docs
-- Add `summarize` command group to CLI reference
-- Update Introduction guide to show `summarize` commands in Stage 3 (Active Challenge)
-- Update Cheat Sheet to reflect removed `get_evaluation_ids_by_project`
+- Update docs
 
 ## 0.5.1
 
