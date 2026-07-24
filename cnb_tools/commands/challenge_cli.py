@@ -74,14 +74,18 @@ def create(
 
 @app.command()
 def launch(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
 ):
     """Launch a challenge by making the project publicly viewable.
 
     Grants READ access to all authenticated Synapse users on the project
     and sets the project's Status annotation to 'Active'.
     """
-    permissions.set_entity_permissions(project_id, _AUTHENTICATED_USERS, permission_level="view")
+    permissions.set_entity_permissions(
+        project_id, _AUTHENTICATED_USERS, permission_level="view"
+    )
     permissions.set_entity_permissions(project_id, _PUBLIC, permission_level="view")
     syn = get_synapse_client()
     entity = syn.get(project_id)
@@ -113,7 +117,9 @@ def register(
 
 @app.command()
 def unregister(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
 ):
     """Unregister a Synapse project as a challenge.
 
@@ -130,7 +136,9 @@ def unregister(
 
 @app.command()
 def get(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -151,7 +159,9 @@ def get(
 
 @app.command()
 def teams(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -196,7 +206,9 @@ def teams(
 
 @app.command()
 def queues(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -219,7 +231,9 @@ def queues(
 
 @app.command()
 def close(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project to close")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project to close")
+    ],
 ):
     """Close a challenge.
 
@@ -234,7 +248,9 @@ def close(
 
 @app.command()
 def stats(
-    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    project_id: Annotated[
+        str, typer.Argument(help="Synapse ID of the challenge project")
+    ],
     as_json: Annotated[
         bool,
         typer.Option("--json", help="Output raw JSON instead of formatted text"),
@@ -242,9 +258,8 @@ def stats(
 ):
     """Show basic statistics for a challenge.
 
-    Reports registered participants, registered teams, evaluation queues,
-    total submissions across all queues (fetched in parallel), and
-    discussion thread count.
+    Reports number of registered participants, registered teams, evaluation queues,
+    and total submissions across all queues.
     """
     syn = get_synapse_client()
 
