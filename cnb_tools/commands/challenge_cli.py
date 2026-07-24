@@ -242,9 +242,8 @@ def stats(
 ):
     """Show basic statistics for a challenge.
 
-    Reports registered participants, registered teams, evaluation queues,
-    total submissions across all queues (fetched in parallel), and
-    discussion thread count.
+    Reports number of registered participants, registered teams, evaluation queues,
+    and total submissions across all queues.
     """
     syn = get_synapse_client()
 
@@ -266,23 +265,14 @@ def stats(
     num_queues = len(evaluations)
 
     def _count_submissions(ev) -> int:
-        return sum(1 for _ in syn.getSubmissions(ev.id))
+        return syn.restGET(f"/evaluation/{ev.id}/submission/count")
 
     if evaluations:
         with ThreadPoolExecutor(max_workers=min(8, len(evaluations))) as pool:
-            num_submissions = sum(pool.map(_count_submissions, evaluations))
+            submissions_per_queue = list(pool.map(_count_submissions, evaluations))
+        num_submissions = sum(submissions_per_queue)
     else:
         num_submissions = 0
-
-    try:
-        forum = syn.restGET(f"/entity/{project_id}/forum")
-        thread_resp = syn.restGET(
-            f"/forum/{forum['id']}/threads",
-            params={"limit": 1, "filter": "NO_FILTER"},
-        )
-        num_threads: int | None = thread_resp.get("totalNumberOfResults", 0)
-    except Exception:
-        num_threads = None
 
     if as_json:
         result: dict = {
@@ -291,12 +281,10 @@ def stats(
             "registered_teams": num_teams,
             "evaluation_queues": num_queues,
             "total_submissions": num_submissions,
-            "discussion_threads": num_threads,
         }
         typer.echo(json.dumps(result, indent=2))
     else:
-        typer.echo(f"Registered participants:  {num_participants}")
-        typer.echo(f"Registered teams:         {num_teams}")
-        typer.echo(f"Evaluation queues:        {num_queues}")
-        typer.echo(f"Total submissions:        {num_submissions}")
-        typer.echo(f"Discussion threads:       {num_threads if num_threads is not None else 'N/A'}")
+        typer.echo(f"Registered participants: {num_participants}")
+        typer.echo(f"Registered teams:        {num_teams}")
+        typer.echo(f"Evaluation queues:       {num_queues}")
+        typer.echo(f"Total submissions:       {num_submissions}")

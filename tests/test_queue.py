@@ -49,7 +49,9 @@ class TestGetEvaluationsByProject:
 
         result = queue.get_evaluations_by_project("syn12345")
 
-        MockEvaluation.get_evaluations_by_project.assert_called_once_with(project_id="syn12345")
+        MockEvaluation.get_evaluations_by_project.assert_called_once_with(
+            project_id="syn12345", limit=100
+        )
         assert result == [mock_evaluation]
 
     @patch("cnb_tools.modules.queue.Evaluation")

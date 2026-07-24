@@ -270,7 +270,7 @@ def close_challenge(project_id: str) -> None:
     logger.info(f"Project {project_id} Status set to 'Closed'")
 
     # 2. Downgrade participant team permissions on every queue
-    eval_ids = queue_module.get_evaluation_ids_by_project(project_id)
+    eval_ids = [ev.id for ev in queue_module.get_evaluations_by_project(project_id)]
     for eval_id in eval_ids:
         permissions.set_evaluation_permissions(
             eval_id, participant_team_id, permission_level="view"

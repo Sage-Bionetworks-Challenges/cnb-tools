@@ -66,7 +66,6 @@ from cnb_tools.modules.queue import (
     create_evaluation_round,
     get_challenge_name_from_evaluation,
     get_evaluation,
-    get_evaluation_ids_by_project,
     get_evaluations_by_project,
 )
 from cnb_tools.modules.submission import (
@@ -114,7 +113,6 @@ __all__ = [
     "set_evaluation_permissions",
     # queue
     "get_evaluation",
-    "get_evaluation_ids_by_project",
     "get_challenge_name_from_evaluation",
     "create_evaluation",
     "create_evaluation_round",

@@ -16,6 +16,7 @@ from cnb_tools.commands import (
     challenge_cli,
     queue_cli,
     submission_cli,
+    summarize_cli,
 )
 
 app = typer.Typer(rich_markup_mode="rich")
@@ -33,6 +34,11 @@ app.add_typer(
     submission_cli.app,
     name="submission",
     help=("Manage submissions."),
+)
+app.add_typer(
+    summarize_cli.app,
+    name="summarize",
+    help="Summarize challenge data (submissions, participants).",
 )
 
 

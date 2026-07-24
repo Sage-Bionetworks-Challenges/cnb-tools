@@ -37,26 +37,13 @@ def get_evaluation(evaluation_id: int) -> Evaluation:
         ) from err
 
 
-def get_evaluation_ids_by_project(project_id: str) -> list[str]:
-    """Return the IDs of all evaluation queues linked to a Synapse project.
-
-    Tip: Example Use Case
-      List every queue associated with a challenge project before bulk-
-      updating permissions or closing the challenge.
-
-    Args:
-      project_id: Synapse ID of the challenge project.
-
-    Returns:
-      List of evaluation queue ID strings.
-    """
-    get_synapse_client()  # ensure authentication
-    evaluations = Evaluation.get_evaluations_by_project(project_id=project_id)
-    return [ev.id for ev in evaluations if ev.id]
-
-
 def get_evaluations_by_project(project_id: str) -> list[Evaluation]:
     """Return all evaluation queues linked to a Synapse project.
+
+    Note: This is a wrapper around ``Evaluation.get_evaluations_by_project()``
+    from the synapseclient. The client defaults to ``limit=10``, which would
+    silently truncate challenges with more than 10 queues. This wrapper passes
+    ``limit=100``, the API maximum.
 
     Tip: Example Use Case
       Inspect all queues for a challenge project, e.g. to display their
@@ -71,9 +58,11 @@ def get_evaluations_by_project(project_id: str) -> list[Evaluation]:
     Raises:
       UnknownSynapseID: If the project ID is invalid.
     """
-    get_synapse_client()  # ensure authentication
+    get_synapse_client()
     try:
-        return list(Evaluation.get_evaluations_by_project(project_id=project_id))
+        # TODO: If a project ever has more than 100 queues, replace this with
+        # a pagination loop (limit=100, offset incremented until page < 100).
+        return Evaluation.get_evaluations_by_project(project_id=project_id, limit=100)
     except SynapseHTTPError as err:
         raise UnknownSynapseID(
             f"⛔ {err.response.json().get('reason')}. Check the ID and try again."

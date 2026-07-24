@@ -402,3 +402,84 @@ Options:
 Name | Type | Description | Default
 --|--|--|--
 `--skip-errors` | boolean | Continue update even if unknown ID error is encountered | False
+
+---
+
+## Command: `summarize`
+
+Summarize challenge activity for a post-challenge landscape. Results will return
+as bar charts, counts, and percentages.
+
+By default, all results are returned, but empty results can be ignored with `--ignore-empty`.
+
+### `submissions`
+
+Show a breakdown of submissions over time. Fetches all submissions across every
+evaluation queue and groups them by day (default) or week (`--weekly`).
+
+```bash
+cnb-tools summarize submissions PROJECT_ID [--weekly] [--ignore-empty]
+```
+
+Replace the following:
+
+- _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--weekly` | boolean | Group by ISO week instead of day | False
+`--ignore-empty` | boolean | Hide rows with zero counts | False
+
+### `participants`
+
+Show a breakdown of participants by sector type (academia, government, non-profit, for-profit,
+other).
+
+!!!note
+    Categories are estimated using keyword matching on self-reported profile
+    fields. Results may not be accurate.
+
+```bash
+cnb-tools summarize participants PROJECT_ID [--ignore-empty]
+```
+
+Replace the following:
+
+- _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--ignore-empty` | boolean | Hide categories with zero participants | False
+
+Categories (in display order):
+
+| Category | Description |
+|---|---|
+| Academia | Universities, hospitals, institutes, research centers |
+| Industry / For-profit | Companies, biotech, pharma, consulting |
+| Government | Federal agencies (NIH, FDA, CDC, etc.) |
+| Non-profit | Foundations, societies, associations |
+| Other | Profile fields filled but no keyword matched |
+| Not specified | Both company and industry fields are blank |
+
+### `queues`
+
+Show a breakdown of submissions per evaluation queue.
+
+```bash
+cnb-tools summarize queues PROJECT_ID [--ignore-empty]
+```
+
+Replace the following:
+
+- _`PROJECT_ID`_ - Synapse ID of the challenge project
+
+Options:
+
+Name | Type | Description | Default
+--|--|--|--
+`--ignore-empty` | boolean | Hide queues with zero submissions | False
