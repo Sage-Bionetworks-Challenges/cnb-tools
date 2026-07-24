@@ -167,6 +167,10 @@ def submissions(
         bool,
         typer.Option("--weekly", help="Group by ISO week instead of day"),
     ] = False,
+    ignore_empty: Annotated[
+        bool,
+        typer.Option("--ignore-empty", help="Hide rows with zero counts"),
+    ] = False,
 ):
     """Show a histogram of submissions over time.
 
@@ -227,6 +231,8 @@ def submissions(
 
     for key in sorted_keys:
         count = counts[key]
+        if ignore_empty and count == 0:
+            continue
         filled = int(count / max_count * bar_width) if max_count > 0 else 0
         bar = "[green]" + "█" * filled + "[/green]"
         pct = f"{count / total * 100:.1f}"
@@ -238,6 +244,10 @@ def submissions(
 @app.command()
 def participants(
     project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    ignore_empty: Annotated[
+        bool,
+        typer.Option("--ignore-empty", help="Hide categories with zero participants"),
+    ] = False,
 ):
     """Show a breakdown of participants by organization type.
 
@@ -293,6 +303,8 @@ def participants(
 
     for category in _CATEGORY_ORDER:
         count = counts.get(category, 0)
+        if ignore_empty and count == 0:
+            continue
         color = _CATEGORY_COLORS[category]
         filled = int(count / max_count * bar_width) if count > 0 else 0
         bar = f"[{color}]" + "█" * filled + f"[/{color}]"
@@ -304,3 +316,68 @@ def participants(
         "[dim]Note: Categories are estimated using keyword matching on self-reported "
         "company and industry fields. Results may not be accurate.[/dim]\n"
     )
+
+
+@app.command()
+def queues(
+    project_id: Annotated[str, typer.Argument(help="Synapse ID of the challenge project")],
+    ignore_empty: Annotated[
+        bool,
+        typer.Option("--ignore-empty", help="Hide queues with zero submissions"),
+    ] = False,
+):
+    """Show a breakdown of submissions per evaluation queue.
+
+    Fetches the submission count for each queue in parallel and prints a
+    bar chart sorted by queue name.
+    """
+    syn = get_synapse_client()
+    console = Console()
+
+    try:
+        evaluations = get_evaluations_by_project(project_id)
+    except UnknownSynapseID as err:
+        sys.exit(err)
+
+    if not evaluations:
+        typer.echo(f"No evaluation queues found for {project_id}.")
+        return
+
+    def _count(ev) -> tuple[str, str, int]:
+        return ev.id, ev.name or ev.id or "", syn.restGET(f"/evaluation/{ev.id}/submission/count")
+
+    with ThreadPoolExecutor(max_workers=min(8, len(evaluations))) as pool:
+        futures = {pool.submit(_count, ev): ev for ev in evaluations}
+        results = [future.result() for future in as_completed(futures)]
+
+    results.sort(key=lambda r: r[1])  # sort by name
+    if ignore_empty:
+        results = [r for r in results if r[2] > 0]
+    total = sum(r[2] for r in results)
+
+    if total == 0:
+        typer.echo("No submissions found.")
+        return
+
+    max_count = max(r[2] for r in results)
+    bar_width = 40
+
+    table = Table(
+        box=box.SIMPLE,
+        show_header=True,
+        header_style="bold cyan",
+        title=f"Submissions per queue  (total: {total})",
+        title_style="bold",
+    )
+    table.add_column("Queue", style="dim", no_wrap=True)
+    table.add_column("Bar", min_width=bar_width)
+    table.add_column("Count", justify="right", style="bold green")
+    table.add_column("%", justify="right", style="cyan")
+
+    for _, name, count in results:
+        filled = int(count / max_count * bar_width) if max_count > 0 else 0
+        bar = "[green]" + "█" * filled + "[/green]"
+        pct = f"{count / total * 100:.1f}" if total > 0 else "0.0"
+        table.add_row(name, bar, str(count), pct)
+
+    console.print(table)
