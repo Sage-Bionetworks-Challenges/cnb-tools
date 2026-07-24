@@ -1,3 +1,18 @@
+## 0.6.0
+
+### Features
+- Add `cnb-tools summarize` CLI group with three subcommands:
+  - `summarize submissions`
+  - `summarize participants`
+  - `summarize queues`
+
+### Internal
+- Remove `get_evaluation_ids_by_project` (use `get_evaluations_by_project` instead)
+- Simplify `get_evaluations_by_project` to pass `limit=100` (API max) in a single call
+
+### Docs
+- Update docs
+
 ## 0.5.1
 
 ### Internal
