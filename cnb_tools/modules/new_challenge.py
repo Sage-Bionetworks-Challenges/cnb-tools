@@ -327,6 +327,7 @@ def main(
         result["preregistrant_team_id"] = teams["preregistrant_team_id"]
     return result
 
+
 def close_challenge(project_id: str) -> None:
     """Close a challenge by locking submissions and the participant team.
 
