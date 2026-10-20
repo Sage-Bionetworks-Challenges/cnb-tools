@@ -1,3 +1,11 @@
+## 0.7.0
+
+### Features
+- Add support for creating a staging site (with preregistrants team) when creating a new challenge ([#63](https://github.com/Sage-Bionetworks-Challenges/cnb-tools/pull/63))
+
+### Internal
+- Bump dependency versions
+
 ## 0.6.0
 
 ### Features
