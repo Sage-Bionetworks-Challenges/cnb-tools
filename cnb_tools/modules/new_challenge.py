@@ -9,6 +9,7 @@ Portal Challenge template.
 import logging
 
 import synapseutils
+from synapseclient import Wiki
 from synapseclient.core.exceptions import SynapseHTTPError
 from synapseclient.models import Folder, Project
 
@@ -28,6 +29,18 @@ CHALLENGE_TEMPLATE_SYNID = "syn52941681"
 
 # Synapse user/team ID for the Sage CNB admin team.
 SAGE_CNB_TEAM = "3379097"
+
+# Pre-launch wiki shown on the live project when a staging site is used;
+# invites visitors to pre-register while the full content is drafted on staging.
+_LIVE_PAGE_MARKDOWN = (
+    "## ${{jointeam?teamId={team_id}&isChallenge=false"
+    "&isMemberMessage=You have successfully preregistered for the challenge"
+    "&text=Click here to preregister&isSimpleRequestButton=true"
+    "&requestOpenText=Your registration is in progress"
+    "&successMessage=Your registration is in progress}}\n\n"
+    "### There are ${{teammembercount?teamId={team_id}}} preregistered participants. "
+    "**Join them now!**\n"
+)
 
 
 def _create_project(name: str) -> Project:
@@ -59,8 +72,13 @@ def _update_wikipage_string(
     return wikipage_string
 
 
-def _create_teams(challenge_name: str) -> dict[str, str]:
-    """Create the Participants and Organizers teams for the challenge."""
+def _create_teams(challenge_name: str, with_staging: bool = False) -> dict[str, str]:
+    """Create the Participants and Organizers teams for the challenge.
+
+    If `with_staging` is True, also creates a Pre-registrants team used on
+    the live project's placeholder wiki while the challenge is drafted on
+    the staging site.
+    """
     team_part = participant.create_team(
         name=f"{challenge_name} Participants",
         description="Challenge Participant Team",
@@ -71,10 +89,18 @@ def _create_teams(challenge_name: str) -> dict[str, str]:
         description="Challenge Organizing Team",
         can_public_join=False,
     )
-    return {
+    teams = {
         "participant_team_id": str(team_part.id),
         "organizer_team_id": str(team_org.id),
     }
+    if with_staging:
+        team_prereg = participant.create_team(
+            name=f"{challenge_name} Preregistrants",
+            description="Challenge Pre-registration Team",
+            can_public_join=True,
+        )
+        teams["preregistrant_team_id"] = str(team_prereg.id)
+    return teams
 
 
 def _create_challenge_widget(project_id: str, participant_team_id: str):
@@ -138,20 +164,48 @@ def _add_to_portal(project_id: str) -> None:
     logger.info(f"Challenge added to 'Curated Challenge Projects' ({PORTAL_TABLE})")
 
 
+def _create_live_preregistration_wiki(project_id: str, preregistrant_team_id: str) -> None:
+    """Store a placeholder wiki on the live project inviting pre-registration."""
+    syn = get_synapse_client()
+    markdown = _LIVE_PAGE_MARKDOWN.format(team_id=preregistrant_team_id)
+    syn.store(Wiki(title="", owner=project_id, markdown=markdown))
+
+
+def _create_staging_project(
+    challenge_name: str,
+    organizer_team_id: str,
+) -> Project:
+    """Create the private staging project used to draft challenge content."""
+    project_staging = _create_project(f"{challenge_name} - staging")
+    permissions.set_entity_permissions(
+        project_staging.id,
+        organizer_team_id,
+        permission_level="edit",
+    )
+    permissions.set_entity_permissions(
+        project_staging.id,
+        SAGE_CNB_TEAM,
+        permission_level="admin",
+    )
+    return project_staging
+
+
 def main(
     challenge_name: str,
     tasks_count: int = 1,
     live_site: str | None = None,
     add_to_portal: bool = True,
+    with_staging: bool = False,
 ) -> dict[str, str]:
     """Create a new challenge ready for release on the Challenge Portal.
 
     Create the full challenge project in a single call:
 
-    - **Teams**: Participants and Organizers.
+    - **Teams**: Participants and Organizers (plus Pre-registrants if
+      `with_staging` is set).
     - **Evaluation queues**: one queue per task.
-    - **Data folders**: ``Data/`` (Training, Validation — open to participants)
-      and ``Private Data/`` (Groundtruth, Test — organizers only).
+    - **Data folders**: `Data/` (Training, Validation — open to participants)
+      and `Private Data/` (Groundtruth, Test — organizers only).
     - **Wiki**: copied from the portal template and updated with the real
       challenge/team/project IDs.
     - **Portal registration** (optional): adds the project to the Curated Challenges table.
@@ -162,19 +216,27 @@ def main(
 
     Args:
       challenge_name: Name of the new challenge.
-      tasks_count: Number of task evaluation queues to create. Default ``1``.
+      tasks_count: Number of task evaluation queues to create. Default `1`.
       live_site: Synapse ID of an already-existing project to use as the
         live site. If given, no new project is created and the caller is
-        responsible for its permissions and wiki. Default ``None``.
+        responsible for its permissions and wiki. Default `None`.
       add_to_portal: Whether to register the challenge in the Challenge Portal
-        table. Default ``True``.
+        table. Default `True`.
+      with_staging: If True, drafts the challenge wiki on a separate private
+        staging project (`"{challenge_name} - staging"`) instead of the
+        live project. The live project instead gets a minimal placeholder
+        wiki inviting visitors to pre-register, and a Pre-registrants team
+        is created for that purpose. Ignored if `live_site` is given.
+        Default `False`.
 
     Returns:
-      A dict with keys ``live_project_synid``, ``organizer_team_id``, and
-      ``participant_team_id``.
+      A dict with keys `live_project_synid`, `organizer_team_id`, and
+      `participant_team_id`, plus `staging_project_synid` and
+      `preregistrant_team_id` when `with_staging` is set.
     """
     syn = get_synapse_client()
-    teams = _create_teams(challenge_name)
+    use_staging = with_staging and live_site is None
+    teams = _create_teams(challenge_name, with_staging=use_staging)
     participant.disable_team_email(teams["participant_team_id"])
 
     # --- Project -------------------------------------------------------
@@ -217,37 +279,61 @@ def main(
     )
 
     # --- Wiki ---------------------------------------------------------------
-    logger.info(f"Copying wiki template to {project_live.name}")
-    new_wikiids = synapseutils.copyWiki(syn, CHALLENGE_TEMPLATE_SYNID, project_live.id)
-    for page in new_wikiids:
-        wikipage = syn.getWiki(project_live.id, page["id"])
-        wikipage.markdown = _update_wikipage_string(
-            wikipage.markdown,
-            challenge_obj["id"],
-            teams["participant_team_id"],
+    project_staging: Project | None = None
+    if use_staging:
+        project_staging = _create_staging_project(
             challenge_name,
-            project_live.id,
+            organizer_team_id=teams["organizer_team_id"],
         )
-        syn.store(wikipage)
+        logger.info(f"Copying wiki template to {project_staging.name}")
+        new_wikiids = synapseutils.copyWiki(syn, CHALLENGE_TEMPLATE_SYNID, project_staging.id)
+        for page in new_wikiids:
+            wikipage = syn.getWiki(project_staging.id, page["id"])
+            wikipage.markdown = _update_wikipage_string(
+                wikipage.markdown,
+                challenge_obj["id"],
+                teams["participant_team_id"],
+                challenge_name,
+                project_live.id,
+            )
+            syn.store(wikipage)
+        _create_live_preregistration_wiki(project_live.id, teams["preregistrant_team_id"])
+    else:
+        logger.info(f"Copying wiki template to {project_live.name}")
+        new_wikiids = synapseutils.copyWiki(syn, CHALLENGE_TEMPLATE_SYNID, project_live.id)
+        for page in new_wikiids:
+            wikipage = syn.getWiki(project_live.id, page["id"])
+            wikipage.markdown = _update_wikipage_string(
+                wikipage.markdown,
+                challenge_obj["id"],
+                teams["participant_team_id"],
+                challenge_name,
+                project_live.id,
+            )
+            syn.store(wikipage)
 
     if add_to_portal:
         _add_to_portal(project_live.id)
 
-    return {
+    result = {
         "live_project_synid": project_live.id,
         "organizer_team_id": teams["organizer_team_id"],
         "participant_team_id": teams["participant_team_id"],
     }
-
+    if use_staging:
+        assert project_staging is not None
+        result["staging_project_synid"] = project_staging.id
+        result["preregistrant_team_id"] = teams["preregistrant_team_id"]
+    return result
 
 def close_challenge(project_id: str) -> None:
     """Close a challenge by locking submissions and the participant team.
 
     Performs three actions in sequence:
 
-    1. Sets the project's ``Status`` annotation to ``"Closed"``.
+    1. Sets the project's `Status` annotation to `"Closed"`.
     2. Downgrades the participant team's evaluation queue permissions from
-       ``"submit"`` to ``"view"`` on every queue in the project.
+       `"submit"` to `"view"` on every queue in the project.
     3. Locks the participant team so no new members can join or request
        membership.
 

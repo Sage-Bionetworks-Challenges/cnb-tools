@@ -52,6 +52,18 @@ def create(
             help="Skip registering the challenge in the Challenge Portal table",
         ),
     ] = False,
+    staging: Annotated[
+        bool,
+        typer.Option(
+            "--staging",
+            help=(
+                "Draft the challenge wiki on a separate private staging project "
+                "instead of the live project, and create a Pre-registrants team "
+                "for a placeholder pre-registration page on the live project. "
+                "Ignored if --live-site is given."
+            ),
+        ),
+    ] = False,
 ):
     """Create a new challenge on Synapse. Use --no-portal to skip registering
     the challenge on the Synapse Challenge Portal (challenges.synapse.org)
@@ -65,11 +77,15 @@ def create(
         tasks_count=tasks,
         live_site=live_site,
         add_to_portal=not no_portal,
+        with_staging=staging,
     )
     typer.echo("✅ Challenge creation complete:")
     typer.echo(f"   Live project synID:    {result['live_project_synid']}")
-    typer.echo(f"   Participants teamID:    {result['participant_teamid']}")
-    typer.echo(f"   Organizers teamID:      {result['organizer_teamid']}")
+    typer.echo(f"   Participants teamID:    {result['participant_team_id']}")
+    typer.echo(f"   Organizers teamID:      {result['organizer_team_id']}")
+    if "staging_project_synid" in result:
+        typer.echo(f"   Staging project synID:  {result['staging_project_synid']}")
+        typer.echo(f"   Preregistrants teamID:  {result['preregistrant_team_id']}")
 
 
 @app.command()
