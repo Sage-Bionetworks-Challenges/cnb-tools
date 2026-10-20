@@ -195,14 +195,14 @@ def main(
     tasks_count: int = 1,
     live_site: str | None = None,
     add_to_portal: bool = True,
-    with_staging: bool = False,
+    no_staging: bool = False,
 ) -> dict[str, str]:
     """Create a new challenge ready for release on the Challenge Portal.
 
     Create the full challenge project in a single call:
 
-    - **Teams**: Participants and Organizers (plus Pre-registrants if
-      `with_staging` is set).
+    - **Teams**: Participants and Organizers (plus Pre-registrants unless
+      `no_staging` is set).
     - **Evaluation queues**: one queue per task.
     - **Data folders**: `Data/` (Training, Validation — open to participants)
       and `Private Data/` (Groundtruth, Test — organizers only).
@@ -222,20 +222,21 @@ def main(
         responsible for its permissions and wiki. Default `None`.
       add_to_portal: Whether to register the challenge in the Challenge Portal
         table. Default `True`.
-      with_staging: If True, drafts the challenge wiki on a separate private
-        staging project (`"{challenge_name} - staging"`) instead of the
-        live project. The live project instead gets a minimal placeholder
-        wiki inviting visitors to pre-register, and a Pre-registrants team
-        is created for that purpose. Ignored if `live_site` is given.
-        Default `False`.
+      no_staging: If True, skips the staging site and drafts the wiki
+        directly on the live project, as a single-project challenge.
+        By default, the challenge wiki is drafted on a separate private
+        staging project (`"{challenge_name} - staging"`), the live project
+        gets a minimal placeholder wiki inviting visitors to pre-register,
+        and a Pre-registrants team is created for that purpose. Ignored
+        (treated as True) if `live_site` is given. Default `False`.
 
     Returns:
       A dict with keys `live_project_synid`, `organizer_team_id`, and
       `participant_team_id`, plus `staging_project_synid` and
-      `preregistrant_team_id` when `with_staging` is set.
+      `preregistrant_team_id` when a staging site is created.
     """
     syn = get_synapse_client()
-    use_staging = with_staging and live_site is None
+    use_staging = not no_staging and live_site is None
     teams = _create_teams(challenge_name, with_staging=use_staging)
     participant.disable_team_email(teams["participant_team_id"])
 

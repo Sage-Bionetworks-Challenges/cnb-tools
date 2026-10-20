@@ -52,14 +52,15 @@ def create(
             help="Skip registering the challenge in the Challenge Portal table",
         ),
     ] = False,
-    staging: Annotated[
+    no_staging: Annotated[
         bool,
         typer.Option(
-            "--staging",
+            "--no-staging",
             help=(
-                "Draft the challenge wiki on a separate private staging project "
-                "instead of the live project, and create a Pre-registrants team "
-                "for a placeholder pre-registration page on the live project. "
+                "Skip the staging site and draft the wiki directly on the live "
+                "project. By default, the wiki is drafted on a separate private "
+                "staging project and the live project gets a placeholder "
+                "pre-registration page backed by a Pre-registrants team. "
                 "Ignored if --live-site is given."
             ),
         ),
@@ -77,7 +78,7 @@ def create(
         tasks_count=tasks,
         live_site=live_site,
         add_to_portal=not no_portal,
-        with_staging=staging,
+        no_staging=no_staging,
     )
     typer.echo("✅ Challenge creation complete:")
     typer.echo(f"   Live project synID:    {result['live_project_synid']}")
